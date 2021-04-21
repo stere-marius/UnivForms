@@ -35,7 +35,7 @@ utilizatorSchema.methods.matchPassword = async function (parolaIntrodusa) {
   return await bcrypt.compare(parolaIntrodusa, this.parola);
 };
 
-userSchema.pre("save", async function (next) {
+utilizatorSchema.pre("save", async function (next) {
   if (!this.isModified("parola")) {
     next();
   }
@@ -44,5 +44,9 @@ userSchema.pre("save", async function (next) {
   this.parola = await bcrypt.hash(this.parola, salt);
 });
 
-const Utilizator = mongoose.model("Utilizator", utilizatorSchema);
+const Utilizator = mongoose.model(
+  "Utilizator",
+  utilizatorSchema,
+  "utilizatori"
+);
 export default Utilizator;

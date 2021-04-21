@@ -25,6 +25,7 @@ const raspunsuriSchema = mongoose.Schema({
 
 const RaspunsuriFormular = mongoose.model(
   "RaspunsuriFormular",
-  raspunsuriSchema
+  raspunsuriSchema,
+  "raspunsuri_formular"
 );
 export default RaspunsuriFormular;

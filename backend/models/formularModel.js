@@ -44,5 +44,5 @@ const formularSchema = mongoose.Schema(
   }
 );
 
-const Formular = mongoose.model("Formular", formularSchema);
+const Formular = mongoose.model("Formular", formularSchema, "formulare");
 export default Formular;

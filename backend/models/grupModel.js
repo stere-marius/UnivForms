@@ -1,29 +1,18 @@
 import mongoose from "mongoose";
 
-const utilizatoriGrupSchema = mongoose.Schema({
-  utilizator: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: "Utilizator",
-  },
-  admistrator: {
-    type: Boolean,
-    required: true,
-    default: false,
-  },
-  abonat: {
-    type: Boolean,
-    required: true,
-    default: false,
-  },
-});
-
 const grupSchema = mongoose.Schema({
   nume: {
     type: String,
     required: true,
   },
-  utilizatori: [utilizatoriGrupSchema],
+  utilizatori: [
+    {
+      utilizator: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Utilizator",
+      },
+    },
+  ],
   formulare: [
     {
       formular: {
@@ -32,15 +21,7 @@ const grupSchema = mongoose.Schema({
       },
     },
   ],
-  chestionare: [
-    {
-      chestionar: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Chestionar",
-      },
-    },
-  ],
 });
 
-const Grup = mongoose.model("Grup", grupSchema);
+const Grup = mongoose.model("Grup", grupSchema, "grupuri");
 export default Grup;
