@@ -1,0 +1,8 @@
+[
+  {
+    "utilizator": "ObjectId()",
+    "formular": "ObjectId()",
+    "intrebare": "ObjectId()",
+    "raspunsuri": ["ObjectId()", "ObjectId()"]
+  }
+]
