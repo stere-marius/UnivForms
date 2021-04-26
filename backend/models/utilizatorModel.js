@@ -20,7 +20,7 @@ const utilizatorSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    administrator: {
+    esteAdministrator: {
       type: Boolean,
       required: true,
       default: false,
