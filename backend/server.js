@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import colors from "colors";
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
+import formRoutes from "./routes/formRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
 dotenv.config();
@@ -18,6 +19,7 @@ app.get("/", (request, response) => {
 });
 
 app.use("/api/users", userRoutes);
+app.use("/api/forms", formRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
