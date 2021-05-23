@@ -1,0 +1,230 @@
+warning: LF will be replaced by CRLF in package.json.
+The file will have its original line endings in your working directory
+[1mdiff --git a/backend/data/formulare.js b/backend/data/formulare.js[m
+[1mindex 78b5d64..99353bb 100644[m
+[1m--- a/backend/data/formulare.js[m
+[1m+++ b/backend/data/formulare.js[m
+[36m@@ -47,6 +47,134 @@[m [mconst formulare = [[m
+           },[m
+         ],[m
+       },[m
+[32m+[m
+[32m+[m[32m      {[m
+[32m+[m[32m        tip: "Caseta de selectare",[m
+[32m+[m[32m        titlu: "Selectati vecinii României",[m
+[32m+[m[32m        imagine: "C://Imagini//imagine.jpg",[m
+[32m+[m[32m        obligatoriu: true,[m
+[32m+[m[32m        atribute: {[m
+[32m+[m[32m          descriere: "Descriere",[m
+[32m+[m[32m          afisareOrdineDescrescatoare: false,[m
+[32m+[m[32m          punctaj: 100,[m
+[32m+[m[32m          validareRaspuns: {[m
+[32m+[m[32m            selectareExact: 2,[m
+[32m+[m[32m            textEroare: "Selectati exact doua raspunsuri",[m
+[32m+[m[32m          },[m
+[32m+[m[32m        },[m
+[32m+[m[32m        raspunsuri: [[m
+[32m+[m[32m          {[m
+[32m+[m[32m            titlu: "Ucraina",[m
+[32m+[m[32m            imagine: "C://Imagini//ucraina.jpg",[m
+[32m+[m[32m            atribute: {[m
+[32m+[m[32m              raspunsCorect: true,[m
+[32m+[m[32m            },[m
+[32m+[m[32m          },[m
+[32m+[m[32m          {[m
+[32m+[m[32m            titlu: "Rusia",[m
+[32m+[m[32m            imagine: "C://Imagini//rusia.jpg",[m
+[32m+[m[32m          },[m
+[32m+[m[32m          {[m
+[32m+[m[32m            titlu: "Moldova",[m
+[32m+[m[32m            imagine: "C://Imagini//Moldova.jpg",[m
+[32m+[m[32m            atribute: {[m
+[32m+[m[32m              raspunsCorect: true,[m
+[32m+[m[32m            },[m
+[32m+[m[32m          },[m
+[32m+[m[32m          {[m
+[32m+[m[32m            titlu: "Germania",[m
+[32m+[m[32m            imagine: "C://Imagini//germania.jpg",[m
+[32m+[m[32m          },[m
+[32m+[m[32m          {[m
+[32m+[m[32m            titlu: "Serbia",[m
+[32m+[m[32m            imagine: "C://Imagini//serbia.jpg",[m
+[32m+[m[32m            atribute: {[m
+[32m+[m[32m              raspunsCorect: true,[m
+[32m+[m[32m            },[m
+[32m+[m[32m          },[m
+[32m+[m[32m          {[m
+[32m+[m[32m            titlu: "Bulgaria",[m
+[32m+[m[32m            imagine: "C://Imagini//bulgaria.jpg",[m
+[32m+[m[32m            atribute: {[m
+[32m+[m[32m              raspunsCorect: true,[m
+[32m+[m[32m            },[m
+[32m+[m[32m          },[m
+[32m+[m[32m          {[m
+[32m+[m[32m            titlu: "Ungaria",[m
+[32m+[m[32m            imagine: "C://Imagini//ungaria.jpg",[m
+[32m+[m[32m            atribute: {[m
+[32m+[m[32m              raspunsCorect: true,[m
+[32m+[m[32m            },[m
+[32m+[m[32m          },[m
+[32m+[m[32m        ],[m
+[32m+[m[32m      },[m
+[32m+[m
+[32m+[m[32m      {[m
+[32m+[m[32m        tip: "Caseta de selectare",[m
+[32m+[m[32m        titlu: "Bifati raspunsurile corecte",[m
+[32m+[m[32m        obligatoriu: true,[m
+[32m+[m[32m        raspunsuri: [[m
+[32m+[m[32m          {[m
+[32m+[m[32m            titlu: "MD5 returneaza un string de 32 caractere",[m
+[32m+[m[32m            atribute: {[m
+[32m+[m[32m              raspunsCorect: true,[m
+[32m+[m[32m            },[m
+[32m+[m[32m          },[m
+[32m+[m[32m          {[m
+[32m+[m[32m            titlu: "MD5 returneaza un string de 64 caractere",[m
+[32m+[m[32m            imagine: "C://Imagini//rusia.jpg",[m
+[32m+[m[32m          },[m
+[32m+[m[32m          {[m
+[32m+[m[32m            titlu: "SHA256 returneaza un string de 64 caractere",[m
+[32m+[m[32m            imagine: "C://Imagini//Moldova.jpg",[m
+[32m+[m[32m            atribute: {[m
+[32m+[m[32m              raspunsCorect: true,[m
+[32m+[m[32m            },[m
+[32m+[m[32m          },[m
+[32m+[m[32m          {[m
+[32m+[m[32m            titlu: "SHA256 returneaza un string de 32 caractere",[m
+[32m+[m[32m          },[m
+[32m+[m[32m        ],[m
+[32m+[m[32m      },[m
+[32m+[m
+[32m+[m[32m      {[m
+[32m+[m[32m        tip: "Caseta de selectare",[m
+[32m+[m[32m        titlu: "Selectati tipurile de date primitive din JAVA",[m
+[32m+[m[32m        obligatoriu: true,[m
+[32m+[m[32m        raspunsuri: [[m
+[32m+[m[32m          {[m
+[32m+[m[32m            titlu: "byte",[m
+[32m+[m[32m            atribute: {[m
+[32m+[m[32m              raspunsCorect: true,[m
+[32m+[m[32m            },[m
+[32m+[m[32m          },[m
+[32m+[m[32m          {[m
+[32m+[m[32m            titlu: "short",[m
+[32m+[m[32m            atribute: {[m
+[32m+[m[32m              raspunsCorect: true,[m
+[32m+[m[32m            },[m
+[32m+[m[32m          },[m
+[32m+[m[32m          {[m
+[32m+[m[32m            titlu: "char",[m
+[32m+[m[32m            atribute: {[m
+[32m+[m[32m              raspunsCorect: true,[m
+[32m+[m[32m            },[m
+[32m+[m[32m          },[m
+[32m+[m[32m          {[m
+[32m+[m[32m            titlu: "Integer",[m
+[32m+[m[32m          },[m
+[32m+[m
+[32m+[m[32m          {[m
+[32m+[m[32m            titlu: "String",[m
+[32m+[m[32m          },[m
+[32m+[m[32m          {[m
+[32m+[m[32m            titlu: "int",[m
+[32m+[m[32m            atribute: {[m
+[32m+[m[32m              raspunsCorect: true,[m
+[32m+[m[32m            },[m
+[32m+[m[32m          },[m
+[32m+[m[32m        ],[m
+[32m+[m[32m      },[m
+     ],[m
+   },[m
+ ];[m
+[1mdiff --git a/backend/models/formularModel.js b/backend/models/formularModel.js[m
+[1mindex d3501f3..6901ceb 100644[m
+[1m--- a/backend/models/formularModel.js[m
+[1m+++ b/backend/models/formularModel.js[m
+[36m@@ -6,6 +6,11 @@[m [mconst formularSchema = mongoose.Schema([m
+       type: mongoose.Schema.Types.ObjectId,[m
+       ref: "Utilizator",[m
+     },[m
+[32m+[m[32m    nume: {[m
+[32m+[m[32m      type: String,[m
+[32m+[m[32m      required: true,[m
+[32m+[m[32m      default: "Formular",[m
+[32m+[m[32m    },[m
+     intrebari: [[m
+       {[m
+         tip: {[m
+[1mdiff --git a/backend/models/grupModel.js b/backend/models/grupModel.js[m
+[1mindex 8a3380a..d3d57dd 100644[m
+[1m--- a/backend/models/grupModel.js[m
+[1m+++ b/backend/models/grupModel.js[m
+[36m@@ -1,32 +1,37 @@[m
+ import mongoose from "mongoose";[m
+ [m
+[31m-const grupSchema = mongoose.Schema({[m
+[31m-  nume: {[m
+[31m-    type: String,[m
+[31m-    required: true,[m
+[31m-  },[m
+[31m-  utilizatori: [[m
+[31m-    {[m
+[31m-      utilizator: {[m
+[31m-        type: mongoose.Schema.Types.ObjectId,[m
+[31m-        ref: "Utilizator",[m
+[31m-      },[m
+[31m-      esteAdministrator: {[m
+[31m-        type: Boolean,[m
+[31m-        required: true,[m
+[31m-        default: false,[m
+[31m-      },[m
+[32m+[m[32mconst grupSchema = mongoose.Schema([m
+[32m+[m[32m  {[m
+[32m+[m[32m    nume: {[m
+[32m+[m[32m      type: String,[m
+[32m+[m[32m      required: true,[m
+     },[m
+[31m-  ],[m
+[31m-  formulare: [[m
+[31m-    {[m
+[31m-      formular: {[m
+[31m-        type: mongoose.Schema.Types.ObjectId,[m
+[31m-        ref: "Formular",[m
+[32m+[m[32m    utilizatori: [[m
+[32m+[m[32m      {[m
+[32m+[m[32m        utilizator: {[m
+[32m+[m[32m          type: mongoose.Schema.Types.ObjectId,[m
+[32m+[m[32m          ref: "Utilizator",[m
+[32m+[m[32m        },[m
+[32m+[m[32m        esteAdministrator: {[m
+[32m+[m[32m          type: Boolean,[m
+[32m+[m[32m          required: true,[m
+[32m+[m[32m          default: false,[m
+[32m+[m[32m        },[m
+       },[m
+[31m-    },[m
+[31m-  ],[m
+[31m-});[m
+[32m+[m[32m    ],[m
+[32m+[m[32m    formulare: [[m
+[32m+[m[32m      {[m
+[32m+[m[32m        formular: {[m
+[32m+[m[32m          type: mongoose.Schema.Types.ObjectId,[m
+[32m+[m[32m          ref: "Formular",[m
+[32m+[m[32m        },[m
+[32m+[m[32m      },[m
+[32m+[m[32m    ],[m
+[32m+[m[32m  },[m
+[32m+[m[32m  {[m
+[32m+[m[32m    timeStamps: true,[m
+[32m+[m[32m  }[m
+[32m+[m[32m);[m
+ [m
+ const Grup = mongoose.model("Grup", grupSchema, "grupuri");[m
+ export default Grup;[m
+[1mdiff --git a/frontend b/frontend[m
+[1m--- a/frontend[m
+[1m+++ b/frontend[m
+[36m@@ -1 +1 @@[m
+[31m-Subproject commit c0e35dc21b49812ea7bf4363cb1407e50dbd6c31[m
+[32m+[m[32mSubproject commit c0e35dc21b49812ea7bf4363cb1407e50dbd6c31-dirty[m

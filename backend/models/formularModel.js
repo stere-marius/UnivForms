@@ -6,6 +6,11 @@ const formularSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Utilizator",
     },
+    nume: {
+      type: String,
+      required: true,
+      default: "Formular",
+    },
     intrebari: [
       {
         tip: {
