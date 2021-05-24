@@ -28,17 +28,13 @@ const formularSchema = mongoose.Schema(
           type: Boolean,
           default: false,
         },
-        atribute: [{}],
+        atribute: {},
         raspunsuri: [
           {
-            titlu: {
-              type: String,
-              required: true,
+            _id: {
+              type: mongoose.Schema.Types.ObjectId,
+              auto: true,
             },
-            imagine: {
-              type: String,
-            },
-            atribute: [{}],
           },
         ],
       },
@@ -46,6 +42,7 @@ const formularSchema = mongoose.Schema(
   },
   {
     timeStamps: true,
+    strict: false,
   }
 );
 

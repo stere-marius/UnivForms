@@ -175,6 +175,41 @@ const formulare = [
           },
         ],
       },
+
+      {
+        tip: "Raspuns text",
+        titlu: "Tipurile de date primitive din JAVA",
+        obligatoriu: true,
+        atribute: {
+          validareRaspuns: "",
+          textRaspunsInvalid: "Introduceti un raspuns valid",
+          punctaj: 10,
+        },
+        raspunsuri: [
+          {
+            raspunsExact:
+              "byte, short, int, long, float, double, boolean, char",
+          },
+          {
+            contineRaspuns: "byte",
+          },
+          {
+            raspunsRegex: "byte|short|int|long|float|double|boolean|char/i",
+          },
+        ],
+      },
+
+      {
+        tip: "Incarcare fisier",
+        titlu: "Introduceti tema numarul 5",
+        obligatoriu: true,
+        atribute: {
+          tipuriFisierPermise: ["pdf", "docx", "csv"],
+          textRaspunsInvalid: "Introduceti un fisier valid",
+          dimensiuneMaximaFisier: 1,
+          punctajTrimitere: 10,
+        },
+      },
     ],
   },
 ];
