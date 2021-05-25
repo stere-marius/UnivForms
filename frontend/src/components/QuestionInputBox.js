@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
+import QuestionTitle from "./QuestionTitle";
 
 const QuestionMarkBox = ({
   question,
@@ -63,12 +64,11 @@ const QuestionMarkBox = ({
 
   return (
     <div className="ml-3">
-      <h2 className="text-center p-3">
-        {" "}
-        {indexQuestion + 1}
-        {". "}
-        {title}
-      </h2>
+      <QuestionTitle
+        indexQuestion={indexQuestion + 1}
+        title={title}
+        mandatoryQuestion={question.obligatoriu}
+      />
 
       <div className="d-flex flex-column justify-content-center">
         <div className="mx-4 d-flex flex-column">

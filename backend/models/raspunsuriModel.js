@@ -9,18 +9,7 @@ const raspunsuriSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Formular",
   },
-  intrebare: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Formular.intrebari",
-  },
-  raspunsuri: [
-    {
-      raspuns: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Formular.raspunsuri",
-      },
-    },
-  ],
+  data: [{}],
 });
 
 const RaspunsuriFormular = mongoose.model(

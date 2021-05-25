@@ -15,7 +15,7 @@ import {
 } from "../constants/questionTypesConstants";
 import QuestionFileUpload from "../components/QuestionFileUpload";
 
-const FormViewScreen = ({ match }) => {
+const FormViewScreen = ({ match, history }) => {
   const [indexQuestion, setIndexQuestion] = useState(0);
 
   const tabs = [
@@ -32,54 +32,20 @@ const FormViewScreen = ({ match }) => {
   const formDetails = useSelector(state => state.formDetails);
   const { loading, error, form } = formDetails;
 
+  const userLogin = useSelector(state => state.userLogin);
+  const { userInfo } = userLogin;
+
   useEffect(() => {
+    if (!userInfo) {
+      history.push("/login");
+      return;
+    }
+
     dispatch(listFormDetails(match.params.id));
   }, [match, dispatch]);
 
   const handleNextQuestion = () => {
     setIndexQuestion(indexQuestion + 1);
-  };
-
-  const renderFormSendTab = () => {
-    if (selectedTab !== "Trimitere formular") return <> </>;
-
-    return (
-      <div
-        className="d-flex flex-column p-4 m-4"
-        style={{
-          borderRadius: "22px",
-          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)",
-          backgroundColor: "#EFEFEF",
-        }}
-      >
-        <div className="p-4">
-          <h3 className="fw-bold">{form.nume}</h3>
-          <div className="d-flex flex-column mt-5" style={{ width: "45%" }}>
-            <div className="d-flex align-items-baseline ">
-              <i className="fas fa-question" />
-              <p className="fw-bold fs-4" style={{ margin: "0 auto 0 20px" }}>
-                Intrebari
-              </p>
-              <p className="fw-bold fs-4 mx-5">39</p>
-            </div>
-
-            <div className="d-flex align-items-baseline ">
-              <i className="fas fa-question" />
-              <p className="fw-bold fs-4" style={{ margin: "0 auto 0 20px" }}>
-                Intrebari
-              </p>
-              <p className="fw-bold fs-4 mx-5">39</p>
-            </div>
-          </div>
-
-          {<p>{JSON.stringify(raspunsuriIntrebariUtilizator)}</p>}
-
-          <Button className="btn btn-default btn-color-green px-4 text-dark text-bold fs-5 mt-4 font-weight-bold">
-            Trimite formular
-          </Button>
-        </div>
-      </div>
-    );
   };
 
   // TODO: Verific daca a raspuns la toate intrebarile obligatorii
@@ -168,6 +134,7 @@ const FormViewScreen = ({ match }) => {
           indexQuestion={indexQuestion}
           raspunsuriIntrebariUtilizator={raspunsuriIntrebariUtilizator}
           handleNextQuestion={handleNextQuestion}
+          formID={form._id}
         />
       );
     }
@@ -193,18 +160,17 @@ const FormViewScreen = ({ match }) => {
                   {question.titlu}
                 </td>
                 <td>
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    disabled
-                    checked={question.obligatoriu}
-                  />
+                  {question.obligatoriu ? (
+                    <i className="fas fa-check" style={{ color: "#01df9b" }} />
+                  ) : (
+                    <i className="fas fa-times" style={{ color: "red" }} />
+                  )}
                 </td>
                 <td>
                   <Button
-                    variant="primary"
                     className={
-                      "btn-sm " + (index === indexQuestion && " disabled")
+                      "btn-sm btn btn-color-green text-dark text-bold fw-bold " +
+                      (index === indexQuestion && " disabled")
                     }
                     onClick={() => {
                       setIndexQuestion(index);
@@ -221,6 +187,54 @@ const FormViewScreen = ({ match }) => {
       )}
     </>
   );
+
+  const renderFormSendTab = () => {
+    if (selectedTab !== "Trimitere formular") return <> </>;
+
+    return (
+      <div
+        className="d-flex flex-column p-4 m-4"
+        style={{
+          borderRadius: "22px",
+          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)",
+          backgroundColor: "#EFEFEF",
+        }}
+      >
+        <div className="p-4">
+          <h3 className="fw-bold">{form.nume}</h3>
+          <div className="d-flex flex-column mt-5" style={{ width: "45%" }}>
+            <div className="d-flex align-items-baseline my-3">
+              <i className="fas fa-question fs-4" />
+              <p className="fw-bold fs-4 me-auto ms-3">Intrebari</p>
+              <p className="fw-bold fs-4 mx-5">{form.intrebari.length}</p>
+            </div>
+
+            <div className="d-flex align-items-baseline my-3">
+              <i class="fas fa-question-circle fs-4" />
+              <p className="fw-bold fs-4 me-auto ms-3">Intrebari obligatorii</p>
+              <p className="fw-bold fs-4 mx-5">
+                {form.intrebari.map(intrebare => intrebare.obligatoriu).length}
+              </p>
+            </div>
+
+            <div className="d-flex align-items-baseline my-3">
+              <i class="fas fa-align-left fs-4" />
+              <p className="fw-bold fs-4 me-auto ms-3">Raspunsurile tale</p>
+              <p className="fw-bold fs-4 mx-5">
+                {raspunsuriIntrebariUtilizator.length}
+              </p>
+            </div>
+          </div>
+
+          {JSON.stringify(raspunsuriIntrebariUtilizator)}
+
+          <Button className="btn btn-default btn-color-green px-4 text-dark text-bold fs-5 mt-4 fw-bold">
+            Trimite formular
+          </Button>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <>

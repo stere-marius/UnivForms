@@ -3,6 +3,9 @@ import {
   FORM_DETAILS_REQUEST,
   FORM_DETAILS_SUCCESS,
   FORM_DETAILS_FAIL,
+  FORM_SEND_RESPONSE_REQUEST,
+  FORM_SEND_RESPONSE_SUCCESS,
+  FORM_SEND_RESPONSE_FAIL,
 } from "../constants/formConstants";
 
 export const listFormDetails = id => async dispatch => {
@@ -13,6 +16,39 @@ export const listFormDetails = id => async dispatch => {
   } catch (error) {
     dispatch({
       type: FORM_DETAILS_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const sendFormResponses = responseData => async (dispatch, getState) => {
+  try {
+    dispatch({ type: FORM_SEND_RESPONSE_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+        "Content-Type": "application/json",
+      },
+    };
+
+    const { data } = await axios.put(
+      `/api/forms/${responseData.formID}/response`,
+      responseData,
+      config
+    );
+
+    dispatch({ type: FORM_SEND_RESPONSE_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: FORM_SEND_RESPONSE_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message

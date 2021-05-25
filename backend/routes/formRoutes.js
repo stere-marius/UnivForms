@@ -14,6 +14,7 @@ import {
   createQuestion,
   updateQuestion,
   deleteQuestion,
+  formFileUpload,
 } from "../controllers/formController.js";
 
 const router = express.Router();
@@ -25,5 +26,6 @@ router
   .route("/:id/questions/:question_id")
   .put(protect, updateQuestion)
   .delete(protect, deleteQuestion);
+router.route("/uploadFormResponse").post(protect, formFileUpload);
 
 export default router;

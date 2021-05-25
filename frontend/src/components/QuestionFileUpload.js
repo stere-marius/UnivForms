@@ -1,17 +1,28 @@
 import React, { useState, useRef } from "react";
 import { Button } from "react-bootstrap";
 import { formatBytes } from "../utilities";
+import QuestionTitle from "./QuestionTitle";
+import Loader from "./Loader";
+import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
 
 const QuestionFileUpload = ({
   question,
   indexQuestion,
   raspunsuriIntrebariUtilizator,
   handleNextQuestion,
+  formID,
 }) => {
   const questionId = question._id;
   const title = question.titlu;
 
+  const dispatch = useDispatch();
+  const userLogin = useSelector(state => state.userLogin);
+  const { userInfo } = userLogin;
+
   const [errors, setErrors] = useState([]);
+
+  const [uploading, setUploading] = useState(false);
 
   const defaultStateIntrebare = raspunsuriIntrebariUtilizator.find(
     q => q.id === questionId
@@ -20,6 +31,35 @@ const QuestionFileUpload = ({
   const [selectedFile, setSelectedFile] = useState(
     (defaultStateIntrebare && defaultStateIntrebare.fisier) || null
   );
+
+  const uploadFileHandler = async e => {
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+    formData.append("formID", formID);
+    formData.append("questionID", questionId);
+
+    setUploading(true);
+
+    // const { utilizator, formId, intrebareID, formData } = request.body;
+
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+      const { data } = await axios.post(
+        "/api/forms/uploadFormResponse",
+        formData,
+        config
+      );
+      setErrors([data]);
+      setUploading(false);
+    } catch (error) {
+      setUploading(false);
+    }
+  };
 
   const handleSubmit = () => {
     if (!selectedFile) {
@@ -50,6 +90,7 @@ const QuestionFileUpload = ({
       return;
     }
 
+    uploadFileHandler();
     handleNextQuestion();
 
     const questionFound = raspunsuriIntrebariUtilizator.find(
@@ -73,12 +114,11 @@ const QuestionFileUpload = ({
 
   return (
     <div className="ml-3">
-      <h2 className="text-center p-3">
-        {" "}
-        {indexQuestion + 1}
-        {". "}
-        {title}
-      </h2>
+      <QuestionTitle
+        indexQuestion={indexQuestion + 1}
+        title={title}
+        mandatoryQuestion={question.obligatoriu}
+      />
 
       {selectedFile && (
         <div className="d-flex flex-column justify-content-center mx-4">
@@ -109,6 +149,12 @@ const QuestionFileUpload = ({
               </div>
             ))}
           </div>
+        )}
+
+        {uploading && (
+          <>
+            <Loader /> <p>Se incarca fisierul catre server</p>
+          </>
         )}
 
         <div className="d-flex flex-column flex-sm-row mx-4 my-3 justify-content-between">

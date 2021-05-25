@@ -7,6 +7,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+:root {
+  --green-primary: #01df9b;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
@@ -30,7 +34,7 @@ code {
   border-radius: 15px;
   color: black;
   font-weight: bold;
-  background-color: #01df9b;
+  background-color: var(--green-primary);
   outline: none !important;
   border: none;
   padding: 1rem 2.5rem 1rem 2.5rem;
@@ -42,13 +46,30 @@ code {
 }
 
 .btn-color-green {
-  background: #01df9b;
-  border-color: #01df9b;
+  background: var(--green-primary);
+  border-color: var(--green-primary);
+}
+
+.btn-color-green.disabled {
+  background: var(--green-primary);
+  border-color: var(--green-primary);
+  pointer-events: none;
+}
+
+.form-check-input-green:checked {
+  background-color: var(--green-primary);
+  border-color: var(--green-primary);
+}
+
+.form-check-input-green:focus {
+  border-color: var(--green-primary);
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(1, 223, 155, 0.25);
 }
 
 .btn-color-green:hover {
-  background: #01df9b;
-  border-color: #01df9b;
+  background: var(--green-primary);
+  border-color: var(--green-primary);
   opacity: 0.8;
   transition: all 0.2s ease-out;
 }
@@ -56,8 +77,8 @@ code {
 .btn-color-green:focus,
 .btn-color-green:active,
 .btn-color-green:visited {
-  background: #01df9b;
-  border-color: #01df9b;
+  background: var(--green-primary);
+  border-color: var(--green-primary);
   box-shadow: none;
 }
 

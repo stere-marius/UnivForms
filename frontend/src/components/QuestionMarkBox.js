@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
+import QuestionTitle from "./QuestionTitle";
 
 const QuestionMarkBox = ({
   question,
@@ -74,20 +75,18 @@ const QuestionMarkBox = ({
 
   return (
     <div className="ml-3">
-      <h2 className="text-center p-3">
-        {" "}
-        {indexQuestion + 1}
-        {". "}
-        {title}
-        {question.obligatoriu && <sup className="text-danger"> *</sup>}
-      </h2>
+      <QuestionTitle
+        indexQuestion={indexQuestion + 1}
+        title={title}
+        mandatoryQuestion={question.obligatoriu}
+      />
 
       <div className="d-flex flex-column justify-content-center">
         <div className="form-check mx-5">
           {answers.map(answer => (
             <div className="py-3" key={answer._id}>
               <input
-                className="form-check-input fs-2"
+                className="form-check-input form-check-input-green fs-2"
                 type={inputType}
                 id={answer._id}
                 checked={raspunsuriUtilizator.includes(answer._id)}
@@ -119,13 +118,15 @@ const QuestionMarkBox = ({
 
         <div className="d-flex flex-column flex-sm-row mx-4 my-3 justify-content-between">
           <Button
-            variant="primary"
             onClick={handleSubmit}
-            className="mb-4 mb-sm-0"
+            className="mb-4 mb-sm-0 btn btn-color-green text-dark text-bold fw-bold"
           >
             Memoreaza raspuns
           </Button>
-          <Button variant="primary" onClick={handleNextQuestion}>
+          <Button
+            className="btn btn-color-green text-dark text-bold fw-bold"
+            onClick={handleNextQuestion}
+          >
             Urmatoarea intrebare
           </Button>
         </div>

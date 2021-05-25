@@ -5,6 +5,7 @@ import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
 import formRoutes from "./routes/formRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
+import morgan from "morgan";
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ connectDB();
 
 const app = express();
 
+app.use(morgan("dev"));
 app.use(express.json());
 
 app.get("/", (request, response) => {
