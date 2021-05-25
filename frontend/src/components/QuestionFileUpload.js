@@ -22,7 +22,10 @@ const QuestionFileUpload = ({
   );
 
   const handleSubmit = () => {
-    if (!selectedFile) return;
+    if (!selectedFile) {
+      setErrors(["Nu ati încărcat niciun fișier"]);
+      return;
+    }
 
     const ext = selectedFile.name.split(".")[1];
     const sizeInMb = selectedFile.size / 1024 / 1024;
@@ -40,6 +43,11 @@ const QuestionFileUpload = ({
         setErrors([question.atribute.textRaspunsInvalid]);
         return;
       }
+    }
+
+    if (question.obligatoriu && !selectedFile) {
+      setErrors(["Aceasta intrebare este obligatorie"]);
+      return;
     }
 
     handleNextQuestion();
@@ -92,8 +100,6 @@ const QuestionFileUpload = ({
             }}
           />
         </div>
-
-        {console.log(errors)}
 
         {errors && (
           <div className="d-flex flex-column txt-danger px-4 py-3">

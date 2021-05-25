@@ -30,9 +30,17 @@ const QuestionMarkBox = ({
   }, [indexQuestion, question]);
 
   const handleSubmit = () => {
-    handleNextQuestion();
+    if (!raspunsUtilizator) {
+      setErrors(["Nu ati furnizat niciun răspuns"]);
+      return;
+    }
 
-    if (!raspunsUtilizator) return;
+    if (question.obligatoriu && !raspunsUtilizator) {
+      setErrors(["Aceasta intrebare este obligatorie"]);
+      return;
+    }
+
+    handleNextQuestion();
 
     const questionFound = raspunsuriIntrebariUtilizator.find(
       question => question.id === questionId
@@ -76,6 +84,16 @@ const QuestionMarkBox = ({
             value={raspunsUtilizator}
           />
         </div>
+
+        {errors && (
+          <div className="d-flex flex-column txt-danger px-4 py-3">
+            {errors.map(error => (
+              <div className="alert alert-danger">
+                <p className="danger fs-4">{error}</p>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="d-flex flex-column flex-sm-row mx-4 my-3 justify-content-between">
           <Button
