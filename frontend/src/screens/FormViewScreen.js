@@ -45,7 +45,7 @@ const FormViewScreen = ({ match }) => {
 
     return (
       <div
-        className="d-flex flex-column px-4 m-4"
+        className="d-flex flex-column p-4 m-4"
         style={{
           borderRadius: "22px",
           boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)",
@@ -54,18 +54,29 @@ const FormViewScreen = ({ match }) => {
       >
         <div className="p-4">
           <h3 className="fw-bold">{form.nume}</h3>
-          <div className="d-flex flex-column align-items-start">
-            <div className="d-flex pt-5 align-items-baseline justify-content-between">
+          <div className="d-flex flex-column mt-5" style={{ width: "45%" }}>
+            <div className="d-flex align-items-baseline ">
               <i className="fas fa-question" />
-              <p className="fw-bold fs-4 mx-5">Intrebari</p>
+              <p className="fw-bold fs-4" style={{ margin: "0 auto 0 20px" }}>
+                Intrebari
+              </p>
               <p className="fw-bold fs-4 mx-5">39</p>
             </div>
-            <div className="d-flex align-items-baseline justify-content-between">
+
+            <div className="d-flex align-items-baseline ">
               <i className="fas fa-question" />
-              <p className="fw-bold fs-4 mx-5">Intrebari</p>
+              <p className="fw-bold fs-4" style={{ margin: "0 auto 0 20px" }}>
+                Intrebari
+              </p>
               <p className="fw-bold fs-4 mx-5">39</p>
             </div>
           </div>
+
+          {<p>{JSON.stringify(raspunsuriIntrebariUtilizator)}</p>}
+
+          <Button className="btn btn-default btn-color-green px-4 text-dark text-bold fs-5 mt-4 font-weight-bold">
+            Trimite formular
+          </Button>
         </div>
       </div>
     );
@@ -165,7 +176,7 @@ const FormViewScreen = ({ match }) => {
   const renderPreviousQuestionsTab = () => (
     <>
       {selectedTab === "Intrebari anterioare" && form.intrebari && (
-        <Table striped bordered hover response className="table-sm">
+        <Table striped bordered hover response className="table-sm mt-3">
           <thead>
             <tr>
               <th>Titlul intrebarii</th>
@@ -220,7 +231,7 @@ const FormViewScreen = ({ match }) => {
         <Message variant="danger">{error}</Message>
       ) : (
         <div
-          className="mt-4 container bg-white"
+          className="mt-4 container bg-white pb-1"
           style={{ borderRadius: "16px" }}
         >
           {renderTabNav()}

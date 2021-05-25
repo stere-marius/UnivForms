@@ -11,6 +11,8 @@ const QuestionFileUpload = ({
   const questionId = question._id;
   const title = question.titlu;
 
+  const [errors, setErrors] = useState([]);
+
   const defaultStateIntrebare = raspunsuriIntrebariUtilizator.find(
     q => q.id === questionId
   );
@@ -20,9 +22,27 @@ const QuestionFileUpload = ({
   );
 
   const handleSubmit = () => {
-    handleNextQuestion();
-
     if (!selectedFile) return;
+
+    const ext = selectedFile.name.split(".")[1];
+    const sizeInMb = selectedFile.size / 1024 / 1024;
+
+    if (question.atribute) {
+      const dimensiuneMaximaFisier = question.atribute.dimensiuneMaximaFisier;
+      const tipuriFisierPermise = question.atribute.tipuriFisierPermise;
+
+      if (tipuriFisierPermise && !tipuriFisierPermise.includes(ext)) {
+        setErrors([question.atribute.textRaspunsInvalid]);
+        return;
+      }
+
+      if (dimensiuneMaximaFisier && sizeInMb > dimensiuneMaximaFisier) {
+        setErrors([question.atribute.textRaspunsInvalid]);
+        return;
+      }
+    }
+
+    handleNextQuestion();
 
     const questionFound = raspunsuriIntrebariUtilizator.find(
       question => question.id === questionId
@@ -66,9 +86,24 @@ const QuestionFileUpload = ({
             class="form-control"
             type="file"
             id={questionId}
-            onChange={handleChange}
+            onChange={e => {
+              handleChange(e);
+              setErrors([]);
+            }}
           />
         </div>
+
+        {console.log(errors)}
+
+        {errors && (
+          <div className="d-flex flex-column txt-danger px-4 py-3">
+            {errors.map(error => (
+              <div className="alert alert-danger">
+                <p className="danger fs-4">{error}</p>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="d-flex flex-column flex-sm-row mx-4 my-3 justify-content-between">
           <Button

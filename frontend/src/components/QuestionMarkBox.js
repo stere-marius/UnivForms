@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 
 const QuestionMarkBox = ({
@@ -14,18 +14,38 @@ const QuestionMarkBox = ({
   const inputType =
     question.tip === "Caseta de selectare" ? "checkbox" : "radio";
 
-  const defaultStateIntrebare = raspunsuriIntrebariUtilizator.find(
-    q => q.id === questionId
-  );
+  const [raspunsuriUtilizator, setRaspunsuriUtilizator] = useState([]);
 
-  const [raspunsuriUtilizator, setRaspunsuriUtilizator] = useState(
-    (defaultStateIntrebare && defaultStateIntrebare.raspunsuri) || []
-  );
+  const [errors, setErrors] = useState([]);
+
+  useEffect(() => {
+    const defaultStateIntrebare = raspunsuriIntrebariUtilizator.find(
+      q => q.id === questionId
+    );
+    setErrors([]);
+    setRaspunsuriUtilizator(
+      (defaultStateIntrebare && defaultStateIntrebare.raspunsuri) || []
+    );
+  }, [indexQuestion, question]);
 
   const handleSubmit = () => {
-    handleNextQuestion();
+    const atributeIntrebare = question.atribute;
 
-    if (raspunsuriUtilizator.length === 0) return;
+    if (atributeIntrebare) {
+      const validareRaspuns = atributeIntrebare.validareRaspuns;
+
+      if (raspunsuriUtilizator.length < validareRaspuns.selectareExact) {
+        setErrors([validareRaspuns.textEroare]);
+        return;
+      }
+    }
+
+    if (question.obligatoriu && raspunsuriUtilizator.length === 0) {
+      setErrors(["Aceasta intrebare este obligatorie"]);
+      return;
+    }
+
+    handleNextQuestion();
 
     const questionFound = raspunsuriIntrebariUtilizator.find(
       question => question.id === questionId
@@ -59,6 +79,7 @@ const QuestionMarkBox = ({
         {indexQuestion + 1}
         {". "}
         {title}
+        {question.obligatoriu && <sup className="text-danger"> *</sup>}
       </h2>
 
       <div className="d-flex flex-column justify-content-center">
@@ -70,7 +91,10 @@ const QuestionMarkBox = ({
                 type={inputType}
                 id={answer._id}
                 checked={raspunsuriUtilizator.includes(answer._id)}
-                onChange={handleChange}
+                onChange={e => {
+                  handleChange(e);
+                  setErrors([]);
+                }}
                 name={question._id}
               />
               <label
@@ -82,6 +106,16 @@ const QuestionMarkBox = ({
             </div>
           ))}
         </div>
+
+        {errors && (
+          <div className="d-flex flex-column txt-danger px-4 py-3">
+            {errors.map(error => (
+              <div className="alert alert-danger">
+                <p className="danger fs-4">{error}</p>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="d-flex flex-column flex-sm-row mx-4 my-3 justify-content-between">
           <Button

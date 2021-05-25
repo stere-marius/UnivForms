@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 
 const QuestionMarkBox = ({
@@ -11,13 +11,23 @@ const QuestionMarkBox = ({
   const title = question.titlu;
   const answers = question.raspunsuri;
 
+  const [errors, setErrors] = useState([]);
+
   const defaultStateIntrebare = raspunsuriIntrebariUtilizator.find(
     q => q.id === questionId
   );
 
-  const [raspunsUtilizator, setRaspunsUtilizator] = useState(
-    (defaultStateIntrebare && defaultStateIntrebare.raspuns) || ""
-  );
+  const [raspunsUtilizator, setRaspunsUtilizator] = useState("");
+
+  useEffect(() => {
+    const defaultStateIntrebare = raspunsuriIntrebariUtilizator.find(
+      q => q.id === questionId
+    );
+    setErrors([]);
+    setRaspunsUtilizator(
+      (defaultStateIntrebare && defaultStateIntrebare.raspuns) || ""
+    );
+  }, [indexQuestion, question]);
 
   const handleSubmit = () => {
     handleNextQuestion();

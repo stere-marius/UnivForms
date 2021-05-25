@@ -41,6 +41,26 @@ code {
   position: relative;
 }
 
+.btn-color-green {
+  background: #01df9b;
+  border-color: #01df9b;
+}
+
+.btn-color-green:hover {
+  background: #01df9b;
+  border-color: #01df9b;
+  opacity: 0.8;
+  transition: all 0.2s ease-out;
+}
+
+.btn-color-green:focus,
+.btn-color-green:active,
+.btn-color-green:visited {
+  background: #01df9b;
+  border-color: #01df9b;
+  box-shadow: none;
+}
+
 .btn-reset {
   outline: none;
   border: none;
