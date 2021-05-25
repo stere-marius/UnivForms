@@ -198,6 +198,11 @@ const deleteQuestion = asyncHandler(async (request, response) => {
   return response.json({ message: "Intrebarea a fost stearsa cu success" });
 });
 
+// trimite raspunsurile
+// daca formularul are ca atribut sa întoarcă rezultatele utilizatorului după trimitere, întorc un json cu rezultatele
+
+// daca nu are, îi întorc un mesaj prin care îl informez că formularul a fost trimis
+
 export {
   getFormByID,
   createForm,
