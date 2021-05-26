@@ -5,6 +5,9 @@ import {
   FORM_SEND_RESPONSE_REQUEST,
   FORM_SEND_RESPONSE_SUCCESS,
   FORM_SEND_RESPONSE_FAIL,
+  FORM_FILE_UPLOAD_REQUEST,
+  FORM_FILE_UPLOAD_SUCCESS,
+  FORM_FILE_UPLOAD_FAIL,
 } from "../constants/formConstants";
 
 export const formDetailsReducer = (state = { form: {} }, action) => {
@@ -27,6 +30,19 @@ export const formSendResponsesReducer = (state = {}, action) => {
     case FORM_SEND_RESPONSE_SUCCESS:
       return { loading: false, success: true };
     case FORM_SEND_RESPONSE_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const formFileUploadReducer = (state = {}, action) => {
+  switch (action.type) {
+    case FORM_FILE_UPLOAD_REQUEST:
+      return { loading: true };
+    case FORM_FILE_UPLOAD_SUCCESS:
+      return { loading: false, success: true };
+    case FORM_FILE_UPLOAD_FAIL:
       return { loading: false, error: action.payload };
     default:
       return state;

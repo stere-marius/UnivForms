@@ -7,7 +7,10 @@ import {
   userGroupsReducer,
   userFormsReducer,
 } from "./reducers/userReducers";
-import { formDetailsReducer } from "./reducers/formReducers";
+import {
+  formDetailsReducer,
+  formFileUploadReducer,
+} from "./reducers/formReducers";
 
 const reducer = combineReducers({
   userLogin: userLoginReducer,
@@ -15,6 +18,7 @@ const reducer = combineReducers({
   userGroups: userGroupsReducer,
   userForms: userFormsReducer,
   formDetails: formDetailsReducer,
+  formFileUpload: formFileUploadReducer,
 });
 
 const initialState = {};

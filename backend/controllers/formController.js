@@ -249,107 +249,8 @@ const formFileUpload = asyncHandler(async (request, response) => {
   formFormidable.keepFilenames = true;
 
   const __dirname = path.resolve();
-  console.log("__dirname " + __dirname);
 
   formFormidable.uploadDir = path.join(__dirname, "/uploads");
-
-  // formFormidable.on("fileBegin", (name, file) => {
-  //   // const [formID, userID, questionID, fileName] = file.name.split("_");
-  //   // const directory = path.join(
-  //   //   __dirname,
-  //   //   "../" + formID + "/" + userID + "/" + questionID
-  //   // );
-
-  //   file.path =
-  //     "D:\\Licenta\\60abe7604504a157b00f1dc2\\60abe75f4504a157b00f1dbf\\60abe7604504a157b00f1de1";
-  // });
-
-  if (!fs.existsSync(formFormidable.uploadDir)) {
-    fs.mkdirSync(formFormidable.uploadDir);
-  }
-
-  // formFormidable.onPart = async part => {
-  //   if (!part.filename) return;
-
-  //   const [formID, userID, questionID, fileName] = part.filename.split("_");
-  //   console.log(JSON.stringify(part.filename.split("_")));
-  //   console.log("File name " + part.filename);
-  //   console.log("formID " + formID);
-  //   console.log("userID " + userID);
-  //   console.log("questionID " + questionID);
-  //   console.log("fileName " + fileName);
-
-  //   if (!formID || !mongoose.Types.ObjectId.isValid(formID)) {
-  //     formFormidable.emit("error", new Error("Formularul nu exista"));
-  //     return;
-  //   }
-
-  //   if (!questionID) {
-  //     formFormidable.emit("error", new Error("Intrebarea nu a fost gasita"));
-  //     return;
-  //   }
-
-  //   if (!userID || !mongoose.Types.ObjectId.isValid(userID)) {
-  //     formFormidable.emit("error", new Error("Utilizatorul nu a fost gasit"));
-  //     return;
-  //   }
-
-  //   const form = await Form.findById(formID);
-
-  //   if (!form) {
-  //     formFormidable.emit("error", new Error("Formularul nu exista"));
-  //     return;
-  //   }
-
-  //   const intrebareObj = form.intrebari.filter(
-  //     intrebare => intrebare._id.toString() === questionID
-  //   );
-
-  //   if (!intrebareObj) {
-  //     formFormidable.emit("error", new Error("Intrebarea nu a fost gasita"));
-  //     return;
-  //   }
-
-  //   const user = await User.findById(userID);
-
-  //   if (!user) {
-  //     formFormidable.emit("error", new Error("Utilizatorul nu a fost gasit"));
-  //     return;
-  //   }
-
-  //   const directory = path.join(
-  //     __dirname,
-  //     "../" + form._id + "/" + user._id.toString() + "/" + questionID
-  //   );
-
-  //   formFormidable.uploadDir = directory;
-
-  //   console.log("A \n");
-
-  //   if (!fs.existsSync(directory)) {
-  //     fs.mkdirSync(directory, { recursive: true });
-  //   }
-
-  //   // Validate allowed file ext
-  //   if (
-  //     !["mp4", "m4v", "vtt", "pdf"].includes(part.filename.split(".").pop())
-  //   ) {
-  //     // video or caption file
-  //     this.emit(
-  //       "error",
-  //       new Error(`File extension for [ ${part.filename} ] is not supported.`)
-  //     );
-  //     return;
-  //   }
-  //   // Guard multiple files
-  //   // Guard file size
-  //   // formidable default form handling
-  //   formFormidable.handlePart(part);
-  // };
-
-  console.log("UserID " + request.user._id);
-
-  formFormidable.on("file", function (field, file) {});
 
   formFormidable.parse(request, (err, fields, files) => {
     if (err) {
@@ -382,8 +283,6 @@ const formFileUpload = asyncHandler(async (request, response) => {
       formID + "/" + request.user._id.toString() + "/" + questionID
     );
 
-    console.log("newPath " + newPath);
-
     if (!fs.existsSync(newPath)) {
       fs.mkdirSync(newPath, { recursive: true });
     }
@@ -393,10 +292,9 @@ const formFileUpload = asyncHandler(async (request, response) => {
       fs.readFileSync(oldPath),
       error => {
         if (error) {
-          console.log("error " + error);
           formFormidable.emit(
             "error",
-            new Error("Fisierul nu a putut fi incarcat")
+            new Error(`Fisierul ${file.file.name} nu a putut fi incarcat`)
           );
           return;
         }
@@ -407,23 +305,13 @@ const formFileUpload = asyncHandler(async (request, response) => {
       }
     );
 
-    // Object.keys(files).forEach(prop => console.log(prop + "\n"));
-    // console.log("fields " + JSON.stringify(fields, null, 4));
-    // console.log("Files " + JSON.stringify(files, null, 4));
-    // console.log("Uploaded file " + JSON.stringify(uploadedFile));
-
-    // if (files.profilePic.type === "application/pdf") {
-    //   formFormidable.emit("error", new Error("Formularul nu exista"));
-    //   return;
-    // }
+    fs.unlink(oldPath, err => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+    });
   });
-
-  // formFormidable.once("end", () => {
-  //   if (response.writableEnded) return;
-  //   response
-  //     .status(201)
-  //     .json({ message: "Fisierul a fost încărcat cu success" });
-  // });
 });
 
 // trimite raspunsurile

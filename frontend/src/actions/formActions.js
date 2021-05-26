@@ -6,6 +6,9 @@ import {
   FORM_SEND_RESPONSE_REQUEST,
   FORM_SEND_RESPONSE_SUCCESS,
   FORM_SEND_RESPONSE_FAIL,
+  FORM_FILE_UPLOAD_REQUEST,
+  FORM_FILE_UPLOAD_SUCCESS,
+  FORM_FILE_UPLOAD_FAIL,
 } from "../constants/formConstants";
 
 export const listFormDetails = id => async dispatch => {
@@ -56,3 +59,38 @@ export const sendFormResponses = responseData => async (dispatch, getState) => {
     });
   }
 };
+
+export const formFileUpload =
+  (formData, onUploadProgressEvent) => async (dispatch, getState) => {
+    try {
+      dispatch({ type: FORM_FILE_UPLOAD_REQUEST });
+
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+          "Content-Type": "multipart/form-data",
+        },
+        onUploadProgress: progressEv => onUploadProgressEvent(progressEv),
+      };
+
+      const { data } = await axios.post(
+        "/api/forms/uploadFormResponse",
+        formData,
+        config
+      );
+
+      dispatch({ type: FORM_FILE_UPLOAD_SUCCESS, payload: data });
+    } catch (error) {
+      dispatch({
+        type: FORM_FILE_UPLOAD_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      });
+    }
+  };

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { formatBytes } from "../utilities";
 import QuestionTitle from "./QuestionTitle";
@@ -24,41 +24,40 @@ const QuestionFileUpload = ({
 
   const [uploading, setUploading] = useState(false);
 
-  const defaultStateIntrebare = raspunsuriIntrebariUtilizator.find(
-    q => q.id === questionId
-  );
+  const [selectedFile, setSelectedFile] = useState(null);
 
-  const [selectedFile, setSelectedFile] = useState(
-    (defaultStateIntrebare && defaultStateIntrebare.fisier) || null
-  );
+  useEffect(() => {
+    const defaultStateIntrebare = raspunsuriIntrebariUtilizator.find(
+      q => q.id === questionId
+    );
+    setErrors([]);
+    setSelectedFile(defaultStateIntrebare && defaultStateIntrebare.fisier);
+  }, [question, indexQuestion]);
 
   const uploadFileHandler = async e => {
-    const formData = new FormData();
-    formData.append("file", selectedFile);
-    formData.append("formID", formID);
-    formData.append("questionID", questionId);
-
-    setUploading(true);
-
-    // const { utilizator, formId, intrebareID, formData } = request.body;
-
-    try {
-      const config = {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${userInfo.token}`,
-        },
-      };
-      const { data } = await axios.post(
-        "/api/forms/uploadFormResponse",
-        formData,
-        config
-      );
-      setErrors([data]);
-      setUploading(false);
-    } catch (error) {
-      setUploading(false);
-    }
+    // const formData = new FormData();
+    // formData.append("file", selectedFile);
+    // formData.append("formID", formID);
+    // formData.append("questionID", questionId);
+    // setUploading(true);
+    // // const { utilizator, formId, intrebareID, formData } = request.body;
+    // try {
+    //   const config = {
+    //     headers: {
+    //       "Content-Type": "multipart/form-data",
+    //       Authorization: `Bearer ${userInfo.token}`,
+    //     },
+    //   };
+    //   const { data } = await axios.post(
+    //     "/api/forms/uploadFormResponse",
+    //     formData,
+    //     config
+    //   );
+    //   setErrors([data]);
+    //   setUploading(false);
+    // } catch (error) {
+    //   setUploading(false);
+    // }
   };
 
   const handleSubmit = () => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import { useSelector, useDispatch } from "react-redux";
-import { listFormDetails } from "../actions/formActions";
+import { listFormDetails, formFileUpload } from "../actions/formActions";
 import Loader from "../components/Loader";
 import QuestionMarkBox from "../components/QuestionMarkBox";
 import QuestionInputBox from "../components/QuestionInputBox";
@@ -14,6 +14,7 @@ import {
   FILE_UPLOAD,
 } from "../constants/questionTypesConstants";
 import QuestionFileUpload from "../components/QuestionFileUpload";
+import axios from "axios";
 
 const FormViewScreen = ({ match, history }) => {
   const [indexQuestion, setIndexQuestion] = useState(0);
@@ -27,6 +28,10 @@ const FormViewScreen = ({ match, history }) => {
 
   const [raspunsuriIntrebariUtilizator] = useState([]);
 
+  const [errorsSubmit, setErrorsSubmit] = useState([]);
+
+  const [progressFileUpload, setProgressFileUpload] = useState(0);
+
   const dispatch = useDispatch();
 
   const formDetails = useSelector(state => state.formDetails);
@@ -34,6 +39,13 @@ const FormViewScreen = ({ match, history }) => {
 
   const userLogin = useSelector(state => state.userLogin);
   const { userInfo } = userLogin;
+
+  const formFileUploadState = useSelector(state => state.formFileUpload);
+  const {
+    loading: loadingFileUpload,
+    success: successFileUpload,
+    error: errorFileUpload,
+  } = formFileUploadState;
 
   useEffect(() => {
     if (!userInfo) {
@@ -44,8 +56,76 @@ const FormViewScreen = ({ match, history }) => {
     dispatch(listFormDetails(match.params.id));
   }, [match, dispatch]);
 
+  useEffect(() => {
+    setErrorsSubmit([]);
+  }, [raspunsuriIntrebariUtilizator.length]);
+
   const handleNextQuestion = () => {
     setIndexQuestion(indexQuestion + 1);
+  };
+
+  const handleSubmitForm = () => {
+    if (!raspunsuriIntrebariUtilizator.length) {
+      const setErrors = new Set([
+        ...errorsSubmit,
+        "Nu ați oferit niciun răspuns pentru acest formular",
+      ]);
+      setErrorsSubmit([...setErrors]);
+      return;
+    }
+
+    const mandatoryQuestions = form.intrebari
+      .map(question => ({
+        id: question._id,
+        titlu: question.titlu,
+        obligatoriu: question.obligatoriu,
+      }))
+      .filter(
+        question =>
+          question.obligatoriu &&
+          !raspunsuriIntrebariUtilizator.find(
+            answer => answer.id === question.id
+          )
+      );
+
+    if (mandatoryQuestions) {
+      // Iau toate intrebarile care nu se gasesc cu ID-ul în răspunsuriIntrebăriUtilizator
+
+      const setErrors = new Set([...errorsSubmit]);
+
+      mandatoryQuestions.forEach(question => {
+        setErrors.add(`Nu ati oferit un raspuns la "${question.titlu}"`);
+      });
+
+      setErrorsSubmit([...setErrors]);
+      return;
+    }
+
+    // TODO: Verific întrebările obligatorii
+
+    raspunsuriIntrebariUtilizator.map(raspunsObj => {
+      const question = form.intrebari.find(
+        intrebare => intrebare._id === raspunsObj.id
+      );
+
+      console.log(`question ${JSON.stringify(question)}`);
+      console.log(`question ${question.tip}`);
+
+      if (!question) return;
+
+      if (question.tip !== FILE_UPLOAD) return;
+
+      const formData = new FormData();
+      formData.append("file", raspunsObj.fisier);
+      formData.append("formID", form._id);
+      formData.append("questionID", question._id);
+
+      dispatch(
+        formFileUpload(formData, progressEv =>
+          setProgressFileUpload((progressEv.loaded / progressEv.total) * 100)
+        )
+      );
+    });
   };
 
   // TODO: Verific daca a raspuns la toate intrebarile obligatorii
@@ -226,9 +306,43 @@ const FormViewScreen = ({ match, history }) => {
             </div>
           </div>
 
-          {JSON.stringify(raspunsuriIntrebariUtilizator)}
+          {loadingFileUpload && progressFileUpload && (
+            <>
+              <p>Se incarca fisierele</p>
+              <div class="progress">
+                <div
+                  class="progress-bar"
+                  role="progressbar"
+                  style={{ width: `${progressFileUpload}%` }}
+                  aria-valuenow={`${progressFileUpload}`}
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                >
+                  {progressFileUpload}%
+                </div>
+              </div>
+            </>
+          )}
 
-          <Button className="btn btn-default btn-color-green px-4 text-dark text-bold fs-5 mt-4 fw-bold">
+          {errorFileUpload && (
+            <div class="alert alert-danger" role="alert">
+              {errorFileUpload}
+            </div>
+          )}
+
+          {errorsSubmit.length > 0 &&
+            errorsSubmit.map(error => (
+              <div class="alert alert-danger" role="alert">
+                {error}
+              </div>
+            ))}
+
+          {/* {JSON.stringify(raspunsuriIntrebariUtilizator)} */}
+
+          <Button
+            onClick={handleSubmitForm}
+            className="btn btn-default btn-color-green px-4 text-dark text-bold fs-5 mt-4 fw-bold"
+          >
             Trimite formular
           </Button>
         </div>
