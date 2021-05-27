@@ -104,6 +104,7 @@ const QuestionFileUpload = ({
     raspunsuriIntrebariUtilizator.push({
       id: question._id,
       fisier: selectedFile,
+      tip: question.tip,
     });
   };
 

@@ -244,15 +244,29 @@ const getFormResponses = asyncHandler(async (request, response) => {
 });
 
 const formFileUpload = asyncHandler(async (request, response) => {
-  const formFormidable = new formidable.IncomingForm();
-  formFormidable.keepExtensions = true;
-  formFormidable.keepFilenames = true;
+  // TODO: Adauga calea fisierului în colecția răspunsuri_formular
+
+  const formFormidable = new formidable.IncomingForm({
+    multiples: true,
+    keepFilenames: true,
+    keepExtensions: true,
+  });
+
+  formFormidable.on("fileBegin", (filename, file) => {
+    // console.log(`filename ${file.name}`);
+    if (file.name.split(".")[1].toLowerCase() === "pdf") {
+      formFormidable.emit("error", new Error("Nu se permit fisiere PDF"));
+    }
+  });
 
   const __dirname = path.resolve();
 
-  formFormidable.uploadDir = path.join(__dirname, "/uploads");
+  formFormidable.uploadDir = path.join(__dirname, "../uploads");
 
   formFormidable.parse(request, (err, fields, files) => {
+    console.log(`Fields: ${JSON.stringify(fields, null, 10)}`);
+    console.log(`Files: ${JSON.stringify(files, null, 10)}`);
+    console.log(typeof files);
     if (err) {
       console.log("Error " + err);
       response.status(401).json({ message: err.message });
@@ -314,6 +328,280 @@ const formFileUpload = asyncHandler(async (request, response) => {
   });
 });
 
+const sendAnswer = asyncHandler(async (request, response) => {
+  const __dirname = path.resolve();
+
+  // const a = true;
+
+  // if (a) {
+  //   return response.status(400).json({ message: "Test" });
+  // }
+
+  const files = request.files;
+  const { formID, timeLeft } = request.fields;
+  let { answers } = request.fields;
+  answers = JSON.parse(answers);
+
+  console.log(`request.fields ${JSON.stringify(request.fields, null, 10)}`);
+  // console.log(`questions = ${JSON.stringify(JSON.parse(answers), null, 4)}`);
+
+  if (!formID || !mongoose.Types.ObjectId.isValid(formID)) {
+    response.status(404);
+    throw new Error("Formularul nu a fost gasit");
+  }
+
+  const form = await Form.findById(formID);
+
+  if (!form) {
+    response.status(404);
+    throw new Error("Formularul nu a fost gasit");
+  }
+
+  // TODO: replace with object from DB
+  const { timpTransmitere: timer } = request.fields;
+  const { intrebari: formQuestions } = form;
+
+  console.log(`Timer ${timer}`);
+
+  const hasTimer = Boolean(timer && timeLeft <= 5);
+
+  const answerObject = {
+    utilizator: request.user._id,
+    formular: form._id,
+    raspunsuri: [],
+  };
+
+  // TODO: Iau toate intrebarile obligatorii din BD, vad daca nu sunt continute în answers, daca hasTimer îi dau mesaj de eroare
+
+  // TODO: Verific daca un utilizator mai poate trimite raspunsuri daca permite formularul
+
+  const getErrorsQuestions = async () => {
+    const errors = [];
+
+    await answers.forEach(async question => {
+      if (!question.id) return;
+
+      if (!question.tip) return;
+
+      const questionDB = formQuestions.find(
+        questionDB => questionDB._id.toString() === question.id
+      );
+
+      if (!questionDB) return;
+
+      const { obligatoriu: isMandatoryQuestion } = questionDB;
+
+      const questionType = question.tip;
+
+      if (questionType === "Incarcare fisier") {
+        const file = files[`${question.id}`];
+
+        if (!hasTimer && isMandatoryQuestion && !file) {
+          errors.push({
+            id: question.id,
+            title: questionDB.titlu,
+            error: `Nu ati transmit un fisier pentru "${questionDB.titlu}"`,
+          });
+          return;
+        }
+
+        const { atribute } = questionDB;
+
+        if (atribute) {
+          const extension = file.name.split(".")[1];
+          const sizeInMb = file.size / 1024 / 1024;
+          const {
+            tipuriFisierPermise: fileTypes,
+            invalidAnswer: textRaspunsInvalid,
+            maxSize: dimensiuneMaximaFisier,
+          } = atribute;
+
+          if (
+            !hasTimer &&
+            file &&
+            ((fileTypes && !fileTypes.includes(extension)) ||
+              (maxSize && sizeInMb > maxSize))
+          ) {
+            errors.push({
+              id: question.id,
+              title: questionDB.titlu,
+              error: textRaspunsInvalid,
+            });
+            return;
+          }
+        }
+
+        if (hasTimer && file) {
+          const oldPath = file.path;
+          const newPath = path.join(
+            __dirname,
+            `${formID}/${request.user._id.toString()}/${question.id}`
+          );
+
+          console.log();
+          let errorRename = null;
+
+          fs.mkdirSync(newPath, { recursive: true });
+
+          fs.rename(oldPath, path.join(`${newPath}/${file.name}`), error => {
+            if (error) {
+              errors.push({
+                id: questionDB.id,
+                title: questionDB.titlu,
+                error: `Server error! Fisierul ${file.name} nu a putut fi incarcat`,
+              });
+              errorRename = error;
+              console.error(error);
+              return;
+            }
+          });
+
+          if (errorRename) return;
+
+          console.log("Am adaugat raspunsul");
+          answerObject.raspunsuri = [
+            ...answerObject.raspunsuri,
+            {
+              id: question.id,
+              fisier: path.join(
+                `${question.id}/${request.user._id}/${file.name}`
+              ),
+            },
+          ];
+
+          return;
+        }
+
+        return;
+      }
+
+      if (questionType === "Raspuns text") {
+        const answerText = question.raspuns;
+
+        const { atribute } = questionDB;
+
+        const canStillAnswer = !hasTimer && isMandatoryQuestion;
+
+        if (atribute) {
+          const {
+            validareRaspuns: answerValidateRegex,
+            textRaspunsInvalid: invalidAnswerMessage,
+          } = atribute;
+
+          if (
+            canStillAnswer &&
+            (!answerText || !answerText.match(answerValidateRegex))
+          ) {
+            errors.push({
+              title: questionDB.titlu,
+              id: question.id,
+              error: invalidAnswerMessage,
+            });
+            return;
+          }
+        }
+
+        if (canStillAnswer && !answerText) {
+          errors.push({
+            title: questionDB.titlu,
+            id: question.id,
+            error: `Intrebare obligatorie! Nu ati oferit un raspuns pentru "${questionDB.titlu}"`,
+          });
+          return;
+        }
+
+        if (answerText) {
+          answerObject.raspunsuri = [
+            ...answerObject.raspunsuri,
+            {
+              id: question.id,
+              raspuns: answerText,
+            },
+          ];
+        }
+
+        return;
+      }
+
+      if (questionType === "Caseta de selectare") {
+        const answers = question.raspunsuri;
+
+        console.log(`answers ${answers}`);
+
+        const { atribute } = questionDB;
+
+        const canStillAnswer = !hasTimer && isMandatoryQuestion;
+
+        // Daca intrebarea nu are atribute si este o intrebare obligatoriu dar nu a dat un raspuns
+
+        if (canStillAnswer && !answers.length) {
+          errors.push({
+            title: questionDB.titlu,
+            id: question.id,
+            error: `Intrebare obligatorie! Nu ati oferit un raspuns pentru "${questionDB.titlu}"`,
+          });
+          return;
+        }
+
+        if (atribute) {
+          const {
+            validareRaspuns: {
+              selectareExacta: exactSelection,
+              selectareMinima: minSelection,
+              textRaspunsInvalid: invalidAnswerMessage,
+            },
+          } = atribute;
+
+          console.log(`atribute: ${JSON.stringify(atribute, null, 10)}`);
+
+          console.log(`hasTimer ${hasTimer}`);
+          console.log(`isMandatoryQuestion ${isMandatoryQuestion}`);
+          console.log(`answers ${answers}`);
+          console.log(`exactSelection ${exactSelection}`);
+          console.log(`answers.length ${answers.length}`);
+          console.log(`minSelection ${minSelection}`);
+          if (
+            canStillAnswer &&
+            (!answers ||
+              (exactSelection && answers.length !== exactSelection) ||
+              (minSelection && answers.length < minSelection))
+          ) {
+            errors.push({
+              title: questionDB.titlu,
+              id: question.id,
+              error: invalidAnswerMessage,
+            });
+            return;
+          }
+        }
+
+        if (answers) {
+          answerObject.raspunsuri = [
+            ...answerObject.raspunsuri,
+            {
+              id: question.id,
+              raspunsuri: answers,
+            },
+          ];
+          return;
+        }
+      }
+    });
+
+    return errors;
+  };
+
+  const errors = await getErrorsQuestions();
+
+  if (errors.length > 0) {
+    return response.status(400).json({ errors: errors });
+  }
+
+  // console.log(`Fields ${JSON.stringify(request.fields, null, 4)}`);
+  // console.log(`Files ${JSON.stringify(request.files, null, 4)}`);
+  return response.status(201).json(answerObject);
+});
+
 // trimite raspunsurile
 // daca formularul are ca atribut sa întoarcă rezultatele utilizatorului după trimitere, întorc un json cu rezultatele
 
@@ -327,4 +615,5 @@ export {
   updateQuestion,
   deleteQuestion,
   formFileUpload,
+  sendAnswer,
 };

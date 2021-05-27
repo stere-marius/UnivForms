@@ -60,6 +60,7 @@ const QuestionMarkBox = ({
     raspunsuriIntrebariUtilizator.push({
       id: question._id,
       raspunsuri: raspunsuriUtilizator,
+      tip: question.tip,
     });
   };
 

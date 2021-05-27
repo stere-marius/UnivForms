@@ -1,5 +1,6 @@
 import express from "express";
 import { protect, admin } from "../middleware/authMiddleware.js";
+import formidableMiddleware from "express-formidable";
 
 import { requestValidatorResult } from "../validators/requestValidatorResult.js";
 import {
@@ -15,6 +16,7 @@ import {
   updateQuestion,
   deleteQuestion,
   formFileUpload,
+  sendAnswer,
 } from "../controllers/formController.js";
 
 const router = express.Router();
@@ -27,5 +29,13 @@ router
   .put(protect, updateQuestion)
   .delete(protect, deleteQuestion);
 router.route("/uploadFormResponse").post(protect, formFileUpload);
+
+router
+  .route("/sendAnswer")
+  .post(
+    protect,
+    formidableMiddleware({ multiples: true, uploadDir: "../uploads" }),
+    sendAnswer
+  );
 
 export default router;

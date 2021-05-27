@@ -64,7 +64,45 @@ const FormViewScreen = ({ match, history }) => {
     setIndexQuestion(indexQuestion + 1);
   };
 
-  const handleSubmitForm = () => {
+  const handleSubmitForm = async () => {
+    // Cum stiu care fisier este al intrebarii x
+
+    // o idee ar fi sa-l prefixez cu idIntrebare_numeFisier si sa parsez in backend intrebarea
+
+    const files = raspunsuriIntrebariUtilizator
+      .filter(intrebare => intrebare.tip === FILE_UPLOAD)
+      .map(intrebare => ({
+        file: intrebare.fisier,
+        id: intrebare.id,
+      }));
+    console.log(`Files ${files}`);
+
+    const formData = new FormData();
+    formData.append("response", raspunsuriIntrebariUtilizator);
+
+    files.forEach(file => {
+      formData.append(`${file.id}`, file.file);
+    });
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+        "Content-Type": "multipart/form-data",
+      },
+      onUploadProgress: progressEv =>
+        setProgressFileUpload((progressEv.loaded / progressEv.total) * 100),
+    };
+
+    const { data } = await axios.post(
+      "/api/forms/sendAnswer",
+      formData,
+      config
+    );
+
+    const a = true;
+
+    if (a) return;
+
     if (!raspunsuriIntrebariUtilizator.length) {
       const setErrors = new Set([
         ...errorsSubmit,
@@ -101,42 +139,39 @@ const FormViewScreen = ({ match, history }) => {
       return;
     }
 
-    // TODO: Verific întrebările obligatorii
+    const filesUploadObj = raspunsuriIntrebariUtilizator
+      .map(answerObj => ({
+        id: answerObj.id,
+        fisier: answerObj.fisier,
+      }))
+      .filter(answerObj => {
+        const question = form.intrebari.find(q => q._id === answerObj.id);
+        return !question || answerObj.tip !== FILE_UPLOAD;
+      });
 
-    raspunsuriIntrebariUtilizator.map(raspunsObj => {
-      const question = form.intrebari.find(
-        intrebare => intrebare._id === raspunsObj.id
-      );
+    if (filesUploadObj) {
+      filesUploadObj.forEach(obj => {
+        const formData = new FormData();
+        formData.append("file", obj.fisier);
+        formData.append("formID", form._id);
+        formData.append("questionID", obj.id);
 
-      console.log(`question ${JSON.stringify(question)}`);
-      console.log(`question ${question.tip}`);
+        // pun in formData
 
-      if (!question) return;
+        dispatch(
+          formFileUpload(formData, progressEv =>
+            setProgressFileUpload((progressEv.loaded / progressEv.total) * 100)
+          )
+        );
+      });
+    }
 
-      if (question.tip !== FILE_UPLOAD) return;
-
-      const formData = new FormData();
-      formData.append("file", raspunsObj.fisier);
-      formData.append("formID", form._id);
-      formData.append("questionID", question._id);
-
-      dispatch(
-        formFileUpload(formData, progressEv =>
-          setProgressFileUpload((progressEv.loaded / progressEv.total) * 100)
-        )
-      );
-    });
+    const normalQuestions = raspunsuriIntrebariUtilizator.filter(
+      answerObj => answerObj.tip !== FILE_UPLOAD
+    );
   };
 
-  // TODO: Verific daca a raspuns la toate intrebarile obligatorii
-
   // TODO: Sa-i afisez intrebarile anterioare ca fiind intrebarile carora le-a dat skip sau la care a raspuns
-
-  // TODO: Sa-i pastrez raspunsurile pentru intrebari,
-  // iar daca utilizatorul se razgandeste sa se duca la tab-ul "Intrebari anterioare"
-  // si sa poata modifica raspunsurile
-
-  // TODO: Buton care memoreaza raspunsurile
 
   const renderTabs = () =>
     tabs.map(tab => {
