@@ -15,7 +15,6 @@ import {
   createQuestion,
   updateQuestion,
   deleteQuestion,
-  formFileUpload,
   sendAnswer,
 } from "../controllers/formController.js";
 
@@ -28,7 +27,6 @@ router
   .route("/:id/questions/:question_id")
   .put(protect, updateQuestion)
   .delete(protect, deleteQuestion);
-router.route("/uploadFormResponse").post(protect, formFileUpload);
 
 router
   .route("/sendAnswer")
