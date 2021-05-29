@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Header from "../components/Header";
 import { useSelector, useDispatch } from "react-redux";
-import { listFormDetails, formFileUpload } from "../actions/formActions";
+import { listFormDetails, sendFormResponse } from "../actions/formActions";
 import Loader from "../components/Loader";
 import QuestionMarkBox from "../components/QuestionMarkBox";
 import QuestionInputBox from "../components/QuestionInputBox";
+import CountdownTimer from "../components/CountdownTimer";
 import Message from "../components/Message";
 import { Button, Table } from "react-bootstrap";
 import {
@@ -14,25 +15,28 @@ import {
   FILE_UPLOAD,
 } from "../constants/questionTypesConstants";
 import QuestionFileUpload from "../components/QuestionFileUpload";
-import axios from "axios";
+import FormCreateModal from "../components/FormCreateModal";
 
 const FormViewScreen = ({ match, history }) => {
-  const [indexQuestion, setIndexQuestion] = useState(0);
-
   const tabs = [
     "Intrebare curenta",
     "Intrebari anterioare",
     "Trimitere formular",
   ];
+
+  const dispatch = useDispatch();
+
+  const [indexQuestion, setIndexQuestion] = useState(0);
+
   const [selectedTab, setSelectedTab] = useState("Intrebare curenta");
 
   const [raspunsuriIntrebariUtilizator] = useState([]);
 
   const [errorsSubmit, setErrorsSubmit] = useState([]);
 
-  const [progressFileUpload, setProgressFileUpload] = useState(0);
+  const [progressSendResponse, setProgressSendResponse] = useState(0);
 
-  const dispatch = useDispatch();
+  const timeLeft = useRef(0);
 
   const formDetails = useSelector(state => state.formDetails);
   const { loading, error, form } = formDetails;
@@ -40,12 +44,12 @@ const FormViewScreen = ({ match, history }) => {
   const userLogin = useSelector(state => state.userLogin);
   const { userInfo } = userLogin;
 
-  const formFileUploadState = useSelector(state => state.formFileUpload);
+  const formResponse = useSelector(state => state.formResponse);
   const {
-    loading: loadingFileUpload,
-    success: successFileUpload,
-    error: errorFileUpload,
-  } = formFileUploadState;
+    loading: loadingSendResponse,
+    success: successSendResponse,
+    error: errorsSendResponse,
+  } = formResponse;
 
   useEffect(() => {
     if (!userInfo) {
@@ -60,14 +64,43 @@ const FormViewScreen = ({ match, history }) => {
     setErrorsSubmit([]);
   }, [raspunsuriIntrebariUtilizator.length]);
 
+  useEffect(() => {
+    if (new Date(form.dataExpirare) <= Date.now()) {
+      history.push(`/form/${match.params.id}`);
+    }
+  }, [form.dataExpirare]);
+
+  useEffect(() => {
+    if (progressSendResponse === 100 && successSendResponse) {
+      history.push({
+        pathname: `/form/${match.params.id}/summary`,
+        state: { formName: `${form.nume}` },
+        isTimeExpired: timeLeft.current <= 0,
+      });
+    }
+  }, [progressSendResponse, successSendResponse]);
+
+  useEffect(() => {
+    if (indexQuestion >= form.intrebari.length) {
+      setSelectedTab("Trimitere formular");
+    }
+  }, [indexQuestion, form.intrebari]);
+
   const handleNextQuestion = () => {
     setIndexQuestion(indexQuestion + 1);
   };
 
-  const handleSubmitForm = async () => {
-    // Cum stiu care fisier este al intrebarii x
+  const onTimeExpire = () => {
+    // TODO: Transmitere formular
+    sendUserAnswers();
+  };
 
-    // o idee ar fi sa-l prefixez cu idIntrebare_numeFisier si sa parsez in backend intrebarea
+  const onTimeLeftChange = time => {
+    timeLeft.current = time;
+  };
+
+  const sendUserAnswers = () => {
+    const formData = new FormData();
 
     const files = raspunsuriIntrebariUtilizator
       .filter(intrebare => intrebare.tip === FILE_UPLOAD)
@@ -75,46 +108,41 @@ const FormViewScreen = ({ match, history }) => {
         file: intrebare.fisier,
         id: intrebare.id,
       }));
-    console.log(`Files ${files}`);
-
-    const formData = new FormData();
-    formData.append("response", raspunsuriIntrebariUtilizator);
 
     files.forEach(file => {
       formData.append(`${file.id}`, file.file);
     });
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${userInfo.token}`,
-        "Content-Type": "multipart/form-data",
-      },
-      onUploadProgress: progressEv =>
-        setProgressFileUpload((progressEv.loaded / progressEv.total) * 100),
-    };
+    formData.append("formID", form._id);
+    formData.append("timeLeft", timeLeft.current);
+    formData.append("answers", JSON.stringify(raspunsuriIntrebariUtilizator));
+    console.log(`formData: ${JSON.stringify(formData, null, 40)}`);
 
-    const { data } = await axios.post(
-      "/api/forms/sendAnswer",
-      formData,
-      config
+    dispatch(
+      sendFormResponse(formData, progressEv => {
+        const completed = Math.round(
+          (progressEv.loaded * 100) / progressEv.total
+        );
+        console.log(`progress ${completed}`);
+        setProgressSendResponse(completed);
+      })
     );
+  };
 
-    const a = true;
-
-    if (a) return;
-
+  const handleSubmitForm = async () => {
     if (!raspunsuriIntrebariUtilizator.length) {
       const setErrors = new Set([
         ...errorsSubmit,
         "Nu ați oferit niciun răspuns pentru acest formular",
       ]);
       setErrorsSubmit([...setErrors]);
+      console.log(`raspunsuriIntrebariUtilizator.length`);
       return;
     }
 
     const mandatoryQuestions = form.intrebari
       .map(question => ({
-        id: question._id,
+        id: question._id.toString(),
         titlu: question.titlu,
         obligatoriu: question.obligatoriu,
       }))
@@ -126,7 +154,9 @@ const FormViewScreen = ({ match, history }) => {
           )
       );
 
-    if (mandatoryQuestions) {
+    console.log(`${JSON.stringify(mandatoryQuestions, null, 40)}`);
+
+    if (mandatoryQuestions.length > 0) {
       // Iau toate intrebarile care nu se gasesc cu ID-ul în răspunsuriIntrebăriUtilizator
 
       const setErrors = new Set([...errorsSubmit]);
@@ -136,39 +166,12 @@ const FormViewScreen = ({ match, history }) => {
       });
 
       setErrorsSubmit([...setErrors]);
+      console.log(`mandatoryQuestions`);
       return;
     }
 
-    const filesUploadObj = raspunsuriIntrebariUtilizator
-      .map(answerObj => ({
-        id: answerObj.id,
-        fisier: answerObj.fisier,
-      }))
-      .filter(answerObj => {
-        const question = form.intrebari.find(q => q._id === answerObj.id);
-        return !question || answerObj.tip !== FILE_UPLOAD;
-      });
-
-    if (filesUploadObj) {
-      filesUploadObj.forEach(obj => {
-        const formData = new FormData();
-        formData.append("file", obj.fisier);
-        formData.append("formID", form._id);
-        formData.append("questionID", obj.id);
-
-        // pun in formData
-
-        dispatch(
-          formFileUpload(formData, progressEv =>
-            setProgressFileUpload((progressEv.loaded / progressEv.total) * 100)
-          )
-        );
-      });
-    }
-
-    const normalQuestions = raspunsuriIntrebariUtilizator.filter(
-      answerObj => answerObj.tip !== FILE_UPLOAD
-    );
+    console.log(`Sending user answers `);
+    sendUserAnswers();
   };
 
   // TODO: Sa-i afisez intrebarile anterioare ca fiind intrebarile carora le-a dat skip sau la care a raspuns
@@ -200,9 +203,7 @@ const FormViewScreen = ({ match, history }) => {
     <div>
       <ul className="nav nav-tabs flex-column align-items-center align-items-sm-start flex-sm-row justify-content-center">
         {renderTabs()}
-        <li className="nav-item px-4 pt-4 pb-2 ms-md-auto">
-          <p className="text-dark fw-bold">10:00</p>
-        </li>
+        {renderTimer()}
       </ul>
 
       {renderCurrentQuestionTab()}
@@ -211,6 +212,21 @@ const FormViewScreen = ({ match, history }) => {
     </div>
   );
 
+  const renderTimer = () => {
+    return (
+      form.timpTransmitere && (
+        <li className="nav-item px-4 pt-4 pb-2 ms-md-auto">
+          <p className="text-dark fw-bold">
+            <CountdownTimer
+              initialSeconds={form.timpTransmitere}
+              onEnd={onTimeExpire}
+              onTimeLeftChange={onTimeLeftChange}
+            />
+          </p>
+        </li>
+      )
+    );
+  };
   const renderCurrentQuestionTab = () => {
     if (selectedTab !== "Intrebare curenta") return <> </>;
 
@@ -341,29 +357,30 @@ const FormViewScreen = ({ match, history }) => {
             </div>
           </div>
 
-          {loadingFileUpload && progressFileUpload && (
+          {loadingSendResponse && progressSendResponse && (
             <>
-              <p>Se incarca fisierele</p>
+              <p>Se transmit raspunsurile...</p>
               <div class="progress">
                 <div
                   class="progress-bar"
                   role="progressbar"
-                  style={{ width: `${progressFileUpload}%` }}
-                  aria-valuenow={`${progressFileUpload}`}
+                  style={{ width: `${progressSendResponse}%` }}
+                  aria-valuenow={`${progressSendResponse}`}
                   aria-valuemin="0"
                   aria-valuemax="100"
                 >
-                  {progressFileUpload}%
+                  {progressSendResponse}%
                 </div>
               </div>
             </>
           )}
 
-          {errorFileUpload && (
-            <div class="alert alert-danger" role="alert">
-              {errorFileUpload}
-            </div>
-          )}
+          {errorsSendResponse &&
+            errorsSendResponse.map(error => (
+              <div class="alert alert-danger" role="alert">
+                {error.title} - {error.error}
+              </div>
+            ))}
 
           {errorsSubmit.length > 0 &&
             errorsSubmit.map(error => (
@@ -371,8 +388,6 @@ const FormViewScreen = ({ match, history }) => {
                 {error}
               </div>
             ))}
-
-          {/* {JSON.stringify(raspunsuriIntrebariUtilizator)} */}
 
           <Button
             onClick={handleSubmitForm}
@@ -398,9 +413,6 @@ const FormViewScreen = ({ match, history }) => {
           style={{ borderRadius: "16px" }}
         >
           {renderTabNav()}
-          {/* <FormNav /> */}
-
-          {/* {JSON.stringify(formDetails.form.intrebari)} */}
         </div>
       )}
     </>

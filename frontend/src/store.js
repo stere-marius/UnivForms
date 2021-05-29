@@ -8,8 +8,12 @@ import {
   userFormsReducer,
 } from "./reducers/userReducers";
 import {
+  formCreateQuestionReducer,
+  formCreateReducer,
   formDetailsReducer,
   formFileUploadReducer,
+  formSendResponseReducer,
+  formUpdateQuestionReducer,
 } from "./reducers/formReducers";
 
 const reducer = combineReducers({
@@ -18,10 +22,17 @@ const reducer = combineReducers({
   userGroups: userGroupsReducer,
   userForms: userFormsReducer,
   formDetails: formDetailsReducer,
-  formFileUpload: formFileUploadReducer,
+  formResponse: formSendResponseReducer,
+  formCreate: formCreateReducer,
+  formUpdatedQuestion: formUpdateQuestionReducer,
+  formCreatedQuestion: formCreateQuestionReducer,
 });
 
-const initialState = {};
+const userInfoFromStorage = localStorage.getItem("userInfo")
+  ? JSON.parse(localStorage.getItem("userInfo"))
+  : null;
+
+const initialState = { userLogin: { userInfo: userInfoFromStorage } };
 
 const middleware = [thunk];
 

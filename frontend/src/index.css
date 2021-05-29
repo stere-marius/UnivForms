@@ -26,8 +26,63 @@ code {
   padding: 0.3rem 1.3rem 0.3rem 1.3rem;
 }
 
+.btn-color-white {
+  background: #fff;
+  border-color: #fff;
+}
+
+.btn-color-white.disabled {
+  background: #fff;
+  border-color: #fff;
+  pointer-events: none;
+}
+
+.btn-color-white:hover {
+  background: #fff;
+  border-color: #fff;
+  opacity: 0.8;
+  transition: all 0.2s ease-out;
+}
+
+.btn-color-white:focus,
+.btn-color-white:active,
+.btn-color-white:visited {
+  background-color: #fff !important;
+  border-color: #fff;
+  box-shadow: none;
+}
+
+.bg-primary-green {
+  background-color: var(--green-primary);
+}
+
 .text-color-white {
   color: #fff !important;
+}
+
+.dropdown button {
+  background-color: var(--green-primary);
+  border: none;
+  color: #000;
+}
+
+.dropdown button:hover {
+  background: var(--green-primary);
+  border-color: var(--green-primary);
+  color: black !important;
+  opacity: 0.9;
+  transition: all 0.2s ease-out;
+}
+
+.dropdown button:focus,
+.dropdown button:active,
+.dropdown button:checked,
+.dropdown button:visited {
+  background-color: var(--green-primary) !important;
+  color: black !important;
+  border-color: var(--green-primary);
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(1, 223, 155, 0.25) !important;
 }
 
 .btn-green {
@@ -56,12 +111,12 @@ code {
   pointer-events: none;
 }
 
-.form-check-input-green:checked {
+.form-input-green:checked {
   background-color: var(--green-primary);
   border-color: var(--green-primary);
 }
 
-.form-check-input-green:focus {
+.form-input-green:focus {
   border-color: var(--green-primary);
   outline: 0;
   box-shadow: 0 0 0 0.25rem rgba(1, 223, 155, 0.25);
@@ -77,7 +132,7 @@ code {
 .btn-color-green:focus,
 .btn-color-green:active,
 .btn-color-green:visited {
-  background: var(--green-primary);
+  background-color: var(--green-primary) !important;
   border-color: var(--green-primary);
   box-shadow: none;
 }
@@ -91,4 +146,8 @@ code {
   color: black;
   background-color: white;
   outline: none;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }

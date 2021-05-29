@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Image, Container, Row, Col } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import Header from "../components/Header";
@@ -7,6 +7,7 @@ import { getForms, getGroups } from "../actions/userActions";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { Link } from "react-router-dom";
+import FormCreateModal from "../components/FormCreateModal";
 
 const HomeScreen = () => {
   const userLogin = useSelector(state => state.userLogin);
@@ -17,6 +18,8 @@ const HomeScreen = () => {
 
   const userForms = useSelector(state => state.userForms);
   const { loading: loadingForms, error: errorForms, forms } = userForms;
+
+  const [isActiveModalCreateForm, setActiveModalCreateForm] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -102,36 +105,49 @@ const HomeScreen = () => {
               ) : (
                 <Row>
                   {forms.map(form => (
-                    <Link to={`/form/${form._id}/view`}>
-                      <Col key={form._id} sm={12} md={6} lg={4} xl={3}>
-                        <div
-                          className="d-flex flex-column text-dark bg-white mx-4 my-4"
-                          style={{ borderRadius: "10px" }}
-                        >
-                          <h4 className="text-center p-2 border-bottom">
-                            {form.nume}
-                          </h4>
-                          <p className="p-3">
-                            <i className="fas fa-calendar-alt mx-1 inline-block" />
-                            21-03-2021
-                          </p>
-                          <p className="p-3">
-                            <i className="fas fa-pen mx-1 inline-block" />
-                            21-03-2021
-                          </p>
-                          <p className="p-3">
-                            <i className="fas fa-users mx-1 inline-block" />
-                            21
-                          </p>
-                          <div className="d-flex align-items-center justify-content-center m-3">
-                            <Button variant="primary">Vezi formular</Button>
-                          </div>
+                    <Col key={form._id} sm={12} md={6} lg={4} xl={3}>
+                      <div
+                        className="d-flex flex-column text-dark bg-white mx-4 my-4"
+                        style={{ borderRadius: "10px" }}
+                      >
+                        <h4 className="text-center p-2 border-bottom">
+                          {form.nume}
+                        </h4>
+                        <p className="p-3">
+                          <i className="fas fa-calendar-alt mx-1 inline-block" />
+                          21-03-2021
+                        </p>
+                        <p className="p-3">
+                          <i className="fas fa-pen mx-1 inline-block" />
+                          21-03-2021
+                        </p>
+                        <p className="p-3">
+                          <i className="fas fa-users mx-1 inline-block" />
+                          21
+                        </p>
+                        <div className="d-flex align-items-center justify-content-center m-3">
+                          <Link to={`/form/${form._id}`}>
+                            <button className="btn btn-default btn-color-green text-decoration-none">
+                              Vezi formular
+                            </button>
+                          </Link>
                         </div>
-                      </Col>
-                    </Link>
+                      </div>
+                    </Col>
                   ))}
                 </Row>
               )}
+              <button
+                className="btn btn-default btn-color-green mx-4 my-4 p-3"
+                onClick={() => setActiveModalCreateForm(true)}
+              >
+                Formular nou
+              </button>
+              <FormCreateModal
+                showModal={isActiveModalCreateForm}
+                onClose={() => setActiveModalCreateForm(false)}
+                userGroups={groups}
+              />
             </div>
           </div>
         </>
@@ -171,15 +187,12 @@ const HomeScreen = () => {
           </h1>
           <LinkContainer to="/create-form">
             <div className="text-center my-8">
-              <button
-                //   className="my-5"
-                className="btn-reset btn-green"
-              >
+              <button className="btn-reset btn-green">
                 Formular nou
                 <i
                   className="fas fa-long-arrow-alt-right mx-2"
                   style={{ verticalAlign: "middle" }}
-                ></i>
+                />
               </button>
             </div>
           </LinkContainer>

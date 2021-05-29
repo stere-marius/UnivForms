@@ -24,7 +24,7 @@ router.route("/").put(protect, createForm);
 router.route("/:id").get(getFormByID).delete(protect, deleteForm);
 router.route("/:id/questions").put(protect, createQuestion);
 router
-  .route("/:id/questions/:question_id")
+  .route("/:id/questions/:questionID")
   .put(protect, updateQuestion)
   .delete(protect, deleteQuestion);
 

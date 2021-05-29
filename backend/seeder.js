@@ -61,6 +61,22 @@ const importData = async () => {
   }
 };
 
+const importDataFormAnswers = async () => {
+  try {
+    await RaspunsuriFormular.create({
+      utilizator: "60abe75f4504a157b00f1dbf",
+      formular: "60abe7604504a157b00f1dc2",
+      raspunsuri: [{}],
+    });
+
+    console.log("Data Imported".green.inverse);
+    process.exit();
+  } catch (error) {
+    console.error(`${error}`.red.inverse);
+    process.exit(1);
+  }
+};
+
 const destroyData = async () => {
   try {
     await Utilizator.deleteMany();
@@ -76,7 +92,8 @@ const destroyData = async () => {
 };
 
 if (process.argv[2] === "-d") {
-  destroyData();
+  // destroyData();
 } else {
-  importData();
+  importDataFormAnswers();
+  // importData();
 }

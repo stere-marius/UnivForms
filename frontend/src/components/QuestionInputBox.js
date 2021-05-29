@@ -41,6 +41,20 @@ const QuestionMarkBox = ({
       return;
     }
 
+    if (question.atribute && question.atribute.validareRaspuns) {
+      const {
+        validareRaspuns: answerValidateRegex,
+        textRaspunsInvalid: invalidAnswerMessage,
+      } = question.atribute;
+
+      const isValidAnswer = raspunsUtilizator.match(answerValidateRegex);
+
+      if (!isValidAnswer) {
+        setErrors([invalidAnswerMessage]);
+        return;
+      }
+    }
+
     handleNextQuestion();
 
     const questionFound = raspunsuriIntrebariUtilizator.find(

@@ -32,11 +32,20 @@ const QuestionMarkBox = ({
   const handleSubmit = () => {
     const atributeIntrebare = question.atribute;
 
-    if (atributeIntrebare) {
-      const validareRaspuns = atributeIntrebare.validareRaspuns;
+    if (atributeIntrebare && atributeIntrebare.validareRaspuns) {
+      const {
+        selectareMinima: minSelection,
+        selectareExacta: exactSelection,
+        textRaspunsInvalid: invalidTextMessage,
+      } = atributeIntrebare.validareRaspuns;
 
-      if (raspunsuriUtilizator.length < validareRaspuns.selectareExact) {
-        setErrors([validareRaspuns.textEroare]);
+      if (exactSelection && raspunsuriUtilizator.length !== exactSelection) {
+        setErrors([invalidTextMessage]);
+        return;
+      }
+
+      if (minSelection && raspunsuriUtilizator.length < minSelection) {
+        setErrors([invalidTextMessage]);
         return;
       }
     }
@@ -87,7 +96,7 @@ const QuestionMarkBox = ({
           {answers.map(answer => (
             <div className="py-3" key={answer._id}>
               <input
-                className="form-check-input form-check-input-green fs-2"
+                className="form-check-input form-input-green fs-2"
                 type={inputType}
                 id={answer._id}
                 checked={raspunsuriUtilizator.includes(answer._id)}
@@ -99,6 +108,7 @@ const QuestionMarkBox = ({
               />
               <label
                 className="form-check-label text-dark fs-2"
+                spellCheck={false}
                 htmlFor={answer._id}
               >
                 {answer.titlu}
