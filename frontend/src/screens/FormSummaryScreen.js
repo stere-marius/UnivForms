@@ -33,7 +33,7 @@ const FormSummaryScreen = ({ location: { state, isTimeExpired }, history }) => {
             <h2 className="fw-bold">{state.formName}</h2>
 
             {isTimeExpired && (
-              <div class="alert alert-danger mt-4" role="alert">
+              <div className="alert alert-danger mt-4" role="alert">
                 Timpul a expirat!
               </div>
             )}

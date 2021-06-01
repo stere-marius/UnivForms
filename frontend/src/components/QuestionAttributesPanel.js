@@ -89,39 +89,39 @@ const QuestionMarkBoxAttributesPanel = ({ questionDB, onAttributeChange }) => {
 
   return (
     <div className="mx-4 fs-4">
-      <div class="form-check">
+      <div className="form-check">
         <input
-          class="form-check-input form-input-green"
+          className="form-check-input form-input-green"
           type="checkbox"
           checked={attributes.afisareRaspunsuriOrdineAleatorie || false}
           onChange={handleRandomOrder}
           id="checkboxIntrebareObligatorie"
         />
-        <label class="form-check-label" for="checkboxIntrebareObligatorie">
+        <label className="form-check-label" for="checkboxIntrebareObligatorie">
           Afisare raspunsuri in ordine aleatorie
         </label>
       </div>
 
-      <div class="form-check">
+      <div className="form-check">
         <input
-          class="form-check-input form-input-green"
+          className="form-check-input form-input-green"
           type="checkbox"
           checked={isPanelMinAnswers}
           onChange={handleVisibilityMinPanel}
           id="checkboxRaspunsuriMinime"
         />
-        <label class="form-check-label" for="checkboxRaspunsuriMinime">
+        <label className="form-check-label" for="checkboxRaspunsuriMinime">
           Selectare numar raspunsuri minime transmitere
         </label>
       </div>
 
       {isPanelMinAnswers && (
         <div className="d-flex flex-column align-items-start">
-          <label class="form-check-label" for="raspunsuriMinime">
+          <label className="form-check-label" for="raspunsuriMinime">
             Numar raspunsuri minime
           </label>
           <input
-            class="form-input-green rounded"
+            className="form-input-green rounded"
             type="number"
             value={
               (attributes.validareRaspuns &&
@@ -134,26 +134,26 @@ const QuestionMarkBoxAttributesPanel = ({ questionDB, onAttributeChange }) => {
         </div>
       )}
 
-      <div class="form-check">
+      <div className="form-check">
         <input
-          class="form-check-input form-input-green"
+          className="form-check-input form-input-green"
           type="checkbox"
           checked={isPanelExactAnswers}
           onChange={handleVisibilityExactPanel}
           id="checkboxRaspunsuriExacte"
         />
-        <label class="form-check-label" for="checkboxRaspunsuriExacte">
+        <label className="form-check-label" for="checkboxRaspunsuriExacte">
           Selectare numar raspunsuri exacte transmitere
         </label>
       </div>
 
       {isPanelExactAnswers && (
         <div className="d-flex flex-column align-items-start">
-          <label class="form-check-label" for="raspunsuriExacte">
+          <label className="form-check-label" for="raspunsuriExacte">
             Numar raspunsuri exacte
           </label>
           <input
-            class="form-input-green rounded"
+            className="form-input-green rounded"
             type="number"
             value={
               (attributes.validareRaspuns &&
@@ -167,13 +167,13 @@ const QuestionMarkBoxAttributesPanel = ({ questionDB, onAttributeChange }) => {
       )}
 
       {(isPanelExactAnswers || isPanelMinAnswers) && (
-        <div class="input-group d-flex flex-column">
-          <label class="form-check-label mt-3" for="textRaspunsInvalid">
+        <div className="input-group d-flex flex-column">
+          <label className="form-check-label mt-3" for="textRaspunsInvalid">
             Text raspuns invalid
           </label>
           <input
             type="text"
-            class="form-control form-input-green mt-1"
+            className="form-control form-input-green mt-1"
             placeholder="Text raspuns invalid"
             id="textRaspunsInvalid"
             value={

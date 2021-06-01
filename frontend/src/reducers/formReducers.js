@@ -24,6 +24,10 @@ import {
   FORM_DELETE_QUESTION_SUCCESS,
   FORM_DELETE_QUESTION_FAIL,
   FORM_DELETE_QUESTION_RESET,
+  FORM_ANSWERS_REQUEST,
+  FORM_ANSWERS_SUCCESS,
+  FORM_ANSWERS_FAIL,
+  FORM_ANSWERS_RESET,
 } from "../constants/formConstants";
 
 export const formDetailsReducer = (state = { form: {} }, action) => {
@@ -119,6 +123,21 @@ export const formDeleteQuestionReducer = (state = {}, action) => {
     case FORM_DELETE_QUESTION_FAIL:
       return { loading: false, success: false, error: action.payload };
     case FORM_DELETE_QUESTION_RESET:
+      return {};
+    default:
+      return state;
+  }
+};
+
+export const formAnswersReducer = (state = { raspunsuri: [] }, action) => {
+  switch (action.type) {
+    case FORM_ANSWERS_REQUEST:
+      return { loading: true };
+    case FORM_ANSWERS_SUCCESS:
+      return { loading: false, raspunsuri: action.payload };
+    case FORM_ANSWERS_FAIL:
+      return { loading: false, error: action.payload };
+    case FORM_ANSWERS_RESET:
       return {};
     default:
       return state;

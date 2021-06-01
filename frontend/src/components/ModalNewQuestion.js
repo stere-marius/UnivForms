@@ -86,10 +86,10 @@ const ModalNewQuestion = ({ formID, showModal, onClose, onCreate }) => {
           <div className="d-flex flex-column justify-content-between">
             <p>Titlul întrebării</p>
 
-            <div class="input-group">
+            <div className="input-group">
               <input
                 type="text"
-                class="form-control form-input-green"
+                className="form-control form-input-green"
                 placeholder="Titlul întrebării"
                 value={questionTitle}
                 onChange={handleChangeQuestionTitle}
@@ -101,7 +101,7 @@ const ModalNewQuestion = ({ formID, showModal, onClose, onCreate }) => {
             <div className="mt-3">
               <p>Tipul întrebării</p>
               <select
-                class="form-select form-input-green"
+                className="form-select form-input-green"
                 onChange={handleSelectType}
                 value={questionType}
               >
@@ -121,14 +121,14 @@ const ModalNewQuestion = ({ formID, showModal, onClose, onCreate }) => {
           {errors.size > 0 && (
             <div className="my-3">
               {[...errors].map(error => (
-                <div class="alert alert-danger">{error}</div>
+                <div className="alert alert-danger">{error}</div>
               ))}
             </div>
           )}
 
           {error && (
             <div className="my-3">
-              <div class="alert alert-danger">{error}</div>
+              <div className="alert alert-danger">{error}</div>
             </div>
           )}
 

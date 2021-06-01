@@ -9,7 +9,6 @@ import {
   validateNumberRange,
   validateStringLength,
 } from "../utils/validators.js";
-import formidable from "formidable";
 import path from "path";
 import fs from "fs";
 import mongoose from "mongoose";
@@ -400,6 +399,268 @@ const deleteQuestion = asyncHandler(async (request, response) => {
     .json({ message: "Intrebarea a fost stearsa cu success" });
 });
 
+// @desc    Obtine raspunsurilor formularului
+// @route   GET /api/forms/:id/duplicate
+// @access  Private
+
+const duplicateAnswers = asyncHandler(async (request, response) => {
+  const formResponse = await FormResponses.findOne({
+    formular: "60b5790cc68ef450d0c31ae6",
+  });
+
+  for (let i = 0; i < 1000; i++) {
+    formResponse._id = mongoose.Types.ObjectId();
+    await FormResponses.insertMany(formResponse);
+  }
+
+  return response.status(201).json({ message: "Am duplicat formularele" });
+});
+
+// @desc    Obtine raspunsurilor formularului
+// @route   GET /api/forms/:id/answers/:answerID
+// @access  Private
+const getSpecificAnswer = asyncHandler(async (request, response) => {
+  const formID = request.params.id;
+
+  if (!mongoose.Types.ObjectId.isValid(formID)) {
+    response.status(404);
+    throw new Error("Acest formular nu exista!");
+  }
+
+  const form = await Form.findById(formID);
+
+  if (!form) {
+    response.status(404);
+    throw new Error("Acest formular nu exista!");
+  }
+
+  const formResponse = await FormResponses.findOne({
+    formular: request.params.id,
+    _id: request.params.answerID,
+  });
+
+  if (!formResponse) {
+    response.status(404);
+    throw new Error(
+      `Raspunsul cu ID-ul ${request.params.answerID} nu a fost gasit`
+    );
+  }
+
+  const questionsID = form.intrebari.map(q => q._id.toString());
+  const validAnswers = formResponse.raspunsuri.filter(answer =>
+    questionsID.includes(answer.intrebare)
+  );
+
+  if (questionsID.length === 0 || validAnswers.length === 0) {
+    return response.status(201).json({ raspunsuri: [] });
+  }
+
+  const timeLeft =
+    form.timpTransmitere && +form.timpTransmitere - +formResponse.timpRamas;
+
+  const questionResponses = [];
+
+  let userScore = 0;
+  const totalScore = form.intrebari
+    .map(q => q.punctaj || 0)
+    .reduce((preValue, currValue) => preValue + currValue, 0);
+
+  validAnswers.forEach(answer => {
+    const question = form.intrebari.find(
+      q => q._id.toString() === answer.intrebare
+    );
+    const {
+      _id: id,
+      tip: type,
+      titlu: title,
+      raspunsuri: questionAnswers,
+      punctaj: questionScore,
+    } = question;
+
+    const responseQuestion = {
+      id,
+      titlu: title,
+      tip: type,
+    };
+
+    if (
+      (type === "Caseta de selectare" || type === "Buton radio") &&
+      answer.raspunsuri
+    ) {
+      const correctAnswersDB = questionAnswers.filter(
+        a => a.toObject().atribute && a.toObject().atribute.raspunsCorect
+      );
+
+      console.log(`${title}'s response is ${answer.raspunsuri}`);
+
+      const correctAnswersUser = new Set();
+
+      const userAnswers = questionAnswers.map(answerDB => {
+        const includes = answer.raspunsuri.includes(answerDB._id.toString());
+
+        const attributes = answerDB.toObject().atribute;
+        const isCorrect = Boolean(attributes && attributes.raspunsCorect);
+
+        if (isCorrect) {
+          correctAnswersUser.add(answerDB._id);
+        }
+
+        return includes
+          ? {
+              id: answerDB._id,
+              titlu: answerDB.toObject().titlu,
+              esteCorect: isCorrect,
+            }
+          : { id: answerDB._id, titlu: answerDB.toObject().titlu };
+      });
+
+      responseQuestion.punctaj = questionScore
+        ? correctAnswersUser.size === correctAnswersDB.length
+          ? questionScore
+          : 0
+        : undefined;
+      userScore += +responseQuestion.punctaj || 0;
+      responseQuestion.raspunsuri = userAnswers;
+      questionResponses.push(responseQuestion);
+
+      return;
+    }
+
+    if (type === "Raspuns text" && answer.raspuns !== undefined) {
+      let userAnswer = answer.raspuns.trim();
+      console.log(`${title}'s response is ${userAnswer}`);
+      let correctUserAnswer = false;
+      // const flags = raspuns.match(/\/[a-z]/);
+
+      for (let answerDB of questionAnswers) {
+        const { raspuns, tipRaspuns: answerType } = answerDB.toObject();
+
+        if (answerType === "CONTINE_TEXT" && userAnswer.includes(raspuns)) {
+          correctUserAnswer = true;
+          break;
+        }
+
+        if (answerType === "RASPUNS_EXACT" && userAnswer === raspuns) {
+          correctUserAnswer = true;
+          break;
+        }
+
+        if (
+          answerType === "POTRIVESTE_REGEX" &&
+          new RegExp(raspuns).test(userAnswer)
+        ) {
+          correctUserAnswer = true;
+          break;
+        }
+      }
+
+      responseQuestion.punctaj = questionScore
+        ? correctUserAnswer
+          ? questionScore
+          : 0
+        : undefined;
+      userScore += +responseQuestion.punctaj || 0;
+      responseQuestion.raspuns = answer.raspuns;
+      responseQuestion.esteCorect = correctUserAnswer;
+      questionResponses.push(responseQuestion);
+
+      return;
+    }
+
+    if (type === "Incarcare fisier" && answer.fisier) {
+      let correctUserAnswer = false;
+
+      responseQuestion.punctaj = questionScore
+        ? correctUserAnswer
+          ? questionScore
+          : 0
+        : undefined;
+      userScore += +responseQuestion.punctaj || 0;
+      responseQuestion.caleFisier = answer.fisier;
+      responseQuestion.esteCorect = true;
+      questionResponses.push(responseQuestion);
+    }
+
+    return;
+  });
+
+  return response.status(201).json({
+    timpRamas: isNaN(timeLeft) ? undefined : timeLeft,
+    punctajTotal: totalScore,
+    punctajUtilizator: userScore,
+    intrebari: questionResponses,
+  });
+});
+
+// @desc    Obtine raspunsurilor formularului
+// @route   GET /api/forms/:id/answers
+// @access  Private
+const getFormAnswers = asyncHandler(async (request, response) => {
+  const formID = request.params.id;
+
+  if (!mongoose.Types.ObjectId.isValid(formID)) {
+    response.status(404);
+    throw new Error("Acest formular nu exista!");
+  }
+
+  const form = await Form.findById(formID);
+
+  if (!form) {
+    response.status(404);
+    throw new Error("Acest formular nu exista!");
+  }
+
+  const perPage = request.body.perPagina || 15;
+  const page = request.body.pagina || 0;
+
+  const formResponseArray = await FormResponses.find({ formular: form._id })
+    .limit(perPage)
+    .skip(perPage * page)
+    .sort("createdAt");
+
+  if (!formResponseArray || formResponseArray.length === 0) {
+    return response.status(201).json({ raspunsuri: [] });
+  }
+
+  const responseArray = [];
+
+  await Promise.all(
+    formResponseArray.map(async formResponse => {
+      // const questionsID = form.intrebari.map(q => q._id.toString());
+      // const validAnswers = formResponse.raspunsuri.filter(answer =>
+      //   questionsID.includes(answer.intrebare)
+      // );
+
+      const user = await User.findById(formResponse.utilizator).select({
+        email: 1,
+        _id: 1,
+        nume: 1,
+        prenume: 1,
+      });
+
+      if (!user) return;
+
+      const responseObject = {
+        id: formResponse._id,
+        utilizator: user,
+        dataTransmitere: formResponse.createdAt,
+        // intrebari: [],
+      };
+
+      responseArray.push(responseObject);
+      // });
+    })
+  );
+
+  // formResponseArray.forEach(async formResponse => {
+  //         console.log(`Am adaugat in responseArray`);
+  //   });
+  // });
+
+  console.log(`Am returnat răspunsul`);
+  return response.status(201).json({ raspunsuri: responseArray });
+});
+
 // @desc    Trimite raspunsurilor formularului
 // @route   POST /api/forms/sendAnswer
 // @access  Private
@@ -757,4 +1018,7 @@ export {
   deleteQuestion,
   sendAnswer,
   getUserAnswers,
+  getFormAnswers,
+  getSpecificAnswer,
+  duplicateAnswers,
 };

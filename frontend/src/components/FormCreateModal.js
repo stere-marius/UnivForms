@@ -79,10 +79,10 @@ const FormCreateModal = ({ showModal, onClose, userGroups, history }) => {
           <div className="d-flex flex-column justify-content-between">
             <p>Titlul formularului</p>
 
-            <div class="input-group">
+            <div className="input-group">
               <input
                 type="text"
-                class="form-control form-input-green"
+                className="form-control form-input-green"
                 placeholder="Titlul formularului"
                 value={formTitle}
                 onChange={handleChangeFormTitle}
@@ -114,14 +114,14 @@ const FormCreateModal = ({ showModal, onClose, userGroups, history }) => {
           {errors.size > 0 && (
             <div className="my-3">
               {[...errors].map(error => (
-                <div class="alert alert-danger">{error}</div>
+                <div className="alert alert-danger">{error}</div>
               ))}
             </div>
           )}
 
           {errorForm && (
             <div className="my-3">
-              <div class="alert alert-danger">{errorForm}</div>
+              <div className="alert alert-danger">{errorForm}</div>
             </div>
           )}
 

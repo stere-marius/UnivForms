@@ -12,6 +12,9 @@ import {
   sendAnswer,
   updateForm,
   getUserAnswers,
+  getFormAnswers,
+  duplicateAnswers,
+  getSpecificAnswer,
 } from "../controllers/formController.js";
 
 const router = express.Router();
@@ -23,7 +26,10 @@ router
   .delete(protect, deleteForm)
   .put(protect, updateForm);
 
-router.route("/:id/userAnswers").get(getUserAnswers);
+router.route("/:id/answers").get(protect, getFormAnswers);
+router.route("/:id/answers/:answerID").get(protect, getSpecificAnswer);
+router.route("/:id/duplicate").get(protect, duplicateAnswers);
+router.route("/:id/userAnswers").get(protect, getUserAnswers);
 router.route("/:id/questions").put(protect, createQuestion);
 
 router

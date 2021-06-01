@@ -24,27 +24,27 @@ const QuestionAttributes = ({
   return (
     <div className="mx-4 fs-4">
       <div className="d-flex flex-column align-items-start">
-        <div class="form-check ">
+        <div className="form-check ">
           <input
-            class="form-check-input form-input-green"
+            className="form-check-input form-input-green"
             type="checkbox"
             checked={isMandatoryQuestion}
             onChange={handleChangeMandatoryQuestion}
             id="checkboxIntrebareObligatorie"
           />
           <label
-            class="form-check-label"
+            className="form-check-label"
             htmlFor="checkboxIntrebareObligatorie"
           >
             Intrebare obligatorie
           </label>
         </div>
         <div className="my-3 d-flex flex-column">
-          <label class="form-check-label" htmlFor="punctaj">
+          <label className="form-check-label" htmlFor="punctaj">
             Punctaj
           </label>
           <input
-            class="form-input-green rounded mt-2"
+            className="form-input-green rounded mt-2"
             type="number"
             value={score}
             style={{ width: "35%" }}

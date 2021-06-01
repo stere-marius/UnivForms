@@ -118,7 +118,7 @@ const QuestionMarkBox = ({
             Raspunsul dumneavoastra
           </label>
           <input
-            class="form-control"
+            className="form-control"
             type="text"
             placeholder="Introduceti raspunsul"
             id={questionId}

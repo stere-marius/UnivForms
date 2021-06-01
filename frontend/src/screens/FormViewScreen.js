@@ -359,7 +359,7 @@ const FormViewScreen = ({ match, history }) => {
             </div>
 
             <div className="d-flex align-items-baseline my-3">
-              <i class="fas fa-question-circle fs-4" />
+              <i className="fas fa-question-circle fs-4" />
               <p className="fw-bold fs-4 me-auto ms-3">Intrebari obligatorii</p>
               <p className="fw-bold fs-4 mx-5">
                 {form.intrebari.map(intrebare => intrebare.obligatoriu).length}
@@ -367,7 +367,7 @@ const FormViewScreen = ({ match, history }) => {
             </div>
 
             <div className="d-flex align-items-baseline my-3">
-              <i class="fas fa-align-left fs-4" />
+              <i className="fas fa-align-left fs-4" />
               <p className="fw-bold fs-4 me-auto ms-3">Raspunsurile tale</p>
               <p className="fw-bold fs-4 mx-5">
                 {raspunsuriIntrebariUtilizator.length}
@@ -378,9 +378,9 @@ const FormViewScreen = ({ match, history }) => {
           {loadingSendResponse && progressSendResponse && (
             <>
               <p>Se transmit raspunsurile...</p>
-              <div class="progress">
+              <div className="progress">
                 <div
-                  class="progress-bar"
+                  className="progress-bar"
                   role="progressbar"
                   style={{ width: `${progressSendResponse}%` }}
                   aria-valuenow={progressSendResponse}
@@ -396,18 +396,18 @@ const FormViewScreen = ({ match, history }) => {
           {errorsSendResponse &&
             (Array.isArray(errorsSendResponse) ? (
               errorsSendResponse.map(error => (
-                <div class="alert alert-danger">
+                <div className="alert alert-danger">
                   {error.title} - {error.error}
                   <span> Treci la intrebare</span>
                 </div>
               ))
             ) : (
-              <div class="alert alert-info">{errorsSendResponse}</div>
+              <div className="alert alert-info">{errorsSendResponse}</div>
             ))}
 
           {errorsSubmit.length > 0 &&
             errorsSubmit.map(error => (
-              <div class="alert alert-danger">{error}</div>
+              <div className="alert alert-danger">{error}</div>
             ))}
 
           <Button

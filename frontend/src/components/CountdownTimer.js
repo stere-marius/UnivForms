@@ -20,7 +20,7 @@ const CountdownTimer = ({ initialSeconds, onEnd, onTimeLeftChange }) => {
     };
   });
 
-  return <p>{formatToHHMMSS(seconds)}</p>;
+  return <>{formatToHHMMSS(seconds)}</>;
 };
 
 export default CountdownTimer;

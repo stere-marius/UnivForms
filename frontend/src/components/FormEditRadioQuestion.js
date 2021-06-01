@@ -193,7 +193,7 @@ const FormEditRadioQuestion = ({
                   title="Deschide atributele raspunsului"
                   onClick={() => toggleQuestionPanel(index)}
                 >
-                  <i class="fas fa-ellipsis-v" />
+                  <i className="fas fa-ellipsis-v" />
                 </button>
                 <button
                   className="btn btn-default btn-color-green fw-bold rounded-pill px-3 ms-5 bg-danger border-0"
@@ -202,14 +202,14 @@ const FormEditRadioQuestion = ({
                   title="Sterge raspunsul"
                   onClick={() => deleteAnswer(index)}
                 >
-                  <i class="fas fa-trash" />
+                  <i className="fas fa-trash" />
                 </button>
               </div>
               {answersPanel.includes(index) && (
                 <div className="d-flex mt-3">
-                  <div class="form-check form-input-green">
+                  <div className="form-check form-input-green">
                     <input
-                      class="form-check-input form-input-green"
+                      className="form-check-input form-input-green"
                       type="checkbox"
                       value=""
                       id={index}
@@ -219,7 +219,7 @@ const FormEditRadioQuestion = ({
                       }
                       onChange={e => handleCheckboxCorrectAnswer(e, index)}
                     />
-                    <label class="form-check-label" for="flexCheckDefault">
+                    <label className="form-check-label" for="flexCheckDefault">
                       Raspuns corect
                     </label>
                   </div>
@@ -238,7 +238,7 @@ const FormEditRadioQuestion = ({
           data-bs-placement="top"
           title="Adauga un nou raspuns"
         >
-          <i class="fas fa-plus" />
+          <i className="fas fa-plus" />
         </button>
         <button
           className="btn btn-default btn-color-green fw-bold rounded-pill px-3 ms-5"
@@ -247,7 +247,7 @@ const FormEditRadioQuestion = ({
           title="Deschide atributele raspunsului"
           onClick={() => setQuestionPanelVisible(!isQuestionPanelVisible)}
         >
-          <i class="fas fa-ellipsis-v" />
+          <i className="fas fa-ellipsis-v" />
         </button>
       </div>
       {isQuestionPanelVisible && (

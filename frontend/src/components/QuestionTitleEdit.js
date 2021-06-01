@@ -21,7 +21,7 @@ const QuestionTitleEdit = ({
   };
 
   return (
-    <div class="input-group my-3 p-4">
+    <div className="input-group my-3 p-4">
       <input
         type="text"
         className="form-control form-input-green text-center fs-4"

@@ -95,7 +95,7 @@ const FormMainScreen = ({ match, history }) => {
                     </div>
 
                     <div className="d-flex align-items-baseline my-3">
-                      <i class="fas fa-question-circle fs-4" />
+                      <i className="fas fa-question-circle fs-4" />
                       <p className="fw-bold fs-4 me-auto ms-3">
                         Intrebari obligatorii
                       </p>
@@ -109,7 +109,7 @@ const FormMainScreen = ({ match, history }) => {
 
                     {form.timpTransmitere && (
                       <div className="d-flex align-items-baseline my-3">
-                        <i class="fas fa-question-circle fs-4" />
+                        <i className="fas fa-question-circle fs-4" />
                         <p className="fw-bold fs-4 me-auto ms-3">
                           Timp transmitere
                         </p>
@@ -122,7 +122,7 @@ const FormMainScreen = ({ match, history }) => {
 
                   {form.timpTransmitere && (
                     <>
-                      <div class="alert alert-danger fw-bold text-dark">
+                      <div className="alert alert-danger fw-bold text-dark">
                         Acest formular contine un timp limitat de transmiterea a
                         raspunsurilor!
                       </div>

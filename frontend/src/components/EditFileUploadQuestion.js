@@ -215,15 +215,18 @@ const EditFileUploadQuestion = ({
           onScoreChange={onScoreChange}
         />
 
-        <div class="form-check mx-4 fs-4">
+        <div className="form-check mx-4 fs-4">
           <input
-            class="form-check-input form-input-green"
+            className="form-check-input form-input-green"
             type="checkbox"
             checked={isFileSizePanel}
             onChange={handleVisibilitySizePanel}
             id="checkboxDimensiuneMaximaFisier"
           />
-          <label class="form-check-label" for="checkboxDimensiuneMaximaFisier">
+          <label
+            className="form-check-label"
+            for="checkboxDimensiuneMaximaFisier"
+          >
             Dimensiune maxima fisier in MB
           </label>
         </div>
@@ -231,7 +234,7 @@ const EditFileUploadQuestion = ({
         {isFileSizePanel && (
           <div className="my-3 mx-4 d-flex flex-column align-items-start">
             <input
-              class="form-input-green rounded mt-2"
+              className="form-input-green rounded mt-2"
               type="number"
               value={fileSize}
               style={{ width: "35%" }}
@@ -241,15 +244,15 @@ const EditFileUploadQuestion = ({
           </div>
         )}
 
-        <div class="form-check mx-4 fs-4">
+        <div className="form-check mx-4 fs-4">
           <input
-            class="form-check-input form-input-green"
+            className="form-check-input form-input-green"
             type="checkbox"
             checked={isExtensionPanel}
             onChange={e => setExtensionPanel(e.target.checked)}
             id="extensiiFisierPermise"
           />
-          <label class="form-check-label" for="extensiiFisierPermise">
+          <label className="form-check-label" for="extensiiFisierPermise">
             Extensii fisier permise
           </label>
         </div>
@@ -289,16 +292,16 @@ const EditFileUploadQuestion = ({
                 )}
             </div>
             <div className="row">
-              <div class="col-sm-12 col-md-12 col-lg-6 col-xl-3 col-xxl-2 mt-3">
+              <div className="col-sm-12 col-md-12 col-lg-6 col-xl-3 col-xxl-2 mt-3">
                 <input
                   type="text"
-                  class="form-control form-input-green"
+                  className="form-control form-input-green"
                   placeholder="Extensie noua"
                   value={extension}
                   onChange={e => setExtension(e.target.value)}
                 />
                 <span
-                  class="input-group-text bg-color-green cursor-pointer"
+                  className="input-group-text bg-color-green cursor-pointer"
                   id="basic-addon2"
                   onClick={handleAddExtension}
                 >
@@ -310,13 +313,13 @@ const EditFileUploadQuestion = ({
         )}
 
         {(isFileSizePanel || isExtensionPanel) && (
-          <div class="input-group d-flex flex-column mx-4 fs-4">
-            <label class="form-check-label mt-3" for="textRaspunsInvalid">
+          <div className="input-group d-flex flex-column mx-4 fs-4">
+            <label className="form-check-label mt-3" for="textRaspunsInvalid">
               Text raspuns invalid
             </label>
             <input
               type="text"
-              class="form-control form-input-green mt-1"
+              className="form-control form-input-green mt-1"
               placeholder="Text raspuns invalid"
               id="textRaspunsInvalid"
               value={

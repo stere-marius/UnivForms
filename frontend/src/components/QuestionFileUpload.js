@@ -98,7 +98,7 @@ const QuestionFileUpload = ({
       <div className="d-flex flex-column justify-content-center">
         <div className="mx-4 d-flex flex-column">
           <input
-            class="form-control"
+            className="form-control"
             type="file"
             id={questionId}
             onChange={e => {
