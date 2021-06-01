@@ -143,3 +143,18 @@ export const formAnswersReducer = (state = { raspunsuri: [] }, action) => {
       return state;
   }
 };
+
+export const formAnswerReducer = (state = {}, action) => {
+  switch (action.type) {
+    case FORM_ANSWER_REQUEST:
+      return { loading: true };
+    case FORM_ANSWER_SUCCESS:
+      return { loading: false, raspuns: action.payload };
+    case FORM_ANSWER_FAIL:
+      return { loading: false, error: action.payload };
+    case FORM_ANSWER_RESET:
+      return {};
+    default:
+      return state;
+  }
+};

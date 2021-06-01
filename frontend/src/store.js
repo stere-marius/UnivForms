@@ -15,6 +15,8 @@ import {
   formSendResponseReducer,
   formUpdateQuestionReducer,
   formUpdateReducer,
+  formAnswerReducer,
+  formAnswersReducer,
 } from "./reducers/formReducers";
 
 const reducer = combineReducers({
@@ -29,6 +31,8 @@ const reducer = combineReducers({
   formUpdatedQuestion: formUpdateQuestionReducer,
   formCreatedQuestion: formCreateQuestionReducer,
   formDeletedQuestion: formDeleteQuestionReducer,
+  formAnswers: formAnswersReducer,
+  formAnswer: formAnswerReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")

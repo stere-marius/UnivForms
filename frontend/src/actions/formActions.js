@@ -25,6 +25,14 @@ import {
   FORM_UPDATE_SUCCESS,
   FORM_UPDATE_FAIL,
   FORM_UPDATE_QUESTION_RESET,
+  FORM_ANSWERS_REQUEST,
+  FORM_ANSWERS_SUCCESS,
+  FORM_ANSWERS_FAIL,
+  FORM_ANSWERS_RESET,
+  FORM_ANSWER_REQUEST,
+  FORM_ANSWER_SUCCESS,
+  FORM_ANSWER_FAIL,
+  FORM_ANSWER_RESET,
 } from "../constants/formConstants";
 
 export const listFormDetails = id => async dispatch => {
@@ -246,6 +254,66 @@ export const deleteQuestion =
     } catch (error) {
       dispatch({
         type: FORM_DELETE_QUESTION_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      });
+    }
+  };
+
+export const getFormAnswers = formID => async (dispatch, getState) => {
+  try {
+    dispatch({ type: FORM_ANSWERS_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const data = await axios.get(`/api/forms/${formID}/answers`, config);
+
+    dispatch({ type: FORM_ANSWERS_SUCCESS });
+  } catch (error) {
+    dispatch({
+      type: FORM_ANSWERS_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const getFormAnswer =
+  (formID, answerID) => async (dispatch, getState) => {
+    try {
+      dispatch({ type: FORM_ANSWER_REQUEST });
+
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      const data = await axios.get(
+        `/api/forms/${formID}/answers/${answerID}`,
+        config
+      );
+
+      dispatch({ type: FORM_ANSWER_SUCCESS });
+    } catch (error) {
+      dispatch({
+        type: FORM_ANSWER_FAIL,
         payload:
           error.response && error.response.data.message
             ? error.response.data.message
