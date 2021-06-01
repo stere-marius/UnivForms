@@ -35,8 +35,16 @@ const registerUser = asyncHandler(async (request, response) => {
 
   if (userExists) {
     response.status(400);
+    console.log(`Utilizator deja existent`);
     throw new Error("Utilizator deja existent");
   }
+
+  // const passwordRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
+
+  // if(!passwordRegex.test()){
+
+  //   return;
+  // }
 
   const user = await User.create({
     nume,
@@ -56,6 +64,7 @@ const registerUser = asyncHandler(async (request, response) => {
     });
   }
 
+  console.log(`Date invalide`);
   response.status(400);
   throw new Error("Date invalide");
 });

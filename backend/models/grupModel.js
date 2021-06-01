@@ -12,7 +12,7 @@ const grupSchema = mongoose.Schema(
           type: mongoose.Schema.Types.ObjectId,
           ref: "Utilizator",
         },
-        esteAdministrator: {
+        administrator: {
           type: Boolean,
           required: true,
           default: false,

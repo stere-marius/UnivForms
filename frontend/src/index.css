@@ -105,15 +105,23 @@ code {
   border-color: var(--green-primary);
 }
 
-.btn-color-green.disabled {
-  background: var(--green-primary);
-  border-color: var(--green-primary);
-  pointer-events: none;
+.bg-color-green {
+  background-color: var(--green-primary) !important;
+}
+
+.cursor-default {
+  cursor: default;
 }
 
 .form-input-green:checked {
   background-color: var(--green-primary);
   border-color: var(--green-primary);
+}
+
+.btn-color-green.disabled {
+  background: var(--green-primary);
+  border-color: var(--green-primary);
+  pointer-events: none;
 }
 
 .form-input-green:focus {

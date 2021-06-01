@@ -14,10 +14,18 @@ const protect = asyncHandler(async (req, res, next) => {
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      req.user = await Utilizator.findById(decoded.id).select("-password");
+      const user = await Utilizator.findById(decoded.id).select("-password");
+
+      if (!user) {
+        res.status(404);
+        throw new Error("Utilizatorul nu a fost gasit!");
+      }
+
+      req.user = user;
 
       next();
     } catch (error) {
+      console.log(`Not authorized, token failed`);
       console.error(error);
       res.status(401);
       throw new Error("Not authorized, token failed");
@@ -25,6 +33,7 @@ const protect = asyncHandler(async (req, res, next) => {
   }
 
   if (!token) {
+    console.log(`Not authorized, no token`);
     res.status(401);
     throw new Error("Not authorized, no token");
   }

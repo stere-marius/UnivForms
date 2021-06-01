@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { createForm } from "../actions/formActions";
 import { Dropdown, DropdownButton } from "react-bootstrap";
@@ -41,14 +41,14 @@ const FormCreateModal = ({ showModal, onClose, userGroups, history }) => {
     if (successCreate && createdForm) {
       history.push(`/form/${createdForm.id}/edit`);
     }
-  }, [successCreate, createdForm]);
+  }, [successCreate, history, createdForm]);
 
   const handleCreateForm = () => {
     if (!formTitle) {
       setErrors(new Set(errors).add("Introduceti titlul formularului!"));
       return;
     }
-
+    dispatch({ type: "FORM_UPDATE_QUESTION_RESET" });
     dispatch(
       createForm({
         titlu: formTitle,

@@ -4,7 +4,7 @@ function formatBytes(bytes) {
   var kiloBytes = marker; // One Kilobyte is 1024 bytes
   var megaBytes = marker * marker; // One MB is 1024 KB
   var gigaBytes = marker * marker * marker; // One GB is 1024 MB
-  var teraBytes = marker * marker * marker * marker; // One TB is 1024 GB
+  // var teraBytes = marker * marker * marker * marker; // One TB is 1024 GB
 
   // return bytes if less than a KB
   if (bytes < kiloBytes) return bytes + " Bytes";
@@ -16,4 +16,54 @@ function formatBytes(bytes) {
   return (bytes / gigaBytes).toFixed(decimal) + " GB";
 }
 
-export { formatBytes };
+function validateStringLength(text, length, validationType) {
+  if (validationType === "SIR DE LUNGIME MAI MARE DECAT") {
+    return text.length() > length;
+  }
+}
+
+function validateNumberRange(number, validationBD, validationType) {
+  if (validationType === "NUMAR MAI MARE DECAT") {
+    return +number > +validationBD;
+  }
+
+  if (validationType === "NUMAR MAI MIC DECAT") {
+    return +number < +validationBD;
+  }
+
+  if (validationType === "NUMAR EGAL CU") {
+    return +number === +validationBD;
+  }
+
+  if (validationType === "NUMAR IN INTERVAL") {
+    const firstRange = validationBD.split("-")[0];
+    const secondRange = validationBD.split("-")[0];
+
+    return +number >= +firstRange && +number <= +secondRange;
+  }
+}
+
+const formatToHHMMSS = seconds => {
+  let hours = Math.floor(seconds / 3600);
+  let minutes = Math.floor((seconds - hours * 3600) / 60);
+  seconds = seconds - hours * 3600 - minutes * 60;
+
+  if (hours < 10) {
+    hours = "0" + hours;
+  }
+  if (minutes < 10) {
+    minutes = "0" + minutes;
+  }
+  if (seconds < 10) {
+    seconds = "0" + seconds;
+  }
+
+  return hours + ":" + minutes + ":" + seconds;
+};
+
+export {
+  formatBytes,
+  validateStringLength,
+  validateNumberRange,
+  formatToHHMMSS,
+};

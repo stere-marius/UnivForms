@@ -1,9 +1,14 @@
 import Form from "../models/formularModel.js";
 import Group from "../models/grupModel.js";
 import User from "../models/utilizatorModel.js";
+import FormResponses from "../models/raspunsuriModel.js";
 import FormAnswers from "../models/raspunsuriModel.js";
 import asyncHandler from "express-async-handler";
-import { isNumeric } from "../utils/validators.js";
+import {
+  isNumeric,
+  validateNumberRange,
+  validateStringLength,
+} from "../utils/validators.js";
 import formidable from "formidable";
 import path from "path";
 import fs from "fs";
@@ -36,6 +41,79 @@ const deleteForm = asyncHandler(async (request, response) => {
 
   await form.remove();
   return response.json({ message: "Formularul a fost sters cu succes" });
+});
+
+// @desc    Actulizeaza atributele formularului
+// @route   PUT /api/forms/:id
+// @access  Private
+const updateForm = asyncHandler(async (request, response) => {
+  const form = await Form.findById(request.params.id);
+
+  if (!form) {
+    response.status(401);
+    throw new Error("Formularul nu a fost gasit");
+  }
+
+  if (form.utilizator._id.toString() !== request.user._id.toString()) {
+    response.status(401);
+    throw new Error("Nu aveti permisiunea de a edita acest formular!");
+  }
+
+  console.log(`Am primit body ${JSON.stringify(request.body, null, 2)}`);
+
+  const title = request.body.titlu;
+  const multipleAnswers = request.body.raspunsuriMultipleUtilizator;
+  let validDate = request.body.dataValiditate;
+  let expireDate = request.body.dataExpirare;
+  const time = request.body.timpTransmitere;
+
+  if (title) {
+    form.titlu = title;
+  }
+
+  if (time && isNaN(time)) {
+    response.status(401);
+    throw new Error(
+      "Timpul transmiterii formularului trebuie să fie un număr!"
+    );
+  }
+
+  if (time) {
+    form.timpTransmitere = +time;
+  }
+
+  if (multipleAnswers) {
+    form.raspunsuriMultipleUtilizator = multipleAnswers;
+  }
+
+  if (validDate) {
+    validDate = new Date(validDate);
+
+    if (!(validDate instanceof Date && !isNaN(validDate))) {
+      response.status(401);
+      throw new Error("Data validitate invalida!");
+    }
+
+    form.dataValiditate = validDate;
+    console.log(`Am adaugat data validitatea ca fiind ${validDate}`);
+  }
+
+  if (expireDate) {
+    expireDate = new Date(expireDate);
+
+    if (!(expireDate instanceof Date && !isNaN(expireDate))) {
+      response.status(401);
+      throw new Error("Data expirare invalida!");
+    }
+
+    form.dataExpirare = expireDate;
+    console.log(`Am adaugat data validitatea ca fiind ${expireDate}`);
+  }
+
+  const updatedForm = await form.save();
+  console.log(`Updated form = ${JSON.stringify(updatedForm, null, 2)}`);
+
+  return response.json({ message: "Formularul a fost actualizat cu succes" });
 });
 
 // @desc    Creeaza formular
@@ -117,19 +195,16 @@ const createQuestion = asyncHandler(async (request, response) => {
     throw new Error("Formularul nu a fost gasit");
   }
 
-  const question = request.body.intrebare;
+  const title = request.body.titlu;
+  const type = request.body.tip;
 
-  if (!question) {
-    return response.status(401).json({ message: "Intrebare invalidă!" });
-  }
-
-  if (!question.titlu) {
+  if (!title) {
     return response
       .status(401)
       .json({ message: "Intrebare trebuie să conțină un titlu valid!" });
   }
 
-  if (!question.tip) {
+  if (!type) {
     return response
       .status(401)
       .json({ message: "Intrebare trebuie să conțină un tip valid!" });
@@ -142,7 +217,7 @@ const createQuestion = asyncHandler(async (request, response) => {
     "Raspuns text",
   ];
 
-  if (!questionTypes.includes(question.tip.trim())) {
+  if (!questionTypes.includes(type.trim())) {
     return response.status(401).json({
       message: `Intrebare trebuie să conțina un tip valid ${questionTypes.join(
         " , "
@@ -150,13 +225,14 @@ const createQuestion = asyncHandler(async (request, response) => {
     });
   }
 
-  form.intrebari.push(question);
+  form.intrebari.push({
+    titlu: title,
+    tip: type,
+  });
   const updatedForm = await form.save();
   return response
     .status(201)
-    .json({
-      intrebare: updatedForm.intrebari[updatedForm.intrebari.length - 1],
-    });
+    .json(updatedForm.intrebari[updatedForm.intrebari.length - 1]);
 });
 
 // @desc    Actualizeaza intrebarea formularului
@@ -189,17 +265,25 @@ const updateQuestion = asyncHandler(async (request, response) => {
   questionDB.obligatoriu = question.obligatoriu || false;
   questionDB.raspunsuri = question.raspunsuri;
 
-  if (
-    question.atribute &&
-    question.atribute.punctaj &&
-    isNaN(question.atribute.punctaj)
-  ) {
+  if (question.punctaj && !/^[0-9]+$/.test(+question.punctaj)) {
     return response
       .status(401)
       .json({ message: "Punctajul trebuie să fie un număr !" });
   }
 
-  question.atribute.punctaj = +question.atribute.punctaj;
+  question.punctaj = +question.punctaj;
+
+  if (
+    question.tip === "Buton radio" &&
+    question.raspunsuri.filter(question => question.atribute.raspunsCorect)
+      .length > 1
+  ) {
+    return response.status(401).json({
+      message:
+        "O întrebare de tip radio nu poate avea mai mult de un răspuns corect!",
+    });
+    return;
+  }
 
   if (question.tip === "Caseta de selectare" && question.atribute) {
     const attributes = question.atribute;
@@ -256,8 +340,33 @@ const updateQuestion = asyncHandler(async (request, response) => {
 });
 
 // @desc    Sterge intrebarea formularului
-// @route   DELETE /api/forms/:id/questions/:question_id
-// @access  Private/Admin Group??
+// @route   DELETE /api/forms/:id/userAnswers
+// @access  Private
+const getUserAnswers = asyncHandler(async (request, response) => {
+  const form = await Form.findById(request.params.id);
+
+  if (!form) {
+    response.status(404);
+    throw new Error("Formularul nu a fost gasit");
+  }
+
+  const user = request.body.utilizator;
+
+  const answers = await FormResponses.find({
+    utilizator: user,
+    formular: form._id,
+  });
+
+  if (!answers) {
+    return response.status(201).json({ message: [] });
+  }
+
+  return response.status(201).json({ message: answers });
+});
+
+// @desc    Sterge intrebarea formularului
+// @route   DELETE /api/forms/:id/questions
+// @access  Private
 const deleteQuestion = asyncHandler(async (request, response) => {
   const form = await Form.findById(request.params.id);
 
@@ -266,21 +375,29 @@ const deleteQuestion = asyncHandler(async (request, response) => {
     throw new Error("Formularul nu a fost gasit");
   }
 
+  const questionID = request.params.questionID;
+
   const questionIndex = form.intrebari.findIndex(
-    intrebare => intrebare.id === request.params.question_id
+    intrebare => intrebare._id.toString() === questionID
   );
 
   if (questionIndex === -1) {
-    return response.status(401).json({ message: "Intrebarea nu exista" });
+    response.status(401);
+    throw new Error("Intrebarea nu a fost gasita");
   }
 
   if (form.utilizator.toString() !== request.user.id) {
-    return response.status(401).json({ message: "Utilizator neautorizat" });
+    response.status(401);
+    throw new Error(
+      "Utilizator neautorizat! Nu sunteti creatorul acestui formular!"
+    );
   }
 
   form.intrebari.splice(questionIndex, 1);
   await form.save();
-  return response.json({ message: "Intrebarea a fost stearsa cu success" });
+  return response
+    .status(201)
+    .json({ message: "Intrebarea a fost stearsa cu success" });
 });
 
 // @desc    Trimite raspunsurilor formularului
@@ -289,7 +406,6 @@ const deleteQuestion = asyncHandler(async (request, response) => {
 const sendAnswer = asyncHandler(async (request, response) => {
   const files = request.files;
   let { formID, timeLeft } = request.fields;
-  console.log(`Object %0 `, request.fields.answers);
 
   const answers = JSON.parse(request.fields.answers);
 
@@ -311,11 +427,33 @@ const sendAnswer = asyncHandler(async (request, response) => {
       .json({ errors: ["Formularul nu a fost gasit"] });
   }
 
-  // TODO: replace with object from DB
-  const { timpTransmitere: timer } = request.fields;
-  const { intrebari: formQuestions } = form;
+  if (form.dataExpirare && form.dataExpirare <= new Date()) {
+    return response.status(401).json({
+      errors: ["Din păcate acest formular nu mai acceptă răspunsuri!"],
+    });
+  }
 
-  console.log(`Timer ${timer}`);
+  if (form.dataValiditate && form.dataValiditate < new Date()) {
+    return response
+      .status(401)
+      .json({ errors: ["Acest formular nu este valid în momentul curent!"] });
+  }
+
+  if (!form.raspunsuriMultipleUtilizator) {
+    const alreadyAnswered = await FormResponses.find({
+      utilizator: request.user._id,
+      formular: form._id,
+    });
+
+    if (alreadyAnswered) {
+      return response.status(401).json({
+        errors: ["Ati transmit deja un răspuns pentru acest formular!"],
+      });
+    }
+  }
+
+  const { timpTransmitere: timer } = form;
+  const { intrebari: formQuestions } = form;
 
   timeLeft = timer && timeLeft;
 
@@ -377,8 +515,11 @@ const sendAnswer = asyncHandler(async (request, response) => {
         return;
       }
 
-      if (questionType === "Caseta de selectare") {
-        handleTextBoxResponse(
+      if (
+        questionType === "Caseta de selectare" ||
+        questionType === "Buton radio"
+      ) {
+        handleMarkBoxResponse(
           questionDB,
           timeLeft,
           question.raspunsuri,
@@ -396,11 +537,6 @@ const sendAnswer = asyncHandler(async (request, response) => {
     console.log(`Errors backend ${JSON.stringify(errors, null, 4)}`);
     return response.status(400).json({ errors: errors });
   }
-
-  console.log(
-    `Answer Object `,
-    JSON.stringify(answerObject.raspunsuri, null, 10)
-  );
 
   const formAnswer = await FormAnswers.create({
     utilizator: request.user._id,
@@ -439,10 +575,10 @@ const handleFileUploadQuestion = (
   }
 
   if (atribute && file && canAnswer) {
-    const extension = file.name.split(".")[1];
+    const extension = file.name.split(".")[1].toUpperCase();
     const sizeInMb = file.size / 1024 / 1024;
     const {
-      tipuriFisierPermise: fileTypes,
+      extensiiFisierPermise: fileTypes,
       textRaspunsInvalid: invalidAnswer,
       dimensiuneMaximaFisier: maxSize,
     } = atribute;
@@ -513,15 +649,39 @@ const handleTextResponse = (
     return;
   }
 
-  if (atribute && answerText && canAnswer) {
+  if (atribute && answerText && atribute.descriereValidare && canAnswer) {
     const {
-      validareRaspuns: answerValidateRegex,
+      validareRaspuns: answerValidate,
+      descriereValidare: validationDescription,
       textRaspunsInvalid: invalidAnswerMessage,
     } = atribute;
 
-    const isValidAnswer = answerText.match(answerValidateRegex);
+    if (validationDescription === "NUMAR" && !/^\d+$/.test(answerText.trim())) {
+      addError(questionDB, invalidAnswerMessage);
+      return;
+    }
 
-    if (!isValidAnswer) {
+    if (
+      validationDescription === "SIR DE CARACTERE" &&
+      !answerText.match(/^[A-Za-z]+$/)
+    ) {
+      addError(questionDB, invalidAnswerMessage);
+      return;
+    }
+
+    if (
+      validationDescription === "EXPRESIE REGULATA" &&
+      !answerText.match(answerValidate)
+    ) {
+      addError(questionDB, invalidAnswerMessage);
+      return;
+    }
+
+    if (
+      validationDescription !== "NUMAR" &&
+      validationDescription.includes("NUMAR") &&
+      !validateNumberRange(answerText, answerValidate, validationDescription)
+    ) {
       addError(questionDB, invalidAnswerMessage);
       return;
     }
@@ -535,7 +695,7 @@ const handleTextResponse = (
   });
 };
 
-const handleTextBoxResponse = (
+const handleMarkBoxResponse = (
   questionDB,
   timeLeft,
   answers,
@@ -568,17 +728,6 @@ const handleTextBoxResponse = (
     const isExactSelection = answers.length === exactSelection;
     const isMinSelection = answers.length >= minSelection;
 
-    console.log(
-      `Exact selection ${questionDB.titlu} ${exactSelection} ${
-        answers.length === exactSelection
-      } ${isExactSelection}`
-    );
-    console.log(
-      `Min selection ${questionDB.titlu} ${minSelection} ${
-        answers.length >= minSelection
-      } ${isMinSelection}`
-    );
-
     if (exactSelection && !isExactSelection) {
       addError(questionDB, invalidAnswerMessage);
       return;
@@ -590,8 +739,6 @@ const handleTextBoxResponse = (
     }
   }
 
-  console.log(`Intrebare ${questionDB.titlu}`);
-  console.log(`Is answer = ${isAnswer}`);
   if (!isAnswer) return;
 
   addResponse({
@@ -601,11 +748,13 @@ const handleTextBoxResponse = (
 };
 
 export {
-  getFormByID,
   createForm,
+  getFormByID,
+  updateForm,
   deleteForm,
   createQuestion,
   updateQuestion,
   deleteQuestion,
   sendAnswer,
+  getUserAnswers,
 };

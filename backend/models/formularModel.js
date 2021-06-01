@@ -6,10 +6,23 @@ const formularSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Utilizator",
     },
-    nume: {
+    titlu: {
       type: String,
       required: true,
       default: "Formular",
+    },
+    dataValiditate: {
+      type: Date,
+    },
+    dataExpirare: {
+      type: Date,
+    },
+    timpTransmitere: {
+      type: Number,
+    },
+    raspunsuriMultipleUtilizator: {
+      type: Boolean,
+      default: true,
     },
     intrebari: [
       {
@@ -27,6 +40,10 @@ const formularSchema = mongoose.Schema(
         obligatoriu: {
           type: Boolean,
           default: false,
+        },
+        punctaj: {
+          type: Number,
+          default: 0,
         },
         atribute: {},
         raspunsuri: [

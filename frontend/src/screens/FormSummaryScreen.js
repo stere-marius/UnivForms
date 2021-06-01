@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
 import Header from "../components/Header";
 
 const FormSummaryScreen = ({ location: { state, isTimeExpired }, history }) => {
@@ -8,13 +7,10 @@ const FormSummaryScreen = ({ location: { state, isTimeExpired }, history }) => {
   };
 
   useEffect(() => {
-    console.log(`State `, JSON.stringify(state, null, 10));
     if (!state || !state.formName) {
       history.push(`/`);
     }
-  }, [state]);
-
-  // TODO: Vad daca exista raspunsul utilizatorului, daca nu exista, il trimit la main
+  }, [state, history]);
 
   return !state ? (
     <></>

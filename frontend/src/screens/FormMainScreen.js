@@ -1,17 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { listFormDetails } from "../actions/formActions";
 import Header from "../components/Header";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
-import moment from "moment";
+import { formatToHHMMSS } from "../utilities";
 
 const FormMainScreen = ({ match, history }) => {
   const dispatch = useDispatch();
-
-  const [timeSubmit, setTimeSubmit] = useState(0);
-
-  const [hasAcceptedTimer, setAcceptedTimer] = useState(false);
 
   const formDetails = useSelector(state => state.formDetails);
   const { loading = true, error, form } = formDetails;
@@ -26,11 +22,7 @@ const FormMainScreen = ({ match, history }) => {
     }
 
     dispatch(listFormDetails(match.params.id));
-  }, [match, dispatch]);
-
-  //   useEffect(() => {
-  //     setTimeSubmit(form.timpTransmitere);
-  //   }, [form.timpTransmitere]);
+  }, [match, dispatch, history, userInfo]);
 
   const handleAccept = () => {
     history.push(`/form/${match.params.id}/view`);
@@ -61,12 +53,25 @@ const FormMainScreen = ({ match, history }) => {
             }}
           >
             <div className="p-4">
-              <h3 className="fw-bold">{form.nume}</h3>
+              <h3 className="fw-bold">{form.titlu}</h3>
               {form.dataExpirare &&
               new Date(form.dataExpirare) <= Date.now() ? (
                 <>
                   <h3 className="mt-5">
                     Din pacăte acest formular a expirat !
+                  </h3>
+                  <button
+                    className="btn btn-default btn-color-green px-4 text-dark text-bold fs-5 mt-4 fw-bold"
+                    onClick={handleFormExpireButton}
+                  >
+                    OK
+                  </button>
+                </>
+              ) : form.dataValiditate &&
+                Date.now() < new Date(form.dataValiditate) ? (
+                <>
+                  <h3 className="mt-5">
+                    Din pacăte acest formular nu este încă valid !
                   </h3>
                   <button
                     className="btn btn-default btn-color-green px-4 text-dark text-bold fs-5 mt-4 fw-bold"
@@ -109,7 +114,7 @@ const FormMainScreen = ({ match, history }) => {
                           Timp transmitere
                         </p>
                         <p className="fw-bold fs-4 mx-5">
-                          {moment(form.timpTransmitere).format("HH:mm:ss")}
+                          {formatToHHMMSS(form.timpTransmitere)}
                         </p>
                       </div>
                     )}
@@ -119,7 +124,7 @@ const FormMainScreen = ({ match, history }) => {
                     <>
                       <div class="alert alert-danger fw-bold text-dark">
                         Acest formular contine un timp limitat de transmiterea a
-                        informatiilor!
+                        raspunsurilor!
                       </div>
                     </>
                   )}

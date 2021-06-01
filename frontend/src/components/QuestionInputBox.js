@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import QuestionTitle from "./QuestionTitle";
+import { validateNumberRange } from "../utilities";
 
 const QuestionMarkBox = ({
   question,
@@ -10,13 +11,8 @@ const QuestionMarkBox = ({
 }) => {
   const questionId = question._id;
   const title = question.titlu;
-  const answers = question.raspunsuri;
 
   const [errors, setErrors] = useState([]);
-
-  const defaultStateIntrebare = raspunsuriIntrebariUtilizator.find(
-    q => q.id === questionId
-  );
 
   const [raspunsUtilizator, setRaspunsUtilizator] = useState("");
 
@@ -28,7 +24,7 @@ const QuestionMarkBox = ({
     setRaspunsUtilizator(
       (defaultStateIntrebare && defaultStateIntrebare.raspuns) || ""
     );
-  }, [indexQuestion, question]);
+  }, [indexQuestion, question, questionId, raspunsuriIntrebariUtilizator]);
 
   const handleSubmit = () => {
     if (!raspunsUtilizator) {
@@ -41,15 +37,46 @@ const QuestionMarkBox = ({
       return;
     }
 
-    if (question.atribute && question.atribute.validareRaspuns) {
+    if (question.atribute && question.atribute.descriereValidare) {
       const {
-        validareRaspuns: answerValidateRegex,
+        validareRaspuns: answerValidate,
+        descriereValidare: validationDescription,
         textRaspunsInvalid: invalidAnswerMessage,
       } = question.atribute;
 
-      const isValidAnswer = raspunsUtilizator.match(answerValidateRegex);
+      if (
+        validationDescription === "SIR DE CARACTERE" &&
+        !/^[A-Za-z]+$/.test(raspunsUtilizator.trim())
+      ) {
+        setErrors([invalidAnswerMessage]);
+        return;
+      }
 
-      if (!isValidAnswer) {
+      if (
+        validationDescription === "NUMAR" &&
+        !/^\d+$/.test(raspunsUtilizator.trim())
+      ) {
+        setErrors([invalidAnswerMessage]);
+        return;
+      }
+
+      if (
+        validationDescription === "EXPRESIE REGULATA" &&
+        !raspunsUtilizator.match(answerValidate)
+      ) {
+        setErrors([invalidAnswerMessage]);
+        return;
+      }
+
+      if (
+        validationDescription !== "NUMAR" &&
+        validationDescription.includes("NUMAR") &&
+        !validateNumberRange(
+          raspunsUtilizator,
+          answerValidate,
+          validationDescription
+        )
+      ) {
         setErrors([invalidAnswerMessage]);
         return;
       }
@@ -102,8 +129,8 @@ const QuestionMarkBox = ({
 
         {errors && (
           <div className="d-flex flex-column txt-danger px-4 py-3">
-            {errors.map(error => (
-              <div className="alert alert-danger">
+            {errors.map((error, index) => (
+              <div key={index} className="alert alert-danger">
                 <p className="danger fs-4">{error}</p>
               </div>
             ))}

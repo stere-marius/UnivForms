@@ -27,7 +27,7 @@ const QuestionMarkBox = ({
     setRaspunsuriUtilizator(
       (defaultStateIntrebare && defaultStateIntrebare.raspunsuri) || []
     );
-  }, [indexQuestion, question]);
+  }, [indexQuestion, question, questionId, raspunsuriIntrebariUtilizator]);
 
   const handleSubmit = () => {
     const atributeIntrebare = question.atribute;
@@ -93,8 +93,8 @@ const QuestionMarkBox = ({
 
       <div className="d-flex flex-column justify-content-center">
         <div className="form-check mx-5">
-          {answers.map(answer => (
-            <div className="py-3" key={answer._id}>
+          {answers.map((answer, index) => (
+            <div key={answer._id} className="py-3">
               <input
                 className="form-check-input form-input-green fs-2"
                 type={inputType}
@@ -119,8 +119,8 @@ const QuestionMarkBox = ({
 
         {errors && (
           <div className="d-flex flex-column txt-danger px-4 py-3">
-            {errors.map(error => (
-              <div className="alert alert-danger">
+            {errors.map((error, index) => (
+              <div key={index} className="alert alert-danger">
                 <p className="danger fs-4">{error}</p>
               </div>
             ))}

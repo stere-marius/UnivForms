@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 const QuestionMarkBoxAttributesPanel = ({ questionDB, onAttributeChange }) => {
   const [attributes, setAttributesQuestion] = useState(
     questionDB.atribute || {}
   );
 
-  const setAttributes = attributes => {
-    setAttributesQuestion(attributes);
-    onAttributeChange(attributes);
-  };
+  const setAttributes = useCallback(
+    attributes => {
+      setAttributesQuestion(attributes);
+      onAttributeChange(attributes);
+    },
+    [onAttributeChange]
+  );
 
   const [isPanelMinAnswers, setPanelMinAnswersVisible] = useState(
     Boolean(attributes.validareRaspuns?.selectareMinima)
@@ -28,7 +31,7 @@ const QuestionMarkBoxAttributesPanel = ({ questionDB, onAttributeChange }) => {
     setPanelExactAnswersVisible(
       Boolean(attributes.validareRaspuns?.selectareExacta)
     );
-  }, [attributes]);
+  }, [attributes, setAttributes]);
 
   const handleRandomOrder = e => {
     setAttributes({

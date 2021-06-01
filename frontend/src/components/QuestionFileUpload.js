@@ -1,10 +1,8 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { formatBytes } from "../utilities";
 import QuestionTitle from "./QuestionTitle";
 import Loader from "./Loader";
-import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
 
 const QuestionFileUpload = ({
   question,
@@ -16,13 +14,9 @@ const QuestionFileUpload = ({
   const questionId = question._id;
   const title = question.titlu;
 
-  const dispatch = useDispatch();
-  const userLogin = useSelector(state => state.userLogin);
-  const { userInfo } = userLogin;
-
   const [errors, setErrors] = useState([]);
 
-  const [uploading, setUploading] = useState(false);
+  const [uploading] = useState(false);
 
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -32,33 +26,7 @@ const QuestionFileUpload = ({
     );
     setErrors([]);
     setSelectedFile(defaultStateIntrebare && defaultStateIntrebare.fisier);
-  }, [question, indexQuestion]);
-
-  const uploadFileHandler = async e => {
-    // const formData = new FormData();
-    // formData.append("file", selectedFile);
-    // formData.append("formID", formID);
-    // formData.append("questionID", questionId);
-    // setUploading(true);
-    // // const { utilizator, formId, intrebareID, formData } = request.body;
-    // try {
-    //   const config = {
-    //     headers: {
-    //       "Content-Type": "multipart/form-data",
-    //       Authorization: `Bearer ${userInfo.token}`,
-    //     },
-    //   };
-    //   const { data } = await axios.post(
-    //     "/api/forms/uploadFormResponse",
-    //     formData,
-    //     config
-    //   );
-    //   setErrors([data]);
-    //   setUploading(false);
-    // } catch (error) {
-    //   setUploading(false);
-    // }
-  };
+  }, [question, questionId, raspunsuriIntrebariUtilizator, indexQuestion]);
 
   const handleSubmit = () => {
     if (!selectedFile) {
@@ -66,12 +34,12 @@ const QuestionFileUpload = ({
       return;
     }
 
-    const ext = selectedFile.name.split(".")[1];
+    const ext = selectedFile.name.split(".")[1].toUpperCase();
     const sizeInMb = selectedFile.size / 1024 / 1024;
 
     if (question.atribute) {
       const dimensiuneMaximaFisier = question.atribute.dimensiuneMaximaFisier;
-      const tipuriFisierPermise = question.atribute.tipuriFisierPermise;
+      const tipuriFisierPermise = question.atribute.extensiiFisierPermise;
 
       if (tipuriFisierPermise && !tipuriFisierPermise.includes(ext)) {
         setErrors([question.atribute.textRaspunsInvalid]);
@@ -89,7 +57,6 @@ const QuestionFileUpload = ({
       return;
     }
 
-    uploadFileHandler();
     handleNextQuestion();
 
     const questionFound = raspunsuriIntrebariUtilizator.find(
@@ -143,8 +110,8 @@ const QuestionFileUpload = ({
 
         {errors && (
           <div className="d-flex flex-column txt-danger px-4 py-3">
-            {errors.map(error => (
-              <div className="alert alert-danger">
+            {errors.map((error, index) => (
+              <div key={index} className="alert alert-danger">
                 <p className="danger fs-4">{error}</p>
               </div>
             ))}

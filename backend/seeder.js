@@ -16,7 +16,6 @@ connectDB();
 
 const importData = async () => {
   try {
-    destroyData();
     console.log("Inserez utilizatorii");
     const createdUsers = await Utilizator.insertMany(utilizatori);
     const userID = createdUsers[0]._id;
@@ -92,8 +91,8 @@ const destroyData = async () => {
 };
 
 if (process.argv[2] === "-d") {
-  // destroyData();
+  destroyData();
 } else {
-  importDataFormAnswers();
-  // importData();
+  // importDataFormAnswers();
+  importData();
 }

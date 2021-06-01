@@ -9,7 +9,7 @@ import Message from "../components/Message";
 import { Link } from "react-router-dom";
 import FormCreateModal from "../components/FormCreateModal";
 
-const HomeScreen = () => {
+const HomeScreen = ({ history }) => {
   const userLogin = useSelector(state => state.userLogin);
   const { userInfo } = userLogin;
 
@@ -34,12 +34,6 @@ const HomeScreen = () => {
     <>
       {userInfo ? (
         <>
-          {/* {loadingGroups ? (
-            <Loader />
-          ) : (
-            <div>{groups.map(group => console.log(JSON.stringify(group)))}</div>
-          )} */}
-
           <Header width={"95%"} />
 
           <div
@@ -111,7 +105,7 @@ const HomeScreen = () => {
                         style={{ borderRadius: "10px" }}
                       >
                         <h4 className="text-center p-2 border-bottom">
-                          {form.nume}
+                          {form.titlu}
                         </h4>
                         <p className="p-3">
                           <i className="fas fa-calendar-alt mx-1 inline-block" />
@@ -125,10 +119,16 @@ const HomeScreen = () => {
                           <i className="fas fa-users mx-1 inline-block" />
                           21
                         </p>
-                        <div className="d-flex align-items-center justify-content-center m-3">
+
+                        <div className="d-flex align-items-center justify-content-between m-3">
                           <Link to={`/form/${form._id}`}>
                             <button className="btn btn-default btn-color-green text-decoration-none">
                               Vezi formular
+                            </button>
+                          </Link>
+                          <Link to={`/form/${form._id}/edit`}>
+                            <button className="btn btn-default btn-color-green text-decoration-none">
+                              Editeaza formular
                             </button>
                           </Link>
                         </div>

@@ -6,6 +6,7 @@ import Message from "../components/Message";
 import Loader from "../components/Loader";
 import FormContainer from "../components/FormContainer";
 import { register } from "../actions/userActions";
+import { USER_REGISTER_RESET } from "../constants/userConstants";
 
 const RegisterScreen = ({ location, history }) => {
   const [email, setEmail] = useState("");
@@ -22,8 +23,9 @@ const RegisterScreen = ({ location, history }) => {
   useEffect(() => {
     if (userInfo) {
       history.push(redirect);
+      dispatch({ type: USER_REGISTER_RESET });
     }
-  }, [history, userInfo, redirect]);
+  }, [history, userInfo, redirect, dispatch]);
 
   const submitHandler = e => {
     e.preventDefault();
@@ -32,57 +34,65 @@ const RegisterScreen = ({ location, history }) => {
 
   return (
     <FormContainer>
-      <h1>Sign In</h1>
-      {error && <Message variant="danger">{error}</Message>}
+      <h1 className="text-white">Inregistrare</h1>
+      {Array.isArray(error) &&
+        error.length > 0 &&
+        error.map((err, index) => (
+          <Message key={index} variant="danger">
+            {err.msg}
+          </Message>
+        ))}
+      {error && !Array.isArray(error) && (
+        <Message variant="danger">{error}</Message>
+      )}
       {loading && <Loader />}
-      <Form onSubmit={submitHandler}>
-        <Form.Group controlId="firstName">
-          <Form.Label>First name</Form.Label>
+      <Form onSubmit={submitHandler} className="text-white">
+        <Form.Group controlId="lastName">
+          <Form.Label>Nume</Form.Label>
           <Form.Control
             type="text"
-            placeholder="Enter first name"
+            placeholder="Nume"
+            value={lastName}
+            onChange={e => setLastName(e.target.value)}
+          ></Form.Control>
+        </Form.Group>
+        <Form.Group controlId="firstName">
+          <Form.Label>Prenume</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Prenume"
             value={firstName}
             onChange={e => setFirstName(e.target.value)}
           ></Form.Control>
         </Form.Group>
 
-        <Form.Group controlId="lastName">
-          <Form.Label>Last name</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter last name"
-            value={lastName}
-            onChange={e => setLastName(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
-
         <Form.Group controlId="email">
-          <Form.Label>Email Address</Form.Label>
+          <Form.Label>Adresa email</Form.Label>
           <Form.Control
             type="email"
-            placeholder="Enter email"
+            placeholder="email"
             value={email}
             onChange={e => setEmail(e.target.value)}
           ></Form.Control>
         </Form.Group>
 
         <Form.Group controlId="password">
-          <Form.Label>Password</Form.Label>
+          <Form.Label>Parola</Form.Label>
           <Form.Control
             type="password"
-            placeholder="Enter password"
+            placeholder="parola"
             value={password}
             onChange={e => setPassword(e.target.value)}
           ></Form.Control>
         </Form.Group>
 
-        <Button type="submit" variant="primary">
+        <Button type="submit" variant="primary" className="mt-3 text-white">
           Register
         </Button>
       </Form>
-      <Row className="py-3">
+      <Row className="py-3 text-white">
         <Col>
-          Already have an account?{" "}
+          Ai deja un cont?{" "}
           <Link to={redirect ? `/login?redirect=${redirect}` : "/login"}>
             Login
           </Link>

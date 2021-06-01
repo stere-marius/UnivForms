@@ -6,13 +6,13 @@ const formulare = [
         titlu: "Selectati tarile membre UE",
         imagine: "C://Imagini//imagine.jpg",
         obligatoriu: true,
+        punctaj: 100,
         atribute: {
           descriere: "Descriere",
           afisareOrdineDescrescatoare: false,
-          punctaj: 100,
           validareRaspuns: {
-            selectareExact: 2,
-            textEroare: "Selectati exact doua raspunsuri",
+            selectareExacta: 2,
+            textRaspunsInvalid: "Selectati exact doua raspunsuri",
           },
         },
         raspunsuri: [
@@ -53,13 +53,12 @@ const formulare = [
         titlu: "Selectati vecinii României",
         imagine: "C://Imagini//imagine.jpg",
         obligatoriu: true,
+        punctaj: 100,
         atribute: {
           descriere: "Descriere",
-          afisareOrdineDescrescatoare: false,
-          punctaj: 100,
           validareRaspuns: {
-            selectareExact: 2,
-            textEroare: "Selectati exact doua raspunsuri",
+            selectareMinima: 2,
+            textRaspunsInvalid: "Selectati minim doua raspunsuri",
           },
         },
         raspunsuri: [
@@ -180,21 +179,24 @@ const formulare = [
         tip: "Raspuns text",
         titlu: "Tipurile de date primitive din JAVA",
         obligatoriu: true,
+        punctaj: 10,
         atribute: {
-          validareRaspuns: "",
+          validareRaspuns: 5,
+          descriereValidare: "SIR DE LUNGIME MAI MARE DECAT",
           textRaspunsInvalid: "Introduceti un raspuns valid",
-          punctaj: 10,
         },
         raspunsuri: [
           {
-            raspunsExact:
-              "byte, short, int, long, float, double, boolean, char",
+            raspuns: "byte, short, int, long, float, double, boolean, char",
+            tipRaspuns: "RASPUNS_EXACT",
           },
           {
-            contineRaspuns: "byte",
+            raspuns: "byte",
+            tipRaspuns: "CONTINE_TEXT",
           },
           {
-            raspunsRegex: "byte|short|int|long|float|double|boolean|char/i",
+            raspuns: "byte|short|int|long|float|double|boolean|char/i",
+            tipRaspuns: "POTRIVESTE_REGEX",
           },
         ],
       },
@@ -203,11 +205,12 @@ const formulare = [
         tip: "Incarcare fisier",
         titlu: "Introduceti tema numarul 5",
         obligatoriu: true,
+        punctaj: 10,
         atribute: {
-          tipuriFisierPermise: ["pdf", "docx", "csv"],
-          textRaspunsInvalid: "Introduceti un fisier valid",
+          extensiiFisierPermise: ["pdf", "docx", "csv"],
+          textRaspunsInvalid:
+            "Introduceti un fisier de tipul PDF, WORD sau CSV",
           dimensiuneMaximaFisier: 1,
-          punctajTrimitere: 10,
         },
       },
     ],

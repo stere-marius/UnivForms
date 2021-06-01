@@ -15,7 +15,6 @@ import {
   FILE_UPLOAD,
 } from "../constants/questionTypesConstants";
 import QuestionFileUpload from "../components/QuestionFileUpload";
-import FormCreateModal from "../components/FormCreateModal";
 
 const FormViewScreen = ({ match, history }) => {
   const tabs = [
@@ -58,7 +57,19 @@ const FormViewScreen = ({ match, history }) => {
     }
 
     dispatch(listFormDetails(match.params.id));
-  }, [match, dispatch]);
+  }, [match, dispatch, userInfo, history]);
+
+  useEffect(() => {
+    if (form.dataValiditate && Date.now() < new Date(form.dataValiditate)) {
+      history.push(`/form/${form._id}/main`);
+      return;
+    }
+
+    if (form.dataExpirare && new Date(form.dataExpirare) <= Date.now()) {
+      history.push(`/form/${form._id}/main`);
+      return;
+    }
+  }, [form.dataValiditate, form._id, history, form.dataExpirare]);
 
   useEffect(() => {
     setErrorsSubmit([]);
@@ -68,20 +79,27 @@ const FormViewScreen = ({ match, history }) => {
     if (new Date(form.dataExpirare) <= Date.now()) {
       history.push(`/form/${match.params.id}`);
     }
-  }, [form.dataExpirare]);
+  }, [form.dataExpirare, history, match.params.id]);
 
   useEffect(() => {
     if (progressSendResponse === 100 && successSendResponse) {
       history.push({
         pathname: `/form/${match.params.id}/summary`,
-        state: { formName: `${form.nume}` },
-        isTimeExpired: timeLeft.current <= 0,
+        state: { formName: `${form.titlu}` },
+        isTimeExpired: form.timpTransmitere && timeLeft.current <= 0,
       });
     }
-  }, [progressSendResponse, successSendResponse]);
+  }, [
+    progressSendResponse,
+    successSendResponse,
+    form.timpTransmitere,
+    form.titlu,
+    history,
+    match.params.id,
+  ]);
 
   useEffect(() => {
-    if (indexQuestion >= form.intrebari.length) {
+    if (indexQuestion >= form.intrebari?.length) {
       setSelectedTab("Trimitere formular");
     }
   }, [indexQuestion, form.intrebari]);
@@ -332,7 +350,7 @@ const FormViewScreen = ({ match, history }) => {
         }}
       >
         <div className="p-4">
-          <h3 className="fw-bold">{form.nume}</h3>
+          <h3 className="fw-bold">{form.titlu}</h3>
           <div className="d-flex flex-column mt-5" style={{ width: "45%" }}>
             <div className="d-flex align-items-baseline my-3">
               <i className="fas fa-question fs-4" />
@@ -365,7 +383,7 @@ const FormViewScreen = ({ match, history }) => {
                   class="progress-bar"
                   role="progressbar"
                   style={{ width: `${progressSendResponse}%` }}
-                  aria-valuenow={`${progressSendResponse}`}
+                  aria-valuenow={progressSendResponse}
                   aria-valuemin="0"
                   aria-valuemax="100"
                 >
@@ -376,17 +394,20 @@ const FormViewScreen = ({ match, history }) => {
           )}
 
           {errorsSendResponse &&
-            errorsSendResponse.map(error => (
-              <div class="alert alert-danger" role="alert">
-                {error.title} - {error.error}
-              </div>
+            (Array.isArray(errorsSendResponse) ? (
+              errorsSendResponse.map(error => (
+                <div class="alert alert-danger">
+                  {error.title} - {error.error}
+                  <span> Treci la intrebare</span>
+                </div>
+              ))
+            ) : (
+              <div class="alert alert-info">{errorsSendResponse}</div>
             ))}
 
           {errorsSubmit.length > 0 &&
             errorsSubmit.map(error => (
-              <div class="alert alert-danger" role="alert">
-                {error}
-              </div>
+              <div class="alert alert-danger">{error}</div>
             ))}
 
           <Button

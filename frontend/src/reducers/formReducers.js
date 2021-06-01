@@ -2,18 +2,28 @@ import {
   FORM_DETAILS_REQUEST,
   FORM_DETAILS_SUCCESS,
   FORM_DETAILS_FAIL,
+  FORM_UPDATE_REQUEST,
+  FORM_UPDATE_SUCCESS,
+  FORM_UPDATE_FAIL,
+  FORM_UPDATE_RESET,
   FORM_SEND_RESPONSE_REQUEST,
   FORM_SEND_RESPONSE_SUCCESS,
   FORM_SEND_RESPONSE_FAIL,
   FORM_CREATE_REQUEST,
   FORM_CREATE_SUCCESS,
   FORM_CREATE_FAIL,
+  FORM_CREATE_RESET,
   FORM_UPDATE_QUESTION_REQUEST,
   FORM_UPDATE_QUESTION_SUCCESS,
   FORM_UPDATE_QUESTION_FAIL,
+  FORM_UPDATE_QUESTION_RESET,
   FORM_CREATE_QUESTION_REQUEST,
   FORM_CREATE_QUESTION_SUCCESS,
   FORM_CREATE_QUESTION_FAIL,
+  FORM_DELETE_QUESTION_REQUEST,
+  FORM_DELETE_QUESTION_SUCCESS,
+  FORM_DELETE_QUESTION_FAIL,
+  FORM_DELETE_QUESTION_RESET,
 } from "../constants/formConstants";
 
 export const formDetailsReducer = (state = { form: {} }, action) => {
@@ -50,6 +60,23 @@ export const formCreateReducer = (state = {}, action) => {
       return { loading: false, success: true, form: action.payload };
     case FORM_CREATE_FAIL:
       return { loading: false, success: false, error: action.payload };
+    case FORM_CREATE_RESET:
+      return {};
+    default:
+      return state;
+  }
+};
+
+export const formUpdateReducer = (state = {}, action) => {
+  switch (action.type) {
+    case FORM_UPDATE_REQUEST:
+      return { loading: true };
+    case FORM_UPDATE_SUCCESS:
+      return { loading: false, success: true, form: action.payload };
+    case FORM_UPDATE_FAIL:
+      return { loading: false, success: false, error: action.payload };
+    case FORM_UPDATE_RESET:
+      return {};
     default:
       return state;
   }
@@ -63,6 +90,8 @@ export const formUpdateQuestionReducer = (state = {}, action) => {
       return { loading: false, success: true, question: action.payload };
     case FORM_UPDATE_QUESTION_FAIL:
       return { loading: false, success: false, error: action.payload };
+    case FORM_UPDATE_QUESTION_RESET:
+      return {};
     default:
       return state;
   }
@@ -76,6 +105,21 @@ export const formCreateQuestionReducer = (state = {}, action) => {
       return { loading: false, success: true, question: action.payload };
     case FORM_CREATE_QUESTION_FAIL:
       return { loading: false, success: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const formDeleteQuestionReducer = (state = {}, action) => {
+  switch (action.type) {
+    case FORM_DELETE_QUESTION_REQUEST:
+      return { loading: true };
+    case FORM_DELETE_QUESTION_SUCCESS:
+      return { loading: false, success: true };
+    case FORM_DELETE_QUESTION_FAIL:
+      return { loading: false, success: false, error: action.payload };
+    case FORM_DELETE_QUESTION_RESET:
+      return {};
     default:
       return state;
   }

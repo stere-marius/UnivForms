@@ -3,9 +3,10 @@ import { Form, Button, Image } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import { logout } from "../actions/userActions";
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 const Header = ({ width }) => {
-  document.body.style = "background: #191722";
+  let history = useHistory();
 
   const dispatch = useDispatch();
   const userLogin = useSelector(state => state.userLogin);
@@ -13,6 +14,7 @@ const Header = ({ width }) => {
 
   const logoutHandler = () => {
     dispatch(logout());
+    history.push(`/`);
   };
 
   return (

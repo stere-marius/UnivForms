@@ -10,10 +10,11 @@ import {
 import {
   formCreateQuestionReducer,
   formCreateReducer,
+  formDeleteQuestionReducer,
   formDetailsReducer,
-  formFileUploadReducer,
   formSendResponseReducer,
   formUpdateQuestionReducer,
+  formUpdateReducer,
 } from "./reducers/formReducers";
 
 const reducer = combineReducers({
@@ -24,8 +25,10 @@ const reducer = combineReducers({
   formDetails: formDetailsReducer,
   formResponse: formSendResponseReducer,
   formCreate: formCreateReducer,
+  formUpdate: formUpdateReducer,
   formUpdatedQuestion: formUpdateQuestionReducer,
   formCreatedQuestion: formCreateQuestionReducer,
+  formDeletedQuestion: formDeleteQuestionReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")

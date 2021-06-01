@@ -9,6 +9,8 @@ import FormEditScreen from "./screens/FormEditScreen";
 import FormSummaryScreen from "./screens/FormSummaryScreen";
 
 function App() {
+  document.body.style = "background: #191722";
+
   return (
     <Router>
       <Route path="/login" component={LoginScreen} />

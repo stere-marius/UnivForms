@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Modal, Button } from "react-bootstrap";
+import React, { useState, useEffect, useRef } from "react";
+import { Modal } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { createQuestion } from "../actions/formActions";
 import Loader from "./Loader";
@@ -10,7 +10,7 @@ import {
   TEXT_QUESTION,
 } from "../constants/questionTypesConstants";
 
-const ModalNewQuestion = ({ showModal, onClose }) => {
+const ModalNewQuestion = ({ formID, showModal, onClose, onCreate }) => {
   const dispatch = useDispatch();
 
   const [show, setShow] = useState(false);
@@ -43,19 +43,24 @@ const ModalNewQuestion = ({ showModal, onClose }) => {
   }, [showModal]);
 
   useEffect(() => {
-    if (successCreate && createdForm) {
-      history.push(`/form/${createdForm.id}/edit`);
+    if (success && question) {
+      onCreate(question);
     }
-  }, [successCreate, createdForm]);
+  }, [success, onCreate, question]);
 
   const handleCreateQuestion = () => {
     if (!questionType) {
+      setErrors(new Set(errors).add("Introduceti tipul întrebării!"));
+      return;
+    }
+
+    if (!questionTitle) {
       setErrors(new Set(errors).add("Introduceti titlul întrebării!"));
       return;
     }
 
     dispatch(
-      createQuestion({
+      createQuestion(formID, {
         titlu: questionTitle,
         tip: questionType,
       })
@@ -63,7 +68,7 @@ const ModalNewQuestion = ({ showModal, onClose }) => {
   };
 
   const handleSelectType = e => {
-    setQuestionType(e.value);
+    setQuestionType(e.target.value);
   };
 
   const handleChangeQuestionTitle = e => {
@@ -86,24 +91,31 @@ const ModalNewQuestion = ({ showModal, onClose }) => {
                 type="text"
                 class="form-control form-input-green"
                 placeholder="Titlul întrebării"
-                value={formTitle}
+                value={questionTitle}
                 onChange={handleChangeQuestionTitle}
               />
             </div>
           </div>
 
-          {questionTypes.length > 0 && (
-            <select
-              class="form-select"
-              onChange={handleSelectType}
-              value={questionType}
-            >
-              {questionTypes.map((questionType, index) => {
-                <option value={questionType} key={index} selected={index === 0}>
-                  {questionType}
-                </option>;
-              })}
-            </select>
+          {questionTypes.current.length > 0 && (
+            <div className="mt-3">
+              <p>Tipul întrebării</p>
+              <select
+                class="form-select form-input-green"
+                onChange={handleSelectType}
+                value={questionType}
+              >
+                {questionTypes.current.map((questionType, index) => (
+                  <option
+                    value={`${questionType}`}
+                    key={index}
+                    selected={index === 0}
+                  >
+                    {questionType}
+                  </option>
+                ))}
+              </select>
+            </div>
           )}
 
           {errors.size > 0 && (
@@ -137,7 +149,7 @@ const ModalNewQuestion = ({ showModal, onClose }) => {
           </button>
           <button
             className="btn btn-default btn-color-green fw-bold"
-            onClick={handleCreateForm}
+            onClick={handleCreateQuestion}
           >
             Creează intrebare
           </button>
@@ -146,3 +158,5 @@ const ModalNewQuestion = ({ showModal, onClose }) => {
     </>
   );
 };
+
+export default ModalNewQuestion;
