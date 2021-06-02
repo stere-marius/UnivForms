@@ -250,6 +250,45 @@ const addGroupForm = asyncHandler(async (request, response) => {
     .json({ message: "Formularul a fost adaugat cu succes!" });
 });
 
+// @desc    Sterge formular grup
+// @route   DELETE /api/groups/:id/forms/:formID
+// @access  Private/Group admin
+const removeGroupForm = asyncHandler(async (request, response) => {
+  const group = request.group;
+  const formID = request.params.formID;
+
+  if (!formID) {
+    return response
+      .status(400)
+      .json({ message: "Introduceti un formular valid!" });
+  }
+
+  const isValidForm = await Form.findById(formID);
+
+  if (!isValidForm) {
+    return response
+      .status(404)
+      .json({ message: "Formularul nu a fost găsit!" });
+  }
+
+  const formIndex = group.formulare.findIndex(
+    form => form.formularID.toString() === formID
+  );
+
+  if (formIndex === -1) {
+    return response
+      .status(400)
+      .json({ message: "Acest formular nu se află în grup!" });
+  }
+
+  group.formulare.splice(formIndex, 1);
+  await group.save();
+
+  return response
+    .status(200)
+    .json({ message: "Formularul a fost șters cu succes!" });
+});
+
 export {
   findGroupID,
   groupAdmin,
@@ -260,4 +299,5 @@ export {
   addUser,
   setGroupAdmin,
   addGroupForm,
+  removeGroupForm,
 };
