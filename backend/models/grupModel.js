@@ -24,7 +24,7 @@ const grupSchema = mongoose.Schema(
     ],
     formulare: [
       {
-        formular: {
+        formularID: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Formular",
         },

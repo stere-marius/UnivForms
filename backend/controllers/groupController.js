@@ -211,6 +211,45 @@ const setGroupAdmin = asyncHandler(async (request, response) => {
     .json({ message: "Rolul utilizatorului a fost modificat cu succes!" });
 });
 
+// @desc    Adauga formular grup
+// @route   PUT /api/groups/:id/forms
+// @access  Private/Group admin
+const addGroupForm = asyncHandler(async (request, response) => {
+  const group = request.group;
+  const formID = request.body.formID;
+
+  if (!formID) {
+    return response
+      .status(400)
+      .json({ message: "Introduceti un formular valid!" });
+  }
+
+  const isValidForm = await Form.findById(formID);
+
+  if (!isValidForm) {
+    return response
+      .status(404)
+      .json({ message: "Formularul nu a fost găsit!" });
+  }
+
+  const form = group.formulare.find(
+    form => form.formularID.toString() === formID
+  );
+
+  if (form) {
+    return response
+      .status(400)
+      .json({ message: "Acest formular se află deja în grup!" });
+  }
+
+  group.formulare.push({ formularID: formID });
+  await group.save();
+
+  return response
+    .status(200)
+    .json({ message: "Formularul a fost adaugat cu succes!" });
+});
+
 export {
   findGroupID,
   groupAdmin,
@@ -220,4 +259,5 @@ export {
   removeUser,
   addUser,
   setGroupAdmin,
+  addGroupForm,
 };
