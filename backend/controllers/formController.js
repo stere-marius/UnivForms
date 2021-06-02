@@ -76,6 +76,10 @@ const updateForm = asyncHandler(async (request, response) => {
     );
   }
 
+  if (!time) {
+    form.timpTransmitere = undefined;
+  }
+
   if (time) {
     form.timpTransmitere = +time;
   }
@@ -84,7 +88,12 @@ const updateForm = asyncHandler(async (request, response) => {
     form.raspunsuriMultipleUtilizator = multipleAnswers;
   }
 
+  if (!multipleAnswers) {
+    form.raspunsuriMultipleUtilizator = undefined;
+  }
+
   if (!validDate) {
+    form.dataValiditate = undefined;
   }
 
   if (validDate) {
@@ -109,6 +118,10 @@ const updateForm = asyncHandler(async (request, response) => {
 
     form.dataExpirare = expireDate;
     console.log(`Am adaugat data validitatea ca fiind ${expireDate}`);
+  }
+
+  if (!expireDate) {
+    form.dataExpirare = undefined;
   }
 
   const updatedForm = await form.save();
@@ -272,18 +285,17 @@ const updateQuestion = asyncHandler(async (request, response) => {
       .json({ message: "Punctajul trebuie să fie un număr !" });
   }
 
-  question.punctaj = +question.punctaj;
+  questionDB.punctaj = +question.punctaj;
 
   if (
     question.tip === "Buton radio" &&
-    question.raspunsuri.filter(question => question.atribute.raspunsCorect)
+    question.raspunsuri.filter(question => question.atribute?.raspunsCorect)
       .length > 1
   ) {
     return response.status(401).json({
       message:
         "O întrebare de tip radio nu poate avea mai mult de un răspuns corect!",
     });
-    return;
   }
 
   if (question.tip === "Caseta de selectare" && question.atribute) {
@@ -642,7 +654,7 @@ const getSpecificAnswer = asyncHandler(async (request, response) => {
     }
 
     if (type === "Incarcare fisier" && answer.fisier) {
-      let correctUserAnswer = false;
+      let correctUserAnswer = true;
 
       responseQuestion.punctajUtilizator = questionScore
         ? correctUserAnswer
@@ -926,7 +938,7 @@ const handleFileUploadQuestion = (
     const isValidExtension = fileTypes && fileTypes.includes(extension);
     const isValidSize = maxSize && sizeInMb <= maxSize;
 
-    if (!isValidExtension || !isValidSize) {
+    if ((fileTypes && !isValidExtension) || (maxSize && !isValidSize)) {
       addError(questionDB, invalidAnswer);
       fs.unlinkSync(file.path);
       return;
@@ -962,7 +974,9 @@ const handleFileUploadQuestion = (
 
     addResponse({
       intrebare: questionDB.id,
-      fisier: path.join(`${formID}/${userID}/${questionDB.id}/${uniqueID}`),
+      fisier: path.join(
+        `${formID}/${userID}/${questionDB.id}/${uniqueID}/${file.name}`
+      ),
     });
   }
 };

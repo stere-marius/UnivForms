@@ -41,6 +41,11 @@ const QuestionFileUpload = ({
       const dimensiuneMaximaFisier = question.atribute.dimensiuneMaximaFisier;
       const tipuriFisierPermise = question.atribute.extensiiFisierPermise;
 
+      console.log(`Extensie curenta ${ext}`);
+      console.log(
+        `Extensii permise ${JSON.stringify(tipuriFisierPermise, null, 2)}`
+      );
+
       if (tipuriFisierPermise && !tipuriFisierPermise.includes(ext)) {
         setErrors([question.atribute.textRaspunsInvalid]);
         return;

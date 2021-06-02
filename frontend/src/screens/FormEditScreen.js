@@ -97,7 +97,7 @@ const FormEditScreen = ({ match, history }) => {
       setFormTitle(form.titlu);
     }
 
-    if (form.intrebari) {
+    if (form && form.intrebari) {
       const formQuestionsDB = form.intrebari;
       setFormQuestions(formQuestionsDB);
 

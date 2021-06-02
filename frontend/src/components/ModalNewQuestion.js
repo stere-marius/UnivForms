@@ -44,13 +44,13 @@ const ModalNewQuestion = ({ formID, showModal, onClose, onCreate }) => {
     setErrors(new Set());
   }, [showModal]);
 
-  useEffect(() => {
-    if (success && question) {
-      console.log(`Create question`);
-      onCreate(question);
-      success = false;
-    }
-  }, [success, onCreate, question]);
+  // useEffect(() => {
+  //   if (success && question) {
+  //     console.log(`Create question`);
+  //     onCreate(question);
+  //     success = false;
+  //   }
+  // }, [success, onCreate, question]);
 
   const handleCreateQuestion = () => {
     if (!questionType) {
@@ -64,10 +64,14 @@ const ModalNewQuestion = ({ formID, showModal, onClose, onCreate }) => {
     }
 
     dispatch(
-      createQuestion(formID, {
-        titlu: questionTitle,
-        tip: questionType,
-      })
+      createQuestion(
+        formID,
+        {
+          titlu: questionTitle,
+          tip: questionType,
+        },
+        onCreate
+      )
     );
   };
 

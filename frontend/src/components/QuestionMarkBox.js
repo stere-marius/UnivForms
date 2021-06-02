@@ -74,6 +74,11 @@ const QuestionMarkBox = ({
   };
 
   const handleChange = e => {
+    if (inputType === "radio" && e.target.checked) {
+      setRaspunsuriUtilizator([e.target.id]);
+      return;
+    }
+
     if (e.target.checked) {
       setRaspunsuriUtilizator([...raspunsuriUtilizator, e.target.id]);
     } else {
@@ -93,7 +98,7 @@ const QuestionMarkBox = ({
 
       <div className="d-flex flex-column justify-content-center">
         <div className="form-check mx-5">
-          {answers.map((answer, index) => (
+          {answers.map(answer => (
             <div key={answer._id} className="py-3">
               <input
                 className="form-check-input form-input-green fs-2"
@@ -108,7 +113,6 @@ const QuestionMarkBox = ({
               />
               <label
                 className="form-check-label text-dark fs-2"
-                spellCheck={false}
                 htmlFor={answer._id}
               >
                 {answer.titlu}

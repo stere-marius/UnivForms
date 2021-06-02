@@ -86,7 +86,7 @@ const FormEditRadioQuestion = ({
     }
 
     if (
-      formQuestion.raspunsuri.filter(answer => answer.atribute.raspunsCorect)
+      formQuestion.raspunsuri.filter(answer => answer.atribute?.raspunsCorect)
         .length > 1
     ) {
       setErrors(

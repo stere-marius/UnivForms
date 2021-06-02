@@ -194,7 +194,8 @@ export const updateQuestion =
   };
 
 export const createQuestion =
-  (formID, questionData) => async (dispatch, getState) => {
+  (formID, questionData, successCb = () => {}) =>
+  async (dispatch, getState) => {
     try {
       dispatch({ type: FORM_CREATE_QUESTION_REQUEST });
 
@@ -215,6 +216,7 @@ export const createQuestion =
         config
       );
       dispatch({ type: FORM_CREATE_QUESTION_SUCCESS, payload: data });
+      successCb(data);
     } catch (error) {
       dispatch({
         type: FORM_CREATE_QUESTION_FAIL,

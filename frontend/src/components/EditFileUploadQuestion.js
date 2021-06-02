@@ -21,7 +21,7 @@ const EditFileUploadQuestion = ({
 
   const [extension, setExtension] = useState("");
 
-  const [fileSize] = useState(1);
+  const [fileSize, setFileSize] = useState(1);
 
   const [isExtensionPanel, setExtensionPanel] = useState(
     Boolean(
@@ -85,6 +85,13 @@ const EditFileUploadQuestion = ({
       return;
     }
 
+    if (isFileSizePanel && isNaN(fileSize)) {
+      setErrors(
+        new Set(errors).add("Dimensiunea fișierului trebuie să fie numerică!")
+      );
+      return;
+    }
+
     if (
       (isFileSizePanel || isExtensionPanel) &&
       !formQuestion.atribute.textRaspunsInvalid
@@ -102,7 +109,11 @@ const EditFileUploadQuestion = ({
       };
     }
 
-    if (!isExtensionPanel) {
+    if (
+      !isExtensionPanel ||
+      (formQuestion.atribute &&
+        formQuestion.atribute.extensiiFisierPermise.length === 0)
+    ) {
       formQuestion.atribute = {
         ...formQuestion.atribute,
         extensiiFisierPermise: undefined,
@@ -115,6 +126,15 @@ const EditFileUploadQuestion = ({
         textRaspunsInvalid: undefined,
       };
     }
+
+    if (isFileSizePanel) {
+      formQuestion.atribute = {
+        ...formQuestion.atribute,
+        dimensiuneMaximaFisier: +fileSize,
+      };
+    }
+
+    console.log(`Am trimis ${JSON.stringify(formQuestion, null, 2)}`);
 
     await dispatch(
       updateQuestion(formID, formQuestion._id, { intrebare: formQuestion })
@@ -173,6 +193,7 @@ const EditFileUploadQuestion = ({
 
     if (value <= 0) return;
 
+    setFileSize(value);
     setFormQuestion({
       ...formQuestion,
       atribute: {

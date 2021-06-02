@@ -325,26 +325,28 @@ const EditTextQuestion = ({ formID, formQuestionDB, handleNewQuestion }) => {
                     onChange={handleChangeSelect}
                     value={selectValue}
                   >
-                    <option value={selectValue === "NUMAR"}>NUMAR</option>
-                    <option value={selectValue === "SIR_DE_CARACTERE"}>
+                    <option selected={selectValue === "NUMAR"}>NUMAR</option>
+                    <option selected={selectValue === "SIR_DE_CARACTERE"}>
                       SIR DE CARACTERE
                     </option>
-                    <option value={selectValue === "SIR_DE_LUNGIME_MAI_MARE"}>
+                    <option
+                      selected={selectValue === "SIR_DE_LUNGIME_MAI_MARE"}
+                    >
                       SIR DE LUNGIME MAI MARE DECAT
                     </option>
-                    <option value={selectValue === "NUMAR_MAI_MARE"}>
+                    <option selected={selectValue === "NUMAR_MAI_MARE"}>
                       NUMAR MAI MARE DECAT
                     </option>
-                    <option value={selectValue === "NUMAR_MAI_MIC"}>
+                    <option selected={selectValue === "NUMAR_MAI_MIC"}>
                       NUMAR MAI MIC DECAT
                     </option>
-                    <option value={selectValue === "NUMAR_EGAL_CU"}>
+                    <option selected={selectValue === "NUMAR_EGAL_CU"}>
                       NUMAR EGAL CU
                     </option>
-                    <option value={selectValue === "NUMAR_IN_INTERVAL"}>
+                    <option selected={selectValue === "NUMAR_IN_INTERVAL"}>
                       NUMAR IN INTERVAL
                     </option>
-                    <option value={selectValue === "EXPRESIE_REGULATA"}>
+                    <option selected={selectValue === "EXPRESIE_REGULATA"}>
                       EXPRESIE REGULATA
                     </option>
                   </select>

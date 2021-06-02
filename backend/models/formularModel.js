@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import RaspunsuriFormular from "./raspunsuriModel.js";
 
 const formularSchema = mongoose.Schema(
   {
@@ -62,6 +63,11 @@ const formularSchema = mongoose.Schema(
     strict: false,
   }
 );
+
+formularSchema.pre("remove", function (next) {
+  RaspunsuriFormular.remove({ formular: this._id }).exec();
+  next();
+});
 
 const Formular = mongoose.model("Formular", formularSchema, "formulare");
 export default Formular;
