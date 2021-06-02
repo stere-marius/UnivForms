@@ -276,9 +276,10 @@ export const getFormAnswers = formID => async (dispatch, getState) => {
       },
     };
 
-    const data = await axios.get(`/api/forms/${formID}/answers`, config);
+    const { data } = await axios.get(`/api/forms/${formID}/answers`, config);
 
-    dispatch({ type: FORM_ANSWERS_SUCCESS });
+    console.log(`Data = ${JSON.stringify(data, null, 2)}`);
+    dispatch({ type: FORM_ANSWERS_SUCCESS, payload: data.raspunsuri || [] });
   } catch (error) {
     dispatch({
       type: FORM_ANSWERS_FAIL,
@@ -305,12 +306,12 @@ export const getFormAnswer =
         },
       };
 
-      const data = await axios.get(
+      const { data } = await axios.get(
         `/api/forms/${formID}/answers/${answerID}`,
         config
       );
 
-      dispatch({ type: FORM_ANSWER_SUCCESS });
+      dispatch({ type: FORM_ANSWER_SUCCESS, payload: data });
     } catch (error) {
       dispatch({
         type: FORM_ANSWER_FAIL,

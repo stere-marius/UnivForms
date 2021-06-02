@@ -12,6 +12,7 @@ import {
 import path from "path";
 import fs from "fs";
 import mongoose from "mongoose";
+import { arraysHaveSaveValues } from "../utils/utilities.js";
 
 // @desc    Obtine formular folosind ID
 // @route   GET /api/forms/:id
@@ -434,6 +435,16 @@ const getSpecificAnswer = asyncHandler(async (request, response) => {
     throw new Error("Acest formular nu exista!");
   }
 
+  if (!request.params.answerID) {
+    response.status(404);
+    throw new Error("Acest raspuns nu exista!");
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(request.params.answerID)) {
+    response.status(404);
+    throw new Error("Acest raspuns nu exista!");
+  }
+
   const formResponse = await FormResponses.findOne({
     formular: request.params.id,
     _id: request.params.answerID,
@@ -480,6 +491,7 @@ const getSpecificAnswer = asyncHandler(async (request, response) => {
     const responseQuestion = {
       id,
       titlu: title,
+      punctajIntrebare: questionScore,
       tip: type,
     };
 
@@ -487,39 +499,47 @@ const getSpecificAnswer = asyncHandler(async (request, response) => {
       (type === "Caseta de selectare" || type === "Buton radio") &&
       answer.raspunsuri
     ) {
-      const correctAnswersDB = questionAnswers.filter(
-        a => a.toObject().atribute && a.toObject().atribute.raspunsCorect
-      );
+      const correctAnswersDB = questionAnswers
+        .filter(
+          a => a.toObject().atribute && a.toObject().atribute.raspunsCorect
+        )
+        .map(answer => answer._id);
 
-      console.log(`${title}'s response is ${answer.raspunsuri}`);
-
-      const correctAnswersUser = new Set();
+      const answersUser = [];
 
       const userAnswers = questionAnswers.map(answerDB => {
         const includes = answer.raspunsuri.includes(answerDB._id.toString());
 
         const attributes = answerDB.toObject().atribute;
-        const isCorrect = Boolean(attributes && attributes.raspunsCorect);
+        const isCorrect = attributes && attributes.raspunsCorect;
 
-        if (isCorrect) {
-          correctAnswersUser.add(answerDB._id);
+        if (includes) {
+          answersUser.push(answerDB.toObject()._id);
+          return {
+            id: answerDB._id,
+            titlu: answerDB.toObject().titlu,
+            esteCorect: isCorrect || false,
+          };
         }
 
-        return includes
-          ? {
-              id: answerDB._id,
-              titlu: answerDB.toObject().titlu,
-              esteCorect: isCorrect,
-            }
-          : { id: answerDB._id, titlu: answerDB.toObject().titlu };
+        return { id: answerDB._id, titlu: answerDB.toObject().titlu };
       });
 
-      responseQuestion.punctaj = questionScore
-        ? correctAnswersUser.size === correctAnswersDB.length
+      console.log(`${title}`);
+      console.log(`answersUser = ${JSON.stringify(answersUser, null, 2)}`);
+      console.log(
+        `correctAnswersDB = ${JSON.stringify(correctAnswersDB, null, 2)}`
+      );
+      console.log(
+        `arrayEqual = ${arraysHaveSaveValues(answersUser, correctAnswersDB)}`
+      );
+
+      responseQuestion.punctajUtilizator = questionScore
+        ? arraysHaveSaveValues(answersUser, correctAnswersDB)
           ? questionScore
           : 0
         : undefined;
-      userScore += +responseQuestion.punctaj || 0;
+      userScore += +responseQuestion.punctajUtilizator || 0;
       responseQuestion.raspunsuri = userAnswers;
       questionResponses.push(responseQuestion);
 
@@ -528,7 +548,6 @@ const getSpecificAnswer = asyncHandler(async (request, response) => {
 
     if (type === "Raspuns text" && answer.raspuns !== undefined) {
       let userAnswer = answer.raspuns.trim();
-      console.log(`${title}'s response is ${userAnswer}`);
       let correctUserAnswer = false;
       // const flags = raspuns.match(/\/[a-z]/);
 
@@ -554,7 +573,7 @@ const getSpecificAnswer = asyncHandler(async (request, response) => {
         }
       }
 
-      responseQuestion.punctaj = questionScore
+      responseQuestion.punctajUtilizator = questionScore
         ? correctUserAnswer
           ? questionScore
           : 0
@@ -570,7 +589,7 @@ const getSpecificAnswer = asyncHandler(async (request, response) => {
     if (type === "Incarcare fisier" && answer.fisier) {
       let correctUserAnswer = false;
 
-      responseQuestion.punctaj = questionScore
+      responseQuestion.punctajUtilizator = questionScore
         ? correctUserAnswer
           ? questionScore
           : 0
@@ -608,6 +627,11 @@ const getFormAnswers = asyncHandler(async (request, response) => {
   if (!form) {
     response.status(404);
     throw new Error("Acest formular nu exista!");
+  }
+
+  if (form.utilizator.toString() !== request.user._id.toString()) {
+    response.status(401);
+    throw new Error("Nu sunteti utilizatorul acestui formular");
   }
 
   const perPage = request.body.perPagina || 15;

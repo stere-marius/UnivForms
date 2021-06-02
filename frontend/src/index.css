@@ -9,11 +9,25 @@ body {
 
 :root {
   --green-primary: #01df9b;
+  --red-primary: #fc3a3a;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+.border-color-green {
+  border: 1px solid var(--green-primary);
+}
+
+.border-color-red {
+  border: 1px solid var(--red-primary);
+}
+
+.checkbox-red {
+  background-color: var(--red-primary) !important;
+  border-color: var(--red-primary) !important;
 }
 
 .btn-white {

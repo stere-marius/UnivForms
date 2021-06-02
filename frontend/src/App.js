@@ -8,6 +8,7 @@ import FormViewScreen from "./screens/FormViewScreen";
 import FormMainScreen from "./screens/FormMainScreen";
 import FormEditScreen from "./screens/FormEditScreen";
 import FormSummaryScreen from "./screens/FormSummaryScreen";
+import FormAnswersScreen from "./screens/FormAnswersScreen";
 
 function App() {
   document.body.style = "background: #191722";
@@ -20,6 +21,7 @@ function App() {
       <Route path="/form/:id/edit" component={FormEditScreen} />
       <Route path="/form/:id/view" component={FormViewScreen} />
       <Route path="/form/:id/summary" component={FormSummaryScreen} />
+      <Route path="/form/:id/answers" component={FormAnswersScreen} />
       <Route path="/" component={HomeScreen} exact />
     </Router>
   );
