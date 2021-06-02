@@ -4,6 +4,7 @@ import colors from "colors";
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
 import formRoutes from "./routes/formRoutes.js";
+import groupRoutes from "./routes/groupRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import morgan from "morgan";
 
@@ -22,6 +23,7 @@ app.get("/", (request, response) => {
 
 app.use("/api/users", userRoutes);
 app.use("/api/forms", formRoutes);
+app.use("/api/groups", groupRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

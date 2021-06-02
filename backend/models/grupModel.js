@@ -6,15 +6,18 @@ const grupSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    creator: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Utilizator",
+    },
     utilizatori: [
       {
-        utilizator: {
+        utilizatorID: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Utilizator",
         },
         administrator: {
           type: Boolean,
-          required: true,
           default: false,
         },
       },
