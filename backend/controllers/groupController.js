@@ -39,7 +39,7 @@ const groupAdmin = asyncHandler(async (request, response, next) => {
 
   if (!groupAdmins.includes(request.user._id.toString())) {
     return response.status(401).json({
-      message: "Nu aveți permisiunea de a sterge utilizatori din grup!",
+      message: "Nu aveți permisiunea de a efectua aceasta operatie!",
     });
   }
 
@@ -172,6 +172,45 @@ const addUser = asyncHandler(async (request, response) => {
     .json({ message: "Utilizatorul a fost adaugat cu succes!" });
 });
 
+// @desc    Promoveaza utilizatorul la gradul de administrator
+// @route   PUT /api/groups/:id/admins
+// @access  Private/Group admin
+const setGroupAdmin = asyncHandler(async (request, response) => {
+  const group = request.group;
+
+  const userID = request.body.userID;
+  const admin = request.body.admin;
+
+  if (!userID) {
+    return response
+      .status(400)
+      .json({ message: "Introduceti un utilizator valid!" });
+  }
+
+  const user = group.utilizatori.find(
+    user => user.utilizatorID.toString() === userID
+  );
+
+  if (!user) {
+    return response
+      .status(400)
+      .json({ message: "Acest utilizator nu face parte din grup!" });
+  }
+
+  if (userID === group.creator.toString()) {
+    return response.status(401).json({
+      message: "Rolul celui care a creat grupul nu poate fi modificat!",
+    });
+  }
+
+  user.administrator = admin || false;
+  await group.save();
+
+  return response
+    .status(200)
+    .json({ message: "Rolul utilizatorului a fost modificat cu succes!" });
+});
+
 export {
   findGroupID,
   groupAdmin,
@@ -180,4 +219,5 @@ export {
   deleteGroup,
   removeUser,
   addUser,
+  setGroupAdmin,
 };

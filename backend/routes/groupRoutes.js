@@ -8,6 +8,7 @@ import {
   groupAdmin,
   removeUser,
   addUser,
+  setGroupAdmin,
 } from "../controllers/groupController.js";
 
 const router = express.Router();
@@ -22,5 +23,8 @@ router.route("/:id/users").put(protect, findGroupID, groupAdmin, addUser);
 router
   .route("/:id/users/:userID")
   .delete(protect, findGroupID, groupAdmin, removeUser);
+router
+  .route("/:id/admins")
+  .put(protect, findGroupID, groupAdmin, setGroupAdmin);
 
 export default router;
