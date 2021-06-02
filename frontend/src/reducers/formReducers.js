@@ -32,6 +32,7 @@ import {
   FORM_ANSWER_SUCCESS,
   FORM_ANSWER_FAIL,
   FORM_ANSWER_RESET,
+  FORM_DETAILS_RESET,
 } from "../constants/formConstants";
 
 export const formDetailsReducer = (state = { form: {} }, action) => {
@@ -42,6 +43,8 @@ export const formDetailsReducer = (state = { form: {} }, action) => {
       return { loading: false, form: action.payload };
     case FORM_DETAILS_FAIL:
       return { loading: false, error: action.payload };
+    case FORM_DETAILS_RESET:
+      return { form: {} };
     default:
       return state;
   }

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getFormAnswer } from "../actions/formActions";
+import AnswerFileUpload from "./AnswerFileUpload";
 import AnswerMarkBox from "./AnswerMarkBox";
+import AnswerTextQuestion from "./AnswerTextQuestion";
 import Loader from "./Loader";
 import Message from "./Message";
 
@@ -67,6 +69,14 @@ const UserAnswerTab = ({ answerID, formID }) => {
           {question.tip === "Caseta de selectare" ||
           question.tip === "Buton radio" ? (
             <AnswerMarkBox question={question} />
+          ) : question.tip === "Raspuns text" ? (
+            <AnswerTextQuestion question={question} />
+          ) : question.tip === "Incarcare fisier" ? (
+            <AnswerFileUpload
+              formID={formID}
+              answerID={answerID}
+              question={question}
+            />
           ) : (
             <> </>
           )}

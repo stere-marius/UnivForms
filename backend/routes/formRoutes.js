@@ -13,8 +13,8 @@ import {
   updateForm,
   getUserAnswers,
   getFormAnswers,
-  duplicateAnswers,
   getSpecificAnswer,
+  downloadFile,
 } from "../controllers/formController.js";
 
 const router = express.Router();
@@ -27,8 +27,10 @@ router
   .put(protect, updateForm);
 
 router.route("/:id/answers").get(protect, getFormAnswers);
+router
+  .route("/:id/answers/:answerID/:questionID/downloadFile")
+  .get(protect, downloadFile);
 router.route("/:id/answers/:answerID").get(protect, getSpecificAnswer);
-router.route("/:id/duplicate").get(protect, duplicateAnswers);
 router.route("/:id/userAnswers").get(protect, getUserAnswers);
 router.route("/:id/questions").put(protect, createQuestion);
 

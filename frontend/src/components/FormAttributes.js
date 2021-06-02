@@ -76,24 +76,38 @@ const FormAttributes = ({ form, onPropertyChange }) => {
       return;
     }
 
-    if (isStartPanel && dateValid < new Date()) {
-      setErrors(
-        new Set(errors).add(
-          "Data validitiății nu poate fi mai mică decât data curentă!"
-        )
-      );
-      return;
-    }
+    // if (isStartPanel && dateValid < new Date()) {
+    //   console.log(`Data validitiății nu poate fi mai mică decât data curentă!`);
+    //   setErrors(
+    //     new Set(errors).add(
+    //       "Data validitiății nu poate fi mai mică decât data curentă!"
+    //     )
+    //   );
+    //   return;
+    // }
 
-    if (isExpirePanel && expireDate < new Date()) {
-      setErrors(
-        new Set(errors).add(
-          "Data expirării nu poate fi mai mică decât data curentă!"
-        )
-      );
-      return;
-    }
+    // if (isExpirePanel && expireDate < new Date()) {
+    //   setErrors(
+    //     new Set(errors).add(
+    //       "Data expirării nu poate fi mai mică decât data curentă!"
+    //     )
+    //   );
+    //   return;
+    // }
 
+    console.log(
+      `Obiect trimis ${JSON.stringify(
+        {
+          titlu: formTitle,
+          raspunsuriMultipleUtilizator: acceptMultipleAnswers,
+          dataValiditate: isStartPanel && dateValid ? dateValid : undefined,
+          dataExpirare: isExpirePanel && expireDate ? expireDate : undefined,
+          timpTransmitere: isTimerPanel && time ? time : undefined,
+        },
+        null,
+        2
+      )}`
+    );
     await dispatch(
       updateForm(form._id, {
         titlu: formTitle,

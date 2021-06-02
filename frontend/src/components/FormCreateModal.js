@@ -43,12 +43,12 @@ const FormCreateModal = ({ showModal, onClose, userGroups, history }) => {
     }
   }, [successCreate, history, createdForm]);
 
-  const handleCreateForm = () => {
+  const handleCreateForm = async () => {
     if (!formTitle) {
       setErrors(new Set(errors).add("Introduceti titlul formularului!"));
       return;
     }
-    dispatch({ type: "FORM_UPDATE_QUESTION_RESET" });
+
     dispatch(
       createForm({
         titlu: formTitle,

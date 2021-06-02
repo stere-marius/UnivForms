@@ -28,6 +28,8 @@ const HomeScreen = ({ history }) => {
       dispatch(getGroups());
       dispatch(getForms());
     }
+    dispatch({ type: "FORM_UPDATE_QUESTION_RESET" });
+    dispatch({ type: "FORM_DETAILS_RESET" });
   }, [userInfo, dispatch]);
 
   return (

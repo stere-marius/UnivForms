@@ -59,8 +59,6 @@ const updateForm = asyncHandler(async (request, response) => {
     throw new Error("Nu aveti permisiunea de a edita acest formular!");
   }
 
-  console.log(`Am primit body ${JSON.stringify(request.body, null, 2)}`);
-
   const title = request.body.titlu;
   const multipleAnswers = request.body.raspunsuriMultipleUtilizator;
   let validDate = request.body.dataValiditate;
@@ -84,6 +82,9 @@ const updateForm = asyncHandler(async (request, response) => {
 
   if (multipleAnswers) {
     form.raspunsuriMultipleUtilizator = multipleAnswers;
+  }
+
+  if (!validDate) {
   }
 
   if (validDate) {
@@ -400,21 +401,75 @@ const deleteQuestion = asyncHandler(async (request, response) => {
     .json({ message: "Intrebarea a fost stearsa cu success" });
 });
 
-// @desc    Obtine raspunsurilor formularului
-// @route   GET /api/forms/:id/duplicate
+// @desc    Descarcă fișierul atașat răspunsului
+// @route   GET /api/forms/:id/answers/:answerID/:questionID/downloadFile
 // @access  Private
+const downloadFile = asyncHandler(async (request, response) => {
+  const formID = request.params.id;
 
-const duplicateAnswers = asyncHandler(async (request, response) => {
-  const formResponse = await FormResponses.findOne({
-    formular: "60b5790cc68ef450d0c31ae6",
-  });
-
-  for (let i = 0; i < 1000; i++) {
-    formResponse._id = mongoose.Types.ObjectId();
-    await FormResponses.insertMany(formResponse);
+  if (!mongoose.Types.ObjectId.isValid(formID)) {
+    return response.status(404).json({ message: `Acest formular nu exista!` });
   }
 
-  return response.status(201).json({ message: "Am duplicat formularele" });
+  const form = await Form.findById(formID);
+
+  if (!form) {
+    return response.status(404).json({ message: `Acest formular nu exista!` });
+  }
+
+  if (!request.params.answerID) {
+    return response.status(404).json({ message: `Acest raspuns nu exista!` });
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(request.params.answerID)) {
+    return response.status(404).json({ message: `Acest raspuns nu exista!` });
+  }
+
+  const formResponse = await FormResponses.findOne({
+    formular: request.params.id,
+    _id: request.params.answerID,
+  });
+
+  if (!formResponse) {
+    return response.status(404).json({
+      message: `Raspunsul cu ID-ul ${request.params.answerID} nu a fost gasit`,
+    });
+  }
+
+  if (
+    form.utilizator._id.toString() !== request.user._id.toString() &&
+    formResponse.utilizator.toString() !== request.user._id.toString()
+  ) {
+    return response.status(401).json({
+      message: `Utilizator neautorizat! Numai deținătorul formularului sau cel care a încărcat fișierul au permisiunea de a-l descărca!`,
+    });
+  }
+
+  const question = formResponse.raspunsuri.find(
+    q => q.intrebare.toString() === request.params.questionID
+  );
+
+  if (!question) {
+    return response
+      .status(404)
+      .json({ message: `Întrebarea nu a fost găsită!` });
+  }
+
+  if (!question.fisier) {
+    return response
+      .status(404)
+      .json({ message: `Întrebarea nu conține un fișier atașat!` });
+  }
+
+  const __dirname = path.resolve();
+  const filePath = path.join(__dirname, `../uploads/${question.fisier}`);
+
+  console.log(`File path is ${filePath}`);
+  if (!fs.existsSync(filePath)) {
+    return response.status(404).json({ message: `Fisierul nu a fost găsit!` });
+  }
+
+  return response.status(201).download(filePath);
 });
 
 // @desc    Obtine raspunsurilor formularului
@@ -881,9 +936,10 @@ const handleFileUploadQuestion = (
   if (canAnswer && file) {
     const __dirname = path.resolve();
     const oldPath = file.path;
+    const uniqueID = mongoose.Types.ObjectId();
     const newPath = path.join(
       __dirname,
-      `../uploads/${formID}/${userID}/${questionDB.id}`
+      `../uploads/${formID}/${userID}/${questionDB.id}/${uniqueID}`
     );
 
     let errorRename = null;
@@ -906,7 +962,7 @@ const handleFileUploadQuestion = (
 
     addResponse({
       intrebare: questionDB.id,
-      fisier: path.join(`${questionDB.id}/${userID}/${file.name}`),
+      fisier: path.join(`${formID}/${userID}/${questionDB.id}/${uniqueID}`),
     });
   }
 };
@@ -1044,5 +1100,5 @@ export {
   getUserAnswers,
   getFormAnswers,
   getSpecificAnswer,
-  duplicateAnswers,
+  downloadFile,
 };
