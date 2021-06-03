@@ -8,16 +8,20 @@ import {
   isNumeric,
   validateNumberRange,
   validateStringLength,
+  idValidDate,
 } from "../utils/validators.js";
 import path from "path";
 import fs from "fs";
 import mongoose from "mongoose";
 import { arraysHaveSaveValues } from "../utils/utilities.js";
 
-// @desc    Obtine formular folosind ID
-// @route   GET /api/forms/:id
-// @access  Public
-const getFormByID = asyncHandler(async (request, response) => {
+// @desc    Verifică ID-ul formularului și-l pune în obiectul request
+const findFormID = asyncHandler(async (request, response, next) => {
+  if (!mongoose.Types.ObjectId.isValid(formID)) {
+    response.status(404);
+    throw new Error("Acest formular nu exista!");
+  }
+
   const form = await Form.findById(request.params.id);
 
   if (!form) {
@@ -25,21 +29,34 @@ const getFormByID = asyncHandler(async (request, response) => {
     throw new Error("Formularul nu a fost gasit");
   }
 
-  return response.json(form);
+  request.form = form;
+  next();
+});
+
+// @desc    Verifică creatorul formularului
+const checkFormAdmin = asyncHandler(async (request, response, next) => {
+  if (request.form.utilizator.toString() !== request.user.id) {
+    response.status(401);
+    throw new Error(
+      "Utilizator neautorizat! Nu sunteti creatorul acestui formular!"
+    );
+  }
+
+  next();
+});
+
+// @desc    Obtine formular folosind ID
+// @route   GET /api/forms/:id
+// @access  Public
+const getFormByID = asyncHandler(async (request, response) => {
+  return response.json(request.form);
 });
 
 // @desc    Obtine formular folosind ID
 // @route   DELETE /api/forms/:id
 // @access  Private/Admin Group/Admin Site
 const deleteForm = asyncHandler(async (request, response) => {
-  const form = await Form.findById(request.params.id);
-
-  if (!form) {
-    response.status(401);
-    throw new Error("Formularul nu a fost gasit");
-  }
-
-  await form.remove();
+  await request.form.remove();
   return response.json({ message: "Formularul a fost sters cu succes" });
 });
 
@@ -47,23 +64,9 @@ const deleteForm = asyncHandler(async (request, response) => {
 // @route   PUT /api/forms/:id
 // @access  Private
 const updateForm = asyncHandler(async (request, response) => {
-  const form = await Form.findById(request.params.id);
+  const form = request.form;
 
-  if (!form) {
-    response.status(401);
-    throw new Error("Formularul nu a fost gasit");
-  }
-
-  if (form.utilizator._id.toString() !== request.user._id.toString()) {
-    response.status(401);
-    throw new Error("Nu aveti permisiunea de a edita acest formular!");
-  }
-
-  const title = request.body.titlu;
-  const multipleAnswers = request.body.raspunsuriMultipleUtilizator;
-  let validDate = request.body.dataValiditate;
-  let expireDate = request.body.dataExpirare;
-  const time = request.body.timpTransmitere;
+  const { title, multipleAnswers, validDate, expireDate, time } = request.body;
 
   if (title) {
     form.titlu = title;
@@ -76,56 +79,24 @@ const updateForm = asyncHandler(async (request, response) => {
     );
   }
 
-  if (!time) {
-    form.timpTransmitere = undefined;
+  if (validDate && !isValidDate(validDate)) {
+    response.status(401);
+    throw new Error("Data validitate invalida!");
   }
 
-  if (time) {
-    form.timpTransmitere = +time;
+  if (expireDate && !isValidDate(expireDate)) {
+    response.status(401);
+    throw new Error("Data expirare invalida!");
   }
 
-  if (multipleAnswers) {
-    form.raspunsuriMultipleUtilizator = multipleAnswers;
-  }
+  form.timpTransmitere = time ? +time : undefined;
+  form.dataValiditate = validDate ? new Date(validDate) : undefined;
+  form.expireDate = expireDate ? new Date(expireDate) : undefined;
+  form.raspunsuriMultipleUtilizator = multipleAnswers
+    ? multipleAnswers
+    : undefined;
 
-  if (!multipleAnswers) {
-    form.raspunsuriMultipleUtilizator = undefined;
-  }
-
-  if (!validDate) {
-    form.dataValiditate = undefined;
-  }
-
-  if (validDate) {
-    validDate = new Date(validDate);
-
-    if (!(validDate instanceof Date && !isNaN(validDate))) {
-      response.status(401);
-      throw new Error("Data validitate invalida!");
-    }
-
-    form.dataValiditate = validDate;
-    console.log(`Am adaugat data validitatea ca fiind ${validDate}`);
-  }
-
-  if (expireDate) {
-    expireDate = new Date(expireDate);
-
-    if (!(expireDate instanceof Date && !isNaN(expireDate))) {
-      response.status(401);
-      throw new Error("Data expirare invalida!");
-    }
-
-    form.dataExpirare = expireDate;
-    console.log(`Am adaugat data validitatea ca fiind ${expireDate}`);
-  }
-
-  if (!expireDate) {
-    form.dataExpirare = undefined;
-  }
-
-  const updatedForm = await form.save();
-  console.log(`Updated form = ${JSON.stringify(updatedForm, null, 2)}`);
+  await form.save();
 
   return response.json({ message: "Formularul a fost actualizat cu succes" });
 });
@@ -140,13 +111,6 @@ const createForm = asyncHandler(async (request, response) => {
   if (!titlu) {
     response.status(401);
     throw new Error("Formularul trebuie să aibă un titlu");
-  }
-
-  const utilizator = request.user._id;
-
-  if (!utilizator) {
-    response.status(401);
-    throw new Error("Trebuie să fii logat pentru a crea un formular");
   }
 
   let group;
@@ -202,15 +166,9 @@ const createForm = asyncHandler(async (request, response) => {
 // @route   PUT /api/forms/:id/questions
 // @access  Private
 const createQuestion = asyncHandler(async (request, response) => {
-  const form = await Form.findById(request.params.id);
+  const form = request.form;
 
-  if (!form) {
-    response.status(404);
-    throw new Error("Formularul nu a fost gasit");
-  }
-
-  const title = request.body.titlu;
-  const type = request.body.tip;
+  const { title, type } = request.body;
 
   if (!title) {
     return response
@@ -253,13 +211,8 @@ const createQuestion = asyncHandler(async (request, response) => {
 // @route   PUT /api/forms/:id/questions/:question_id
 // @access  Private/Admin Group
 const updateQuestion = asyncHandler(async (request, response) => {
-  const form = await Form.findById(request.params.id);
+  const form = request.form;
   const question = request.body.intrebare;
-
-  if (!form) {
-    response.status(404);
-    throw new Error("Formularul nu a fost gasit");
-  }
 
   const questionIndex = form.intrebari.findIndex(
     intrebare => intrebare._id.toString() === request.params.questionID
@@ -267,10 +220,6 @@ const updateQuestion = asyncHandler(async (request, response) => {
 
   if (questionIndex === -1) {
     return response.status(401).json({ message: "Intrebarea nu exista" });
-  }
-
-  if (form.utilizator.toString() !== request.user._id.toString()) {
-    return response.status(401).json({ message: "Utilizator neautorizat" });
   }
 
   const questionDB = form.intrebari[questionIndex];
@@ -356,13 +305,7 @@ const updateQuestion = asyncHandler(async (request, response) => {
 // @route   DELETE /api/forms/:id/userAnswers
 // @access  Private
 const getUserAnswers = asyncHandler(async (request, response) => {
-  const form = await Form.findById(request.params.id);
-
-  if (!form) {
-    response.status(404);
-    throw new Error("Formularul nu a fost gasit");
-  }
-
+  const form = request.form;
   const user = request.body.utilizator;
 
   const answers = await FormResponses.find({
@@ -381,12 +324,7 @@ const getUserAnswers = asyncHandler(async (request, response) => {
 // @route   DELETE /api/forms/:id/questions
 // @access  Private
 const deleteQuestion = asyncHandler(async (request, response) => {
-  const form = await Form.findById(request.params.id);
-
-  if (!form) {
-    response.status(404);
-    throw new Error("Formularul nu a fost gasit");
-  }
+  const form = request.form;
 
   const questionID = request.params.questionID;
 
@@ -397,13 +335,6 @@ const deleteQuestion = asyncHandler(async (request, response) => {
   if (questionIndex === -1) {
     response.status(401);
     throw new Error("Intrebarea nu a fost gasita");
-  }
-
-  if (form.utilizator.toString() !== request.user.id) {
-    response.status(401);
-    throw new Error(
-      "Utilizator neautorizat! Nu sunteti creatorul acestui formular!"
-    );
   }
 
   form.intrebari.splice(questionIndex, 1);
@@ -417,17 +348,7 @@ const deleteQuestion = asyncHandler(async (request, response) => {
 // @route   GET /api/forms/:id/answers/:answerID/:questionID/downloadFile
 // @access  Private
 const downloadFile = asyncHandler(async (request, response) => {
-  const formID = request.params.id;
-
-  if (!mongoose.Types.ObjectId.isValid(formID)) {
-    return response.status(404).json({ message: `Acest formular nu exista!` });
-  }
-
-  const form = await Form.findById(formID);
-
-  if (!form) {
-    return response.status(404).json({ message: `Acest formular nu exista!` });
-  }
+  const form = request.form;
 
   if (!request.params.answerID) {
     return response.status(404).json({ message: `Acest raspuns nu exista!` });
@@ -488,19 +409,7 @@ const downloadFile = asyncHandler(async (request, response) => {
 // @route   GET /api/forms/:id/answers/:answerID
 // @access  Private
 const getSpecificAnswer = asyncHandler(async (request, response) => {
-  const formID = request.params.id;
-
-  if (!mongoose.Types.ObjectId.isValid(formID)) {
-    response.status(404);
-    throw new Error("Acest formular nu exista!");
-  }
-
-  const form = await Form.findById(formID);
-
-  if (!form) {
-    response.status(404);
-    throw new Error("Acest formular nu exista!");
-  }
+  const form = request.form;
 
   if (!request.params.answerID) {
     response.status(404);
@@ -682,24 +591,7 @@ const getSpecificAnswer = asyncHandler(async (request, response) => {
 // @route   GET /api/forms/:id/answers
 // @access  Private
 const getFormAnswers = asyncHandler(async (request, response) => {
-  const formID = request.params.id;
-
-  if (!mongoose.Types.ObjectId.isValid(formID)) {
-    response.status(404);
-    throw new Error("Acest formular nu exista!");
-  }
-
-  const form = await Form.findById(formID);
-
-  if (!form) {
-    response.status(404);
-    throw new Error("Acest formular nu exista!");
-  }
-
-  if (form.utilizator.toString() !== request.user._id.toString()) {
-    response.status(401);
-    throw new Error("Nu sunteti utilizatorul acestui formular");
-  }
+  const form = request.form;
 
   const perPage = request.body.perPagina || 15;
   const page = request.body.pagina || 0;
@@ -717,11 +609,6 @@ const getFormAnswers = asyncHandler(async (request, response) => {
 
   await Promise.all(
     formResponseArray.map(async formResponse => {
-      // const questionsID = form.intrebari.map(q => q._id.toString());
-      // const validAnswers = formResponse.raspunsuri.filter(answer =>
-      //   questionsID.includes(answer.intrebare)
-      // );
-
       const user = await User.findById(formResponse.utilizator).select({
         email: 1,
         _id: 1,
@@ -735,20 +622,12 @@ const getFormAnswers = asyncHandler(async (request, response) => {
         id: formResponse._id,
         utilizator: user,
         dataTransmitere: formResponse.createdAt,
-        // intrebari: [],
       };
 
       responseArray.push(responseObject);
-      // });
     })
   );
 
-  // formResponseArray.forEach(async formResponse => {
-  //         console.log(`Am adaugat in responseArray`);
-  //   });
-  // });
-
-  console.log(`Am returnat răspunsul`);
   return response.status(201).json({ raspunsuri: responseArray });
 });
 
@@ -1115,4 +994,6 @@ export {
   getFormAnswers,
   getSpecificAnswer,
   downloadFile,
+  findFormID,
+  checkFormAdmin,
 };

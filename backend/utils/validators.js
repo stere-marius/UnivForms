@@ -1,15 +1,15 @@
-function isNumeric(str) {
+const isNumeric = str => {
   if (typeof str != "string") return false;
   return !isNaN(str) && !isNaN(parseFloat(str));
-}
+};
 
-function validateStringLength(text, length, validationType) {
+const validateStringLength = (text, length, validationType) => {
   if (validationType === "SIR DE LUNGIME MAI MARE DECAT") {
     return text.length() > length;
   }
-}
+};
 
-function validateNumberRange(number, validationBD, validationType) {
+const validateNumberRange = (number, validationBD, validationType) => {
   if (validationType === "NUMAR MAI MARE DECAT") {
     return +number > +validationBD;
   }
@@ -28,6 +28,8 @@ function validateNumberRange(number, validationBD, validationType) {
 
     return +number >= +firstRange && +number <= +secondRange;
   }
-}
+};
 
-export { isNumeric, validateStringLength, validateNumberRange };
+const idValidDate = d => d instanceof Date && !isNaN(d);
+
+export { isNumeric, validateStringLength, validateNumberRange, idValidDate };
