@@ -17,15 +17,17 @@ import { arraysHaveSaveValues } from "../utils/utilities.js";
 
 // @desc    Verifică ID-ul formularului și-l pune în obiectul request
 const findFormID = asyncHandler(async (request, response, next) => {
-  if (!mongoose.Types.ObjectId.isValid(formID)) {
+  if (!mongoose.Types.ObjectId.isValid(request.params.id)) {
     response.status(404);
-    throw new Error("Acest formular nu exista!");
+    console.log(`Formularul nu a fost gasit`);
+    throw new Error("Formularul nu a fost gasit!");
   }
 
   const form = await Form.findById(request.params.id);
 
   if (!form) {
-    response.status(401);
+    console.log(`Formularul nu a fost gasit`);
+    response.status(404);
     throw new Error("Formularul nu a fost gasit");
   }
 
@@ -49,6 +51,22 @@ const checkFormAdmin = asyncHandler(async (request, response, next) => {
 // @route   GET /api/forms/:id
 // @access  Public
 const getFormByID = asyncHandler(async (request, response) => {
+  request.form.intrebari.forEach(question => {
+    if (
+      question.tip === "Buton radio" ||
+      question.tip === "Caseta de selectare"
+    ) {
+      question.raspunsuri = question.raspunsuri.map(answer => ({
+        ...answer.toObject(),
+        atribute: undefined,
+      }));
+    }
+
+    if (question.tip === "Raspuns text") {
+      question.raspunsuri = [];
+    }
+  });
+
   return response.json(request.form);
 });
 
@@ -57,7 +75,9 @@ const getFormByID = asyncHandler(async (request, response) => {
 // @access  Private/Admin Group/Admin Site
 const deleteForm = asyncHandler(async (request, response) => {
   await request.form.remove();
-  return response.json({ message: "Formularul a fost sters cu succes" });
+  return response
+    .status(201)
+    .json({ message: "Formularul a fost sters cu succes" });
 });
 
 // @desc    Actulizeaza atributele formularului

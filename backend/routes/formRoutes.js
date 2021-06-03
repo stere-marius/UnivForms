@@ -25,7 +25,7 @@ router.route("/").put(protect, createForm);
 
 router
   .route("/:id")
-  .get(getFormByID)
+  .get(findFormID, getFormByID)
   .delete(protect, findFormID, checkFormAdmin, deleteForm)
   .put(protect, findFormID, checkFormAdmin, updateForm);
 
