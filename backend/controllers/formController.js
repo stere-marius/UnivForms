@@ -19,14 +19,12 @@ import { arraysHaveSaveValues } from "../utils/utilities.js";
 const findFormID = asyncHandler(async (request, response, next) => {
   if (!mongoose.Types.ObjectId.isValid(request.params.id)) {
     response.status(404);
-    console.log(`Formularul nu a fost gasit`);
     throw new Error("Formularul nu a fost gasit!");
   }
 
   const form = await Form.findById(request.params.id);
 
   if (!form) {
-    console.log(`Formularul nu a fost gasit`);
     response.status(404);
     throw new Error("Formularul nu a fost gasit");
   }
@@ -820,7 +818,7 @@ const handleFileUploadQuestion = (
   if (canAnswer && isMandatoryQuestion && !file) {
     addError(
       questionDB,
-      `Nu ati transmit un fisier pentru "${questionDB.titlu}"`
+      `Nu ati transmis un fisier pentru "${questionDB.titlu}"`
     );
     return;
   }

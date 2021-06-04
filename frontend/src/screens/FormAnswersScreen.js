@@ -4,7 +4,7 @@ import FormAnswersTab from "../components/FormAnswersTab";
 import Header from "../components/Header";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import { getFormAnswers, getFormAnswer } from "../actions/formActions";
+import { getFormAnswers } from "../actions/formActions";
 import UserAnswerTab from "../components/UserAnswerTab";
 
 const FormAnswersScreen = ({ match, history }) => {
@@ -16,9 +16,9 @@ const FormAnswersScreen = ({ match, history }) => {
 
   const [currentAnswer, setCurrentAnswer] = useState(null);
 
-  const [currentPage, setCurrentPage] = useState(0);
+  // const [currentPage, setCurrentPage] = useState(0);
 
-  const [searchText, setSearchText] = useState("");
+  // const [searchText, setSearchText] = useState("");
 
   const userLogin = useSelector(state => state.userLogin);
   const { userInfo } = userLogin;
@@ -26,7 +26,7 @@ const FormAnswersScreen = ({ match, history }) => {
   const formAnswers = useSelector(state => state.formAnswers);
   const {
     loading: loadingAnswers,
-    raspunsuri: answers,
+    // raspunsuri: answers,
     error: errorAnswers,
   } = formAnswers;
 
@@ -40,7 +40,7 @@ const FormAnswersScreen = ({ match, history }) => {
     }
 
     dispatch(getFormAnswers(match.params.id));
-  }, [userInfo, dispatch, match.params.id]);
+  }, [userInfo, dispatch, history, match.params.id]);
 
   const handleAnswerChange = answerID => {
     setCurrentAnswer(answerID);

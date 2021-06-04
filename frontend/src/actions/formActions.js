@@ -28,11 +28,9 @@ import {
   FORM_ANSWERS_REQUEST,
   FORM_ANSWERS_SUCCESS,
   FORM_ANSWERS_FAIL,
-  FORM_ANSWERS_RESET,
   FORM_ANSWER_REQUEST,
   FORM_ANSWER_SUCCESS,
   FORM_ANSWER_FAIL,
-  FORM_ANSWER_RESET,
 } from "../constants/formConstants";
 
 export const listFormDetails = id => async dispatch => {

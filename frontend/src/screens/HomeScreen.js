@@ -8,6 +8,7 @@ import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { Link } from "react-router-dom";
 import FormCreateModal from "../components/FormCreateModal";
+import GroupCreateModal from "../components/GroupCreateModal";
 
 const HomeScreen = ({ history }) => {
   const userLogin = useSelector(state => state.userLogin);
@@ -20,6 +21,8 @@ const HomeScreen = ({ history }) => {
   const { loading: loadingForms, error: errorForms, forms } = userForms;
 
   const [isActiveModalCreateForm, setActiveModalCreateForm] = useState(false);
+
+  const [isActiveModalCreateGroup, setActiveModalCreateGroup] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -42,7 +45,6 @@ const HomeScreen = ({ history }) => {
             className="mt-3 d-flex flex-column mx-auto"
             style={{
               width: "94%",
-              //   height: "300px",
               backgroundColor: "#2C2938",
               borderRadius: "35px",
             }}
@@ -88,6 +90,16 @@ const HomeScreen = ({ history }) => {
                   ))}
                 </Row>
               )}
+              <button
+                className="btn btn-default btn-color-green mx-4 my-4 p-3"
+                onClick={() => setActiveModalCreateGroup(true)}
+              >
+                Grup nou
+              </button>
+              <GroupCreateModal
+                showModal={isActiveModalCreateGroup}
+                onClose={() => setActiveModalCreateGroup(false)}
+              />
             </div>
 
             <div>

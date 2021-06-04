@@ -29,9 +29,7 @@ const ModalNewQuestion = ({ formID, showModal, onClose, onCreate }) => {
   const [errors, setErrors] = useState(new Set());
 
   const createdQuestion = useSelector(state => state.formCreatedQuestion);
-  let { loading, success, question, error } = createdQuestion;
-
-  const [isCreated, setCreated] = useState(false);
+  let { loading, error } = createdQuestion;
 
   const handleClose = () => {
     setShow(false);
@@ -43,14 +41,6 @@ const ModalNewQuestion = ({ formID, showModal, onClose, onCreate }) => {
     setQuestionTitle("");
     setErrors(new Set());
   }, [showModal]);
-
-  // useEffect(() => {
-  //   if (success && question) {
-  //     console.log(`Create question`);
-  //     onCreate(question);
-  //     success = false;
-  //   }
-  // }, [success, onCreate, question]);
 
   const handleCreateQuestion = () => {
     if (!questionType) {
