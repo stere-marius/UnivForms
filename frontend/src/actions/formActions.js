@@ -262,40 +262,40 @@ export const deleteQuestion =
     }
   };
 
-export const getFormAnswers = (formID, page) => async (dispatch, getState) => {
-  try {
-    dispatch({ type: FORM_ANSWERS_REQUEST });
+export const getFormAnswers =
+  (formID, page, searchQuery) => async (dispatch, getState) => {
+    try {
+      dispatch({ type: FORM_ANSWERS_REQUEST });
 
-    const {
-      userLogin: { userInfo },
-    } = getState();
+      const {
+        userLogin: { userInfo },
+      } = getState();
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    };
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
 
-    // const perPage = request.body.perPagina || 1;
-    // const page = request.body.pagina || 0;
+      const { data } = await axios.post(
+        `/api/forms/${formID}/answers${
+          searchQuery ? `?search=${searchQuery}` : ""
+        }`,
+        { pagina: page },
+        config
+      );
 
-    const { data } = await axios.post(
-      `/api/forms/${formID}/answers`,
-      { pagina: page },
-      config
-    );
-
-    dispatch({ type: FORM_ANSWERS_SUCCESS, payload: data });
-  } catch (error) {
-    dispatch({
-      type: FORM_ANSWERS_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message,
-    });
-  }
-};
+      dispatch({ type: FORM_ANSWERS_SUCCESS, payload: data });
+    } catch (error) {
+      dispatch({
+        type: FORM_ANSWERS_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      });
+    }
+  };
 
 export const getFormAnswer =
   (formID, answerID) => async (dispatch, getState) => {

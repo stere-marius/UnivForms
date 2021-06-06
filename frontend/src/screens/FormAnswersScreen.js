@@ -20,6 +20,8 @@ const FormAnswersScreen = ({ match, history }) => {
 
   const [perPageAnswers, setPerPageAnswers] = useState(1);
 
+  const [searchAnswerQuery, setSearchAnswerQuery] = useState("");
+
   // const [searchText, setSearchText] = useState("");
 
   const userLogin = useSelector(state => state.userLogin);
@@ -43,8 +45,16 @@ const FormAnswersScreen = ({ match, history }) => {
   const handleNextPage = async () => {
     if (currentPage + 1 > Math.floor(totalAnswers / perPageAnswers)) return;
 
-    await dispatch(getFormAnswers(match.params.id, currentPage + 1));
+    await dispatch(
+      getFormAnswers(match.params.id, currentPage + 1, searchAnswerQuery)
+    );
     setCurrentPage(currentPage + 1);
+  };
+
+  const handleEnterInputSearch = async e => {
+    if (e.keyCode !== 13) return;
+
+    await dispatch(getFormAnswers(match.params.id, 0, searchAnswerQuery));
   };
 
   const handlePageChange = () => {};
@@ -93,6 +103,17 @@ const FormAnswersScreen = ({ match, history }) => {
     if (selectedTab !== "Raspunsuri") return <> </>;
     return (
       <div className="d-flex flex-column">
+        <div class="d-flex mt-3">
+          <input
+            type="text"
+            class="form-control form-input-green"
+            placeholder="Cauta un raspuns"
+            value={searchAnswerQuery}
+            onChange={e => setSearchAnswerQuery(e.target.value)}
+            onKeyUp={handleEnterInputSearch}
+          />
+        </div>
+
         <FormAnswersTab
           formID={match.params.id}
           onAnswerChange={handleAnswerChange}

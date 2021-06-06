@@ -611,8 +611,12 @@ const getSpecificAnswer = asyncHandler(async (request, response) => {
 const getFormAnswers = asyncHandler(async (request, response) => {
   const form = request.form;
 
-  const perPage = request.body.perPagina || 1;
+  const perPage = request.body.perPagina || 10;
   const page = (request.body.pagina > 0 && request.body.pagina) || 0;
+
+  const search = request.query.search;
+
+  const queryResponse = { formular: form._id };
 
   const totalAnswers = await FormResponses.countDocuments({
     formular: form._id,
@@ -627,7 +631,7 @@ const getFormAnswers = asyncHandler(async (request, response) => {
     return response.status(201).json({ raspunsuri: [] });
   }
 
-  const responseArray = [];
+  let responseArray = [];
 
   await Promise.all(
     formResponseArray.map(async formResponse => {
@@ -650,9 +654,21 @@ const getFormAnswers = asyncHandler(async (request, response) => {
     })
   );
 
+  if (search) {
+    responseArray = responseArray.filter(
+      r =>
+        r.utilizator.email === search ||
+        new RegExp(`.*${search}.*`).test(r.utilizator.nume) ||
+        new RegExp(`.*${search}.*`).test(r.utilizator.prenume)
+    );
+  }
+
   return response
     .status(201)
-    .json({ raspunsuri: responseArray, raspunsuriTotale: totalAnswers });
+    .json({
+      raspunsuri: responseArray,
+      raspunsuriTotale: search ? responseArray.length : totalAnswers,
+    });
 });
 
 // @desc    Trimite raspunsurilor formularului
