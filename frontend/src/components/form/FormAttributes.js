@@ -2,14 +2,20 @@ import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useSelector, useDispatch } from "react-redux";
-import { updateForm, listFormDetails } from "../actions/formActions";
-import Loader from "./Loader";
+import { updateForm, listFormDetails } from "../../actions/formActions";
+import ConfirmationModal from "../ConfirmationModal";
+import Loader from "../Loader";
+import axios from "axios";
+import { withRouter } from "react-router-dom";
 
-const FormAttributes = ({ form, onPropertyChange }) => {
+const FormAttributes = ({ form, history }) => {
   const dispatch = useDispatch();
 
   const formUpdate = useSelector(state => state.formUpdate);
   const { loading, success, error: errorUpdate } = formUpdate;
+
+  const userLogin = useSelector(state => state.userLogin);
+  const { userInfo } = userLogin;
 
   const [acceptMultipleAnswers, setAcceptMultipleAnswers] = useState(
     Boolean(form.raspunsuriMultipleUtilizator)
@@ -32,6 +38,8 @@ const FormAttributes = ({ form, onPropertyChange }) => {
   const [isStartPanel, setStartPanelVisible] = useState(
     Boolean(form.dataValiditate)
   );
+
+  const [isActiveModalDeleteForm, setActiveModalDeleteForm] = useState(false);
 
   const date = new Date();
   date.setDate(date.getDate() + 1);
@@ -58,6 +66,31 @@ const FormAttributes = ({ form, onPropertyChange }) => {
     setTime(value);
   };
 
+  const handleDelete = () => {
+    setActiveModalDeleteForm(true);
+  };
+
+  const handleConfirmDeleteForm = async () => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      await axios.delete(`/api/forms/${form._id}`, config);
+      history.push("/");
+    } catch (error) {
+      setErrors(
+        new Set(errors).add(
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message
+        )
+      );
+    }
+  };
+
   const handleSave = async () => {
     if (!formTitle) {
       setErrors(
@@ -76,38 +109,6 @@ const FormAttributes = ({ form, onPropertyChange }) => {
       return;
     }
 
-    // if (isStartPanel && dateValid < new Date()) {
-    //   console.log(`Data validitiății nu poate fi mai mică decât data curentă!`);
-    //   setErrors(
-    //     new Set(errors).add(
-    //       "Data validitiății nu poate fi mai mică decât data curentă!"
-    //     )
-    //   );
-    //   return;
-    // }
-
-    // if (isExpirePanel && expireDate < new Date()) {
-    //   setErrors(
-    //     new Set(errors).add(
-    //       "Data expirării nu poate fi mai mică decât data curentă!"
-    //     )
-    //   );
-    //   return;
-    // }
-
-    console.log(
-      `Obiect trimis ${JSON.stringify(
-        {
-          titlu: formTitle,
-          raspunsuriMultipleUtilizator: acceptMultipleAnswers,
-          dataValiditate: isStartPanel && dateValid ? dateValid : undefined,
-          dataExpirare: isExpirePanel && expireDate ? expireDate : undefined,
-          timpTransmitere: isTimerPanel && time ? time : undefined,
-        },
-        null,
-        2
-      )}`
-    );
     await dispatch(
       updateForm(form._id, {
         titlu: formTitle,
@@ -263,14 +264,37 @@ const FormAttributes = ({ form, onPropertyChange }) => {
         <div className="alert alert-danger mt-3"> {errorUpdate} </div>
       )}
 
-      <button
-        className="btn btn-color-green px-3 mt-5 fw-bold"
-        onClick={handleSave}
-      >
-        Salveaza
-      </button>
+      <div className="d-flex flex-column align-items-start">
+        <button
+          className="btn btn-color-green px-3 mt-5 fw-bold"
+          onClick={handleSave}
+        >
+          Salveaza
+        </button>
+
+        <button
+          className="btn btn-danger px-3 mt-5 fw-bold text-dark"
+          onClick={handleDelete}
+        >
+          Sterge formular
+        </button>
+
+        <ConfirmationModal
+          showModal={isActiveModalDeleteForm}
+          body={
+            <>
+              <p>Confirmati stergerea</p>
+            </>
+          }
+          title={"Stergeti formularul?"}
+          textConfirm={"Da"}
+          textClose={"Nu"}
+          onConfirm={handleConfirmDeleteForm}
+          onClose={() => setActiveModalDeleteForm(false)}
+        />
+      </div>
     </div>
   );
 };
 
-export default FormAttributes;
+export default withRouter(FormAttributes);

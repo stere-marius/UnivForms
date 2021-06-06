@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import FormAnswersTab from "../components/FormAnswersTab";
+import FormAnswersTab from "../components/form/FormAnswersTab";
 import Header from "../components/Header";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { getFormAnswers } from "../actions/formActions";
-import UserAnswerTab from "../components/UserAnswerTab";
+import UserAnswerTab from "../components/form/UserAnswerTab";
 
 const FormAnswersScreen = ({ match, history }) => {
   const dispatch = useDispatch();

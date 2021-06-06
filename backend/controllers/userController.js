@@ -3,6 +3,7 @@ import Group from "../models/grupModel.js";
 import Form from "../models/formularModel.js";
 import asyncHandler from "express-async-handler";
 import generateToken from "../utils/generateToken.js";
+import FormResponses from "../models/raspunsuriModel.js";
 
 // @desc    Logheaza utilizator & obtine token
 // @route   POST /api/users/login
@@ -21,7 +22,6 @@ const authUser = asyncHandler(async (request, response) => {
     });
   }
 
-  console.log("Eroare");
   response.status(401);
   throw new Error("Email sau parola invalide");
 });
@@ -167,14 +167,14 @@ const getUserGroups = asyncHandler(async (request, response) => {
   }
 
   const groups = await Group.find({
-    "utilizatori._id": `${request.user._id}`,
+    "utilizatori.utilizatorID": `${request.user._id}`,
   });
 
   return response.json(groups);
 });
 
 // @desc    Obtine formularele utilizatorului
-// @route   GET /api/users/groups
+// @route   GET /api/users/forms
 // @access  Private
 const getUserForms = asyncHandler(async (request, response) => {
   const user = await User.findById(request.user._id);
@@ -184,7 +184,24 @@ const getUserForms = asyncHandler(async (request, response) => {
     throw new Error("Utilizatorul nu a fost gasit");
   }
 
-  const forms = await Form.find({ utilizator: `${request.user._id}` });
+  let forms = await Form.find({ utilizator: `${request.user._id}` });
+
+  forms = await Promise.all(
+    forms.map(async form => {
+      const formAnswers = await FormResponses.countDocuments({
+        formular: form._id,
+      });
+
+      return {
+        _id: form._id,
+        titlu: form.titlu,
+        raspunsuri: formAnswers,
+        intrebari: form.intrebari.length,
+        createdAt: form.createdAt,
+        utilizator: form.utilizator,
+      };
+    })
+  );
 
   return response.json(forms);
 });

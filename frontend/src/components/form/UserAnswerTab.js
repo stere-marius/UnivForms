@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { getFormAnswer } from "../actions/formActions";
+import { getFormAnswer } from "../../actions/formActions";
 import AnswerFileUpload from "./AnswerFileUpload";
 import AnswerMarkBox from "./AnswerMarkBox";
 import AnswerTextQuestion from "./AnswerTextQuestion";
-import Loader from "./Loader";
-import Message from "./Message";
+import Loader from "../Loader";
+import Message from "../Message";
 
 const UserAnswerTab = ({ answerID, formID }) => {
   const dispatch = useDispatch();

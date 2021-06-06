@@ -72,7 +72,7 @@ const getFormByID = asyncHandler(async (request, response) => {
 // @route   DELETE /api/forms/:id
 // @access  Private/Admin Group/Admin Site
 const deleteForm = asyncHandler(async (request, response) => {
-  await request.form.remove();
+  await request.form.deleteOne();
   return response
     .status(201)
     .json({ message: "Formularul a fost sters cu succes" });
@@ -155,7 +155,7 @@ const createForm = asyncHandler(async (request, response) => {
   }
 
   const createdForm = await Form.create({
-    utilizator: utilizator,
+    utilizator: request.user._id,
     intrebari: {
       titlu: "Titlul intrebarii",
       tip: "Caseta de selectare",

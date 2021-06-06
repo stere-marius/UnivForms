@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
-import Loader from "./Loader";
-import Message from "./Message";
+import Loader from "../Loader";
+import Message from "../Message";
 import { useSelector } from "react-redux";
 
 const AnswerFileUpload = ({ formID, answerID, question }) => {
@@ -81,8 +81,6 @@ const AnswerFileUpload = ({ formID, answerID, question }) => {
       {error && <Message variant="danger">{error}</Message>}
       <button
         className="btn btn-color-green fw-bold mt-3"
-        // href={`/api/forms/${formID}/answers/${answerID}/${question.id}/downloadFile`}
-        // target="_blank"
         onClick={handleFileDownload}
       >
         Descarca fisier

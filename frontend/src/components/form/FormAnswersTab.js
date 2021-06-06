@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import Loader from "./Loader";
-import Message from "./Message";
+import Loader from "../Loader";
+import Message from "../Message";
 
 const FormAnswersTab = ({ onAnswerChange }) => {
   const formAnswers = useSelector(state => state.formAnswers);

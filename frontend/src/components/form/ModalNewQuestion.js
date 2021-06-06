@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Modal } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
-import { createQuestion } from "../actions/formActions";
-import Loader from "./Loader";
+import { createQuestion } from "../../actions/formActions";
+import Loader from "../Loader";
 import {
   CHECKBOX_QUESTION,
   FILE_UPLOAD,
   RADIO_BUTTON_QUESTION,
   TEXT_QUESTION,
-} from "../constants/questionTypesConstants";
+} from "../../constants/questionTypesConstants";
 
 const ModalNewQuestion = ({ formID, showModal, onClose, onCreate }) => {
   const dispatch = useDispatch();

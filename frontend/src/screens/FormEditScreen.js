@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import Header from "../components/Header";
-import CreateMarkBox from "../components/CreateMarkBox";
-import ModalNewQuestion from "../components/ModalNewQuestion";
+import CreateMarkBox from "../components/form/CreateMarkBox";
+import ModalNewQuestion from "../components/form/ModalNewQuestion";
 import { useSelector, useDispatch } from "react-redux";
 import { listFormDetails, deleteQuestion } from "../actions/formActions";
-import EditFileUploadQuestion from "../components/EditFileUploadQuestion";
-import EditTextQuestion from "../components/EditTextQuestion";
+import EditFileUploadQuestion from "../components/form/EditFileUploadQuestion";
+import EditTextQuestion from "../components/form/EditTextQuestion";
 import ConfirmationModal from "../components/ConfirmationModal";
-import FormAttributes from "../components/FormAttributes";
-import FormEditRadioQuestion from "../components/FormEditRadioQuestion";
+import FormAttributes from "../components/form/FormAttributes";
+import FormEditRadioQuestion from "../components/form/FormEditRadioQuestion";
 
 const FormEditScreen = ({ match, history }) => {
   const dispatch = useDispatch();
@@ -81,8 +81,6 @@ const FormEditScreen = ({ match, history }) => {
       return;
     }
 
-    console.log(`useEffect 1`);
-
     dispatch(listFormDetails(match.params.id));
   }, [match, dispatch, history, userInfo]);
 
@@ -93,6 +91,15 @@ const FormEditScreen = ({ match, history }) => {
   }, [error, history]);
 
   useEffect(() => {
+    if (
+      form &&
+      form.utilizator &&
+      form.utilizator.toString() !== userInfo._id
+    ) {
+      history.push("/");
+      return;
+    }
+
     if (form && form.titlu && form.intrebari) {
       setFormTitle(form.titlu);
     }

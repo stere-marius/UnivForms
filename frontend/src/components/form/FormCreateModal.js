@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Modal } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
-import { createForm } from "../actions/formActions";
+import { createForm } from "../../actions/formActions";
 import { Dropdown, DropdownButton } from "react-bootstrap";
-import Loader from "./Loader";
+import Loader from "../Loader";
 import { withRouter } from "react-router-dom";
 
 const FormCreateModal = ({ showModal, onClose, userGroups, history }) => {

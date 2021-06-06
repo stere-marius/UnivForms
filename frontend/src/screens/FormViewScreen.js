@@ -3,8 +3,8 @@ import Header from "../components/Header";
 import { useSelector, useDispatch } from "react-redux";
 import { listFormDetails, sendFormResponse } from "../actions/formActions";
 import Loader from "../components/Loader";
-import QuestionMarkBox from "../components/QuestionMarkBox";
-import QuestionInputBox from "../components/QuestionInputBox";
+import QuestionMarkBox from "../components/form/QuestionMarkBox";
+import QuestionInputBox from "../components/form/QuestionInputBox";
 import CountdownTimer from "../components/CountdownTimer";
 import Message from "../components/Message";
 import { Button, Table } from "react-bootstrap";
@@ -14,7 +14,7 @@ import {
   TEXT_QUESTION,
   FILE_UPLOAD,
 } from "../constants/questionTypesConstants";
-import QuestionFileUpload from "../components/QuestionFileUpload";
+import QuestionFileUpload from "../components/form/QuestionFileUpload";
 
 const FormViewScreen = ({ match, history }) => {
   const tabs = [

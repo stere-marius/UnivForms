@@ -1,85 +1,65 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
+import { formatBytes } from "../../utilities";
 import QuestionTitle from "./QuestionTitle";
-import { validateNumberRange } from "../utilities";
+import Loader from "../Loader";
 
-const QuestionMarkBox = ({
+const QuestionFileUpload = ({
   question,
   indexQuestion,
   raspunsuriIntrebariUtilizator,
   handleNextQuestion,
+  formID,
 }) => {
   const questionId = question._id;
   const title = question.titlu;
 
   const [errors, setErrors] = useState([]);
 
-  const [raspunsUtilizator, setRaspunsUtilizator] = useState("");
+  const [uploading] = useState(false);
+
+  const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
     const defaultStateIntrebare = raspunsuriIntrebariUtilizator.find(
       q => q.id === questionId
     );
     setErrors([]);
-    setRaspunsUtilizator(
-      (defaultStateIntrebare && defaultStateIntrebare.raspuns) || ""
-    );
-  }, [indexQuestion, question, questionId, raspunsuriIntrebariUtilizator]);
+    setSelectedFile(defaultStateIntrebare && defaultStateIntrebare.fisier);
+  }, [question, questionId, raspunsuriIntrebariUtilizator, indexQuestion]);
 
   const handleSubmit = () => {
-    if (!raspunsUtilizator) {
-      setErrors(["Nu ati furnizat niciun răspuns"]);
+    if (!selectedFile) {
+      setErrors(["Nu ati încărcat niciun fișier"]);
       return;
     }
 
-    if (question.obligatoriu && !raspunsUtilizator) {
+    const ext = selectedFile.name.split(".")[1].toUpperCase();
+    const sizeInMb = selectedFile.size / 1024 / 1024;
+
+    if (question.atribute) {
+      const dimensiuneMaximaFisier = question.atribute.dimensiuneMaximaFisier;
+      const tipuriFisierPermise = question.atribute.extensiiFisierPermise;
+
+      console.log(`Extensie curenta ${ext}`);
+      console.log(
+        `Extensii permise ${JSON.stringify(tipuriFisierPermise, null, 2)}`
+      );
+
+      if (tipuriFisierPermise && !tipuriFisierPermise.includes(ext)) {
+        setErrors([question.atribute.textRaspunsInvalid]);
+        return;
+      }
+
+      if (dimensiuneMaximaFisier && sizeInMb > dimensiuneMaximaFisier) {
+        setErrors([question.atribute.textRaspunsInvalid]);
+        return;
+      }
+    }
+
+    if (question.obligatoriu && !selectedFile) {
       setErrors(["Aceasta intrebare este obligatorie"]);
       return;
-    }
-
-    if (question.atribute && question.atribute.descriereValidare) {
-      const {
-        validareRaspuns: answerValidate,
-        descriereValidare: validationDescription,
-        textRaspunsInvalid: invalidAnswerMessage,
-      } = question.atribute;
-
-      if (
-        validationDescription === "SIR DE CARACTERE" &&
-        !/^[A-Za-z]+$/.test(raspunsUtilizator.trim())
-      ) {
-        setErrors([invalidAnswerMessage]);
-        return;
-      }
-
-      if (
-        validationDescription === "NUMAR" &&
-        !/^\d+$/.test(raspunsUtilizator.trim())
-      ) {
-        setErrors([invalidAnswerMessage]);
-        return;
-      }
-
-      if (
-        validationDescription === "EXPRESIE REGULATA" &&
-        !raspunsUtilizator.match(answerValidate)
-      ) {
-        setErrors([invalidAnswerMessage]);
-        return;
-      }
-
-      if (
-        validationDescription !== "NUMAR" &&
-        validationDescription.includes("NUMAR") &&
-        !validateNumberRange(
-          raspunsUtilizator,
-          answerValidate,
-          validationDescription
-        )
-      ) {
-        setErrors([invalidAnswerMessage]);
-        return;
-      }
     }
 
     handleNextQuestion();
@@ -89,19 +69,19 @@ const QuestionMarkBox = ({
     );
 
     if (questionFound) {
-      questionFound.raspuns = raspunsUtilizator;
+      questionFound.fisier = selectedFile;
       return;
     }
 
     raspunsuriIntrebariUtilizator.push({
       id: question._id,
-      raspuns: raspunsUtilizator,
+      fisier: selectedFile,
       tip: question.tip,
     });
   };
 
   const handleChange = e => {
-    setRaspunsUtilizator(e.target.value);
+    setSelectedFile(e.target.files[0]);
   };
 
   return (
@@ -112,18 +92,24 @@ const QuestionMarkBox = ({
         mandatoryQuestion={question.obligatoriu}
       />
 
+      {selectedFile && (
+        <div className="d-flex flex-column justify-content-center mx-4">
+          <p className="fs-4">Fisier atașat</p>
+          <p>Nume: {selectedFile.name}</p>
+          <p>Dimensiune: {formatBytes(selectedFile.size)}</p>
+        </div>
+      )}
+
       <div className="d-flex flex-column justify-content-center">
         <div className="mx-4 d-flex flex-column">
-          <label className="my-4 fs-5" htmlFor={questionId}>
-            Raspunsul dumneavoastra
-          </label>
           <input
             className="form-control"
-            type="text"
-            placeholder="Introduceti raspunsul"
+            type="file"
             id={questionId}
-            onChange={handleChange}
-            value={raspunsUtilizator}
+            onChange={e => {
+              handleChange(e);
+              setErrors([]);
+            }}
           />
         </div>
 
@@ -135,6 +121,12 @@ const QuestionMarkBox = ({
               </div>
             ))}
           </div>
+        )}
+
+        {uploading && (
+          <>
+            <Loader /> <p>Se incarca fisierul catre server</p>
+          </>
         )}
 
         <div className="d-flex flex-column flex-sm-row mx-4 my-3 justify-content-between">
@@ -154,4 +146,4 @@ const QuestionMarkBox = ({
   );
 };
 
-export default QuestionMarkBox;
+export default QuestionFileUpload;

@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { listFormDetails, updateQuestion } from "../actions/formActions";
-import Loader from "./Loader";
-import QuestionMarkBoxAttributesPanel from "./QuestionAttributesPanel";
+import { updateQuestion, listFormDetails } from "../../actions/formActions";
+import Loader from "../Loader";
 import QuestionAttributes from "./QuestionAttributes";
 import QuestionEditButtons from "./QuestionEditButtons";
 import QuestionTitleEdit from "./QuestionTitleEdit";
 
-const CreateMarkBox = ({ formID, formQuestionDB, handleNewQuestion }) => {
+const FormEditRadioQuestion = ({
+  formID,
+  formQuestionDB,
+  handleNewQuestion,
+}) => {
   const dispatch = useDispatch();
 
   const [formQuestion, setFormQuestion] = useState(formQuestionDB);
+
+  const [hasSuccessfullyUpdated, setSuccessfullyUpdated] = useState(false);
 
   const [answersPanel, setAnswersPanel] = useState([]);
 
@@ -22,21 +27,26 @@ const CreateMarkBox = ({ formID, formQuestionDB, handleNewQuestion }) => {
   const { loading, success: successUpdated, error } = updatedQuestion;
 
   useEffect(() => {
-    setErrors(new Set());
-  }, [formQuestion]);
+    setFormQuestion(formQuestionDB);
+  }, [formQuestionDB]);
 
   useEffect(() => {
-    if (!formQuestion.atribute) {
-      setFormQuestion({ ...formQuestion, atribute: {} });
-    }
-  }, [formQuestion, formQuestion.atribute]);
+    setErrors(new Set());
+  }, [formQuestion, isQuestionPanelVisible, answersPanel]);
 
-  const onAttributeChange = attributes => {
-    setFormQuestion({
-      ...formQuestion,
-      atribute: { ...formQuestion.atribute, ...attributes },
-    });
-  };
+  useEffect(() => {
+    if (!successUpdated) return;
+
+    setSuccessfullyUpdated(true);
+
+    const timerID = setTimeout(() => {
+      setSuccessfullyUpdated(false);
+    }, 3000);
+
+    return () => {
+      clearTimeout(timerID);
+    };
+  }, [successUpdated]);
 
   const onMandatoryAttributeChange = value => {
     setFormQuestion({ ...formQuestion, obligatoriu: value });
@@ -58,6 +68,8 @@ const CreateMarkBox = ({ formID, formQuestionDB, handleNewQuestion }) => {
       ...formQuestion,
       raspunsuri: [...answers],
     });
+
+    setErrors(new Set());
   };
 
   const handleSaveQuestion = async () => {
@@ -73,6 +85,18 @@ const CreateMarkBox = ({ formID, formQuestionDB, handleNewQuestion }) => {
       return;
     }
 
+    if (
+      formQuestion.raspunsuri.filter(answer => answer.atribute?.raspunsCorect)
+        .length > 1
+    ) {
+      setErrors(
+        new Set(errors).add(
+          "Intrebarea de tip buton radio nu poate contine mai mult de un raspuns corect!"
+        )
+      );
+      return;
+    }
+
     await dispatch(
       updateQuestion(formID, formQuestionDB._id, { intrebare: formQuestion })
     );
@@ -85,6 +109,7 @@ const CreateMarkBox = ({ formID, formQuestionDB, handleNewQuestion }) => {
       return { ...answer, titlu: e.target.value };
     });
     setFormQuestion({ ...formQuestion, raspunsuri: [...newAnswers] });
+    setErrors(new Set());
   };
 
   const deleteAnswer = index => {
@@ -103,11 +128,18 @@ const CreateMarkBox = ({ formID, formQuestionDB, handleNewQuestion }) => {
       return;
     }
     setAnswersPanel([...answersPanel, index]);
+    setErrors(new Set());
   };
 
   const handleCheckboxCorrectAnswer = e => {
     const newAnswers = formQuestion.raspunsuri.map((answer, index) => {
-      if (index !== +e.target.id) return answer;
+      if (index !== +e.target.id) {
+        return {
+          ...answer,
+          atribute: { ...answer.atribute, raspunsCorect: false },
+        };
+      }
+
       return {
         ...answer,
         atribute: { ...answer.atribute, raspunsCorect: e.target.checked },
@@ -115,6 +147,7 @@ const CreateMarkBox = ({ formID, formQuestionDB, handleNewQuestion }) => {
     });
 
     setFormQuestion({ ...formQuestion, raspunsuri: [...newAnswers] });
+    setErrors(new Set());
   };
 
   return (
@@ -136,14 +169,11 @@ const CreateMarkBox = ({ formID, formQuestionDB, handleNewQuestion }) => {
               >
                 <input
                   className="form-check-input form-input-green fs-2"
-                  type={
-                    formQuestionDB.tip === "Caseta de selectare"
-                      ? "checkbox"
-                      : "radio"
-                  }
+                  type={"radio"}
                   checked={
                     (answer.atribute && answer.atribute.raspunsCorect) || false
                   }
+                  name={formQuestionDB._id}
                   disabled
                 />
                 <input
@@ -230,15 +260,11 @@ const CreateMarkBox = ({ formID, formQuestionDB, handleNewQuestion }) => {
             onMandatoryAttributeChange={onMandatoryAttributeChange}
             onScoreChange={onScoreChange}
           />
-          <QuestionMarkBoxAttributesPanel
-            questionDB={formQuestion}
-            onAttributeChange={onAttributeChange}
-          />
         </div>
       )}
 
-      {errors.length > 0 &&
-        errors.map((error, index) => (
+      {errors.size > 0 &&
+        [...errors].map((error, index) => (
           <div key={index} className="alert alert-danger">
             {error}
           </div>
@@ -248,7 +274,7 @@ const CreateMarkBox = ({ formID, formQuestionDB, handleNewQuestion }) => {
       {error && <div className="alert alert-danger">{error}</div>}
       <div
         className={`alert alert-success mx-4 my-3 ${
-          successUpdated ? "d-block" : "d-none"
+          hasSuccessfullyUpdated ? "d-block" : "d-none"
         }`}
       >
         Intrebarea a fost salvata cu succes !
@@ -261,4 +287,4 @@ const CreateMarkBox = ({ formID, formQuestionDB, handleNewQuestion }) => {
   );
 };
 
-export default CreateMarkBox;
+export default FormEditRadioQuestion;

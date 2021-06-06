@@ -7,8 +7,9 @@ import { getForms, getGroups } from "../actions/userActions";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { Link } from "react-router-dom";
-import FormCreateModal from "../components/FormCreateModal";
-import GroupCreateModal from "../components/GroupCreateModal";
+import FormCreateModal from "../components/form/FormCreateModal";
+import GroupCreateModal from "../components/group/GroupCreateModal";
+import FormViewContainer from "../components/form/FormViewContainer";
 
 const HomeScreen = ({ history }) => {
   const userLogin = useSelector(state => state.userLogin);
@@ -113,41 +114,11 @@ const HomeScreen = ({ history }) => {
               ) : (
                 <Row>
                   {forms.map(form => (
-                    <Col key={form._id} sm={12} md={6} lg={4} xl={3}>
-                      <div
-                        className="d-flex flex-column text-dark bg-white mx-4 my-4"
-                        style={{ borderRadius: "10px" }}
-                      >
-                        <h4 className="text-center p-2 border-bottom">
-                          {form.titlu}
-                        </h4>
-                        <p className="p-3">
-                          <i className="fas fa-calendar-alt mx-1 inline-block" />
-                          21-03-2021
-                        </p>
-                        <p className="p-3">
-                          <i className="fas fa-pen mx-1 inline-block" />
-                          21-03-2021
-                        </p>
-                        <p className="p-3">
-                          <i className="fas fa-users mx-1 inline-block" />
-                          21
-                        </p>
-
-                        <div className="d-flex align-items-center justify-content-between m-3">
-                          <Link to={`/form/${form._id}`}>
-                            <button className="btn btn-default btn-color-green text-decoration-none">
-                              Vezi formular
-                            </button>
-                          </Link>
-                          <Link to={`/form/${form._id}/edit`}>
-                            <button className="btn btn-default btn-color-green text-decoration-none">
-                              Editeaza formular
-                            </button>
-                          </Link>
-                        </div>
-                      </div>
-                    </Col>
+                    <>
+                      <Col key={form._id} sm={6} md={6} lg={6} xl={3}>
+                        <FormViewContainer form={form} />
+                      </Col>
+                    </>
                   ))}
                 </Row>
               )}

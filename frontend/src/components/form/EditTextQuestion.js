@@ -3,8 +3,8 @@ import QuestionAttributes from "./QuestionAttributes";
 import QuestionEditButtons from "./QuestionEditButtons";
 import QuestionTitleEdit from "./QuestionTitleEdit";
 import { useDispatch, useSelector } from "react-redux";
-import { updateQuestion, listFormDetails } from "../actions/formActions";
-import Loader from "./Loader";
+import { updateQuestion, listFormDetails } from "../../actions/formActions";
+import Loader from "../Loader";
 
 const EditTextQuestion = ({ formID, formQuestionDB, handleNewQuestion }) => {
   const dispatch = useDispatch();
