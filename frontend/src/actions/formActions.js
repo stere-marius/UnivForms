@@ -262,7 +262,7 @@ export const deleteQuestion =
     }
   };
 
-export const getFormAnswers = formID => async (dispatch, getState) => {
+export const getFormAnswers = (formID, page) => async (dispatch, getState) => {
   try {
     dispatch({ type: FORM_ANSWERS_REQUEST });
 
@@ -276,10 +276,16 @@ export const getFormAnswers = formID => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.get(`/api/forms/${formID}/answers`, config);
+    // const perPage = request.body.perPagina || 1;
+    // const page = request.body.pagina || 0;
 
-    console.log(`Data = ${JSON.stringify(data, null, 2)}`);
-    dispatch({ type: FORM_ANSWERS_SUCCESS, payload: data.raspunsuri || [] });
+    const { data } = await axios.post(
+      `/api/forms/${formID}/answers`,
+      { pagina: page },
+      config
+    );
+
+    dispatch({ type: FORM_ANSWERS_SUCCESS, payload: data });
   } catch (error) {
     dispatch({
       type: FORM_ANSWERS_FAIL,

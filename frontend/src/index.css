@@ -10,11 +10,31 @@ body {
 :root {
   --green-primary: #01df9b;
   --red-primary: #fc3a3a;
+  --gray-primary: #efefef;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+.page-item.active .page-link {
+  background-color: var(--gray-primary) !important;
+  border-color: var(--gray-primary);
+  color: black;
+  font-weight: bold;
+}
+
+.page-item .page-link {
+  cursor: pointer;
+  border-color: var(--gray-primary);
+  color: black;
+  font-weight: bold;
+}
+
+.page-item .page-link:focus {
+  border: none !important;
+  box-shadow: none;
 }
 
 .border-color-green {

@@ -31,7 +31,7 @@ router
 
 router
   .route("/:id/answers")
-  .get(protect, findFormID, checkFormAdmin, getFormAnswers);
+  .post(protect, findFormID, checkFormAdmin, getFormAnswers);
 
 router
   .route("/:id/answers/:answerID/:questionID/downloadFile")

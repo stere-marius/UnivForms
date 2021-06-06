@@ -16,7 +16,9 @@ const FormAnswersScreen = ({ match, history }) => {
 
   const [currentAnswer, setCurrentAnswer] = useState(null);
 
-  // const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const [perPageAnswers, setPerPageAnswers] = useState(1);
 
   // const [searchText, setSearchText] = useState("");
 
@@ -26,9 +28,26 @@ const FormAnswersScreen = ({ match, history }) => {
   const formAnswers = useSelector(state => state.formAnswers);
   const {
     loading: loadingAnswers,
-    // raspunsuri: answers,
+    raspunsuri: answers,
+    raspunsuriTotale: totalAnswers = 0,
     error: errorAnswers,
   } = formAnswers;
+
+  const handlePreviousPage = async () => {
+    if (currentPage - 1 < 0) return;
+
+    await dispatch(getFormAnswers(match.params.id, currentPage - 1));
+    setCurrentPage(currentPage - 1);
+  };
+
+  const handleNextPage = async () => {
+    if (currentPage + 1 > Math.floor(totalAnswers / perPageAnswers)) return;
+
+    await dispatch(getFormAnswers(match.params.id, currentPage + 1));
+    setCurrentPage(currentPage + 1);
+  };
+
+  const handlePageChange = () => {};
 
   // TODO: Fac o componenta în care trimit ca argument specificAnswer dacă aceasta a fost randată din FormAnswersScreen
   // dacă argumentul specificAnswer e null fac un useEffect și fac dispatch la specific answer
@@ -72,7 +91,35 @@ const FormAnswersScreen = ({ match, history }) => {
 
   const renderAnswersTab = () => {
     if (selectedTab !== "Raspunsuri") return <> </>;
-    return <FormAnswersTab onAnswerChange={handleAnswerChange} />;
+    return (
+      <div className="d-flex flex-column">
+        <FormAnswersTab
+          formID={match.params.id}
+          onAnswerChange={handleAnswerChange}
+        />
+        {answers.length < totalAnswers && (
+          <ul class="pagination">
+            {currentPage > 0 && (
+              <li class="page-item" onClick={handlePreviousPage}>
+                <span class="page-link">Inapoi</span>
+              </li>
+            )}
+
+            <li class="page-item active">
+              <span class="page-link">{currentPage + 1}</span>
+            </li>
+
+            {currentPage + 1 < Math.floor(totalAnswers / perPageAnswers) && (
+              <li class="page-item" onClick={handleNextPage}>
+                <a class="page-link" href="#">
+                  Inainte
+                </a>
+              </li>
+            )}
+          </ul>
+        )}
+      </div>
+    );
   };
 
   const renderUserAnswerTab = () => {
@@ -92,27 +139,28 @@ const FormAnswersScreen = ({ match, history }) => {
         {renderTabs()}
       </ul>
 
-      {renderAnswersTab()}
-      {renderUserAnswerTab()}
-      {/* {renderFormSendTab()} */}
+      {loadingAnswers ? (
+        <Loader />
+      ) : errorAnswers ? (
+        <Message variant="danger">{errorAnswers}</Message>
+      ) : (
+        <>
+          {renderAnswersTab()}
+          {renderUserAnswerTab()}
+        </>
+      )}
     </div>
   );
 
   return (
     <>
       <Header />
-      {loadingAnswers ? (
-        <Loader />
-      ) : errorAnswers ? (
-        <Message variant="danger">{errorAnswers}</Message>
-      ) : (
-        <div
-          className="mt-4 container bg-white pb-1"
-          style={{ borderRadius: "16px" }}
-        >
-          {renderTabNav()}
-        </div>
-      )}
+      <div
+        className="mt-4 container bg-white pb-1"
+        style={{ borderRadius: "16px" }}
+      >
+        {renderTabNav()}
+      </div>
     </>
   );
 };

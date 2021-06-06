@@ -606,13 +606,17 @@ const getSpecificAnswer = asyncHandler(async (request, response) => {
 });
 
 // @desc    Obtine raspunsurilor formularului
-// @route   GET /api/forms/:id/answers
+// @route   POST /api/forms/:id/answers
 // @access  Private
 const getFormAnswers = asyncHandler(async (request, response) => {
   const form = request.form;
 
-  const perPage = request.body.perPagina || 15;
-  const page = request.body.pagina || 0;
+  const perPage = request.body.perPagina || 1;
+  const page = (request.body.pagina > 0 && request.body.pagina) || 0;
+
+  const totalAnswers = await FormResponses.countDocuments({
+    formular: form._id,
+  });
 
   const formResponseArray = await FormResponses.find({ formular: form._id })
     .limit(perPage)
@@ -646,7 +650,9 @@ const getFormAnswers = asyncHandler(async (request, response) => {
     })
   );
 
-  return response.status(201).json({ raspunsuri: responseArray });
+  return response
+    .status(201)
+    .json({ raspunsuri: responseArray, raspunsuriTotale: totalAnswers });
 });
 
 // @desc    Trimite raspunsurilor formularului

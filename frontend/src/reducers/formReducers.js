@@ -136,12 +136,19 @@ export const formDeleteQuestionReducer = (state = {}, action) => {
   }
 };
 
-export const formAnswersReducer = (state = { raspunsuri: [] }, action) => {
+export const formAnswersReducer = (
+  state = { raspunsuri: [], raspunsuriTotale: 0 },
+  action
+) => {
   switch (action.type) {
     case FORM_ANSWERS_REQUEST:
       return { loading: true };
     case FORM_ANSWERS_SUCCESS:
-      return { loading: false, raspunsuri: action.payload };
+      return {
+        loading: false,
+        raspunsuri: action.payload.raspunsuri,
+        raspunsuriTotale: action.payload.raspunsuriTotale,
+      };
     case FORM_ANSWERS_FAIL:
       return { loading: false, error: action.payload };
     case FORM_ANSWERS_RESET:
