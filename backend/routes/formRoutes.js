@@ -19,6 +19,7 @@ import {
   findFormID,
   checkFormAdmin,
   userCanAnswer,
+  deleteAnswer,
 } from "../controllers/formController.js";
 
 const router = express.Router();
@@ -43,7 +44,8 @@ router
 
 router
   .route("/:id/answers/:answerID")
-  .get(protect, findFormID, getSpecificAnswer);
+  .get(protect, findFormID, getSpecificAnswer)
+  .delete(protect, findFormID, deleteAnswer);
 
 router.route("/:id/userAnswers").get(protect, getUserAnswers);
 

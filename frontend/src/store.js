@@ -17,6 +17,7 @@ import {
   formUpdateReducer,
   formAnswerReducer,
   formAnswersReducer,
+  formAnswerDeleteReducer,
 } from "./reducers/formReducers";
 import { groupCreateReducer } from "./reducers/groupReducers";
 
@@ -34,6 +35,7 @@ const reducer = combineReducers({
   formDeletedQuestion: formDeleteQuestionReducer,
   formAnswers: formAnswersReducer,
   formAnswer: formAnswerReducer,
+  formAnswerDelete: formAnswerDeleteReducer,
   groupCreate: groupCreateReducer,
 });
 

@@ -1,17 +1,17 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Loader from "../Loader";
 import Message from "../Message";
 
-const FormAnswersTab = ({ onAnswerChange }) => {
+const FormAnswersTab = ({ onAnswerChange, onAnswerDelete }) => {
+  const dispatch = useDispatch();
   const formAnswers = useSelector(state => state.formAnswers);
   const {
     loading: loadingAnswers,
     raspunsuri: answers,
+    raspunsuriTotale: totalAnswers,
     error: errorAnswers,
   } = formAnswers;
-
-  const handleDeleteAnswer = answerID => {};
 
   return (
     <>
@@ -55,7 +55,7 @@ const FormAnswersTab = ({ onAnswerChange }) => {
                     <i
                       className="fas fa-trash cursor-pointer"
                       style={{ color: "red" }}
-                      onClick={() => handleDeleteAnswer(answer.id)}
+                      onClick={() => onAnswerDelete(answer.id)}
                     />
                   </td>
                 </tr>

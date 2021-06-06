@@ -31,6 +31,10 @@ import {
   FORM_ANSWER_REQUEST,
   FORM_ANSWER_SUCCESS,
   FORM_ANSWER_FAIL,
+  FORM_DELETE_ANSWER_REQUEST,
+  FORM_DELETE_ANSWER_FAIL,
+  FORM_DELETE_ANSWER_SUCCESS,
+  FORM_DELETE_ANSWER_RESET,
 } from "../constants/formConstants";
 
 export const listFormDetails = (id, isView) => async (dispatch, getState) => {
@@ -334,6 +338,42 @@ export const getFormAnswer =
     } catch (error) {
       dispatch({
         type: FORM_ANSWER_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      });
+    }
+  };
+
+export const deleteFormAnswer =
+  (formID, answerID) => async (dispatch, getState) => {
+    try {
+      dispatch({ type: FORM_DELETE_ANSWER_REQUEST });
+
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      const { data } = await axios.delete(
+        `/api/forms/${formID}/answers/${answerID}`,
+        config
+      );
+
+      dispatch({ type: FORM_DELETE_ANSWER_SUCCESS, payload: data });
+
+      setTimeout(() => {
+        dispatch({ type: FORM_DELETE_ANSWER_RESET });
+      }, 3000);
+    } catch (error) {
+      dispatch({
+        type: FORM_DELETE_ANSWER_FAIL,
         payload:
           error.response && error.response.data.message
             ? error.response.data.message

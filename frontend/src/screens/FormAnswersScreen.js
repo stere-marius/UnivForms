@@ -4,7 +4,7 @@ import FormAnswersTab from "../components/form/FormAnswersTab";
 import Header from "../components/Header";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import { getFormAnswers } from "../actions/formActions";
+import { getFormAnswers, deleteFormAnswer } from "../actions/formActions";
 import UserAnswerTab from "../components/form/UserAnswerTab";
 
 const FormAnswersScreen = ({ match, history }) => {
@@ -55,6 +55,14 @@ const FormAnswersScreen = ({ match, history }) => {
     if (e.keyCode !== 13) return;
 
     await dispatch(getFormAnswers(match.params.id, 0, searchAnswerQuery));
+  };
+
+  const formAnswerDelete = useSelector(state => state.formAnswerDelete);
+  const { success: successDeleteAnswer } = formAnswerDelete;
+
+  const onAnswerDelete = async answerID => {
+    await dispatch(deleteFormAnswer(match.params.id, answerID));
+    dispatch(getFormAnswers(match.params.id));
   };
 
   const handlePageChange = () => {};
@@ -117,7 +125,13 @@ const FormAnswersScreen = ({ match, history }) => {
         <FormAnswersTab
           formID={match.params.id}
           onAnswerChange={handleAnswerChange}
+          onAnswerDelete={onAnswerDelete}
         />
+        {successDeleteAnswer && (
+          <div className="alert alert-success">
+            Răspunsul a fost șters cu success!
+          </div>
+        )}
         {answers.length < totalAnswers && (
           <ul class="pagination">
             {currentPage > 0 && (

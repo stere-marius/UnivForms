@@ -695,6 +695,27 @@ const getFormAnswers = asyncHandler(async (request, response) => {
   });
 });
 
+// @desc    Sterge raspunsul formularului
+// @route   DELETE /api/forms/:id/answer/:answerID
+// @access  Private
+
+const deleteAnswer = asyncHandler(async (request, response) => {
+  const form = request.form;
+
+  const answer = await FormResponses.findById(request.params.answerID);
+
+  if (!answer) {
+    response.status(404);
+    throw new Error(`Raspunsul cu ID-ul ${request.params.answerID} nu exista`);
+  }
+
+  await answer.remove();
+
+  return response
+    .status(201)
+    .json({ message: "Raspunsul a fost șters cu success!" });
+});
+
 // @desc    Trimite raspunsurilor formularului
 // @route   POST /api/forms/sendAnswer
 // @access  Private
@@ -1062,4 +1083,5 @@ export {
   findFormID,
   checkFormAdmin,
   userCanAnswer,
+  deleteAnswer,
 };

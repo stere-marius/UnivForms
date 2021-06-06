@@ -33,6 +33,10 @@ import {
   FORM_ANSWER_FAIL,
   FORM_ANSWER_RESET,
   FORM_DETAILS_RESET,
+  FORM_DELETE_ANSWER_REQUEST,
+  FORM_DELETE_ANSWER_SUCCESS,
+  FORM_DELETE_ANSWER_FAIL,
+  FORM_DELETE_ANSWER_RESET,
 } from "../constants/formConstants";
 
 export const formDetailsReducer = (state = { form: {} }, action) => {
@@ -167,6 +171,21 @@ export const formAnswerReducer = (state = {}, action) => {
     case FORM_ANSWER_FAIL:
       return { loading: false, error: action.payload };
     case FORM_ANSWER_RESET:
+      return {};
+    default:
+      return state;
+  }
+};
+
+export const formAnswerDeleteReducer = (state = {}, action) => {
+  switch (action.type) {
+    case FORM_DELETE_ANSWER_REQUEST:
+      return { loading: true };
+    case FORM_DELETE_ANSWER_SUCCESS:
+      return { loading: false, success: true };
+    case FORM_DELETE_ANSWER_FAIL:
+      return { loading: false, success: false };
+    case FORM_DELETE_ANSWER_RESET:
       return {};
     default:
       return state;
