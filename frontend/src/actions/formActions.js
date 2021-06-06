@@ -33,10 +33,23 @@ import {
   FORM_ANSWER_FAIL,
 } from "../constants/formConstants";
 
-export const listFormDetails = id => async dispatch => {
+export const listFormDetails = (id, isView) => async (dispatch, getState) => {
   try {
     dispatch({ type: FORM_DETAILS_REQUEST });
-    const { data } = await axios.get(`/api/forms/${id}`);
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+    const { data } = await axios.get(
+      `/api/forms/${id}${isView ? "/view" : ""}`,
+      config
+    );
+
     dispatch({ type: FORM_DETAILS_SUCCESS, payload: data });
   } catch (error) {
     dispatch({

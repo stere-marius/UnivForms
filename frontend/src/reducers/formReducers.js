@@ -42,7 +42,7 @@ export const formDetailsReducer = (state = { form: {} }, action) => {
     case FORM_DETAILS_SUCCESS:
       return { loading: false, form: action.payload };
     case FORM_DETAILS_FAIL:
-      return { loading: false, error: action.payload };
+      return { loading: false, error: action.payload, form: {} };
     case FORM_DETAILS_RESET:
       return { form: {} };
     default:

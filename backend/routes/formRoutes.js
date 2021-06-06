@@ -4,6 +4,7 @@ import formidableMiddleware from "express-formidable";
 
 import {
   getFormByID,
+  getFormView,
   createForm,
   deleteForm,
   createQuestion,
@@ -17,6 +18,7 @@ import {
   downloadFile,
   findFormID,
   checkFormAdmin,
+  userCanAnswer,
 } from "../controllers/formController.js";
 
 const router = express.Router();
@@ -25,9 +27,11 @@ router.route("/").put(protect, createForm);
 
 router
   .route("/:id")
-  .get(findFormID, getFormByID)
+  .get(protect, findFormID, checkFormAdmin, getFormByID)
   .delete(protect, findFormID, checkFormAdmin, deleteForm)
   .put(protect, findFormID, checkFormAdmin, updateForm);
+
+router.route("/:id/view").get(protect, findFormID, userCanAnswer, getFormView);
 
 router
   .route("/:id/answers")

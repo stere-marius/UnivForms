@@ -49,6 +49,13 @@ const checkFormAdmin = asyncHandler(async (request, response, next) => {
 // @route   GET /api/forms/:id
 // @access  Public
 const getFormByID = asyncHandler(async (request, response) => {
+  return response.json(request.form);
+});
+
+// @desc    Obtine formular folosind ID
+// @route   GET /api/forms/:id/view
+// @access  Public
+const getFormView = asyncHandler(async (request, response) => {
   request.form.intrebari.forEach(question => {
     if (
       question.tip === "Buton radio" ||
@@ -117,6 +124,25 @@ const updateForm = asyncHandler(async (request, response) => {
   await form.save();
 
   return response.json({ message: "Formularul a fost actualizat cu succes" });
+});
+
+// @desc    Verifica daca un utilizator mai poate trimite raspunsuri unui formular
+// @route   GET /api/forms/:id/canAnswer
+// @access  Private
+const userCanAnswer = asyncHandler(async (request, response, next) => {
+  const answers = await FormResponses.find({
+    utilizator: request.user._id,
+    formular: request.form.id,
+  });
+
+  if (!request.form.raspunsuriMultipleUtilizator && answers) {
+    response.status(403);
+    throw new Error(
+      "Ați oferit deja un răspuns la acest formular! Acest formular nu permite raspunsuri multiple!"
+    );
+  }
+
+  next();
 });
 
 // @desc    Creeaza formular
@@ -663,12 +689,10 @@ const getFormAnswers = asyncHandler(async (request, response) => {
     );
   }
 
-  return response
-    .status(201)
-    .json({
-      raspunsuri: responseArray,
-      raspunsuriTotale: search ? responseArray.length : totalAnswers,
-    });
+  return response.status(201).json({
+    raspunsuri: responseArray,
+    raspunsuriTotale: search ? responseArray.length : totalAnswers,
+  });
 });
 
 // @desc    Trimite raspunsurilor formularului
@@ -1024,6 +1048,7 @@ const handleMarkBoxResponse = (
 export {
   createForm,
   getFormByID,
+  getFormView,
   updateForm,
   deleteForm,
   createQuestion,
@@ -1036,4 +1061,5 @@ export {
   downloadFile,
   findFormID,
   checkFormAdmin,
+  userCanAnswer,
 };

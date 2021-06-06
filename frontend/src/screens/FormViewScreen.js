@@ -56,7 +56,7 @@ const FormViewScreen = ({ match, history }) => {
       return;
     }
 
-    dispatch(listFormDetails(match.params.id));
+    dispatch(listFormDetails(match.params.id, true));
   }, [match, dispatch, userInfo, history]);
 
   useEffect(() => {
@@ -427,7 +427,30 @@ const FormViewScreen = ({ match, history }) => {
       {loading ? (
         <Loader />
       ) : error ? (
-        <Message variant="danger">{error}</Message>
+        <div
+          className="mt-4 container bg-white pb-1 pt-1"
+          style={{ borderRadius: "16px" }}
+        >
+          <div
+            className="d-flex flex-column p-4 m-4"
+            style={{
+              borderRadius: "22px",
+              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)",
+              backgroundColor: "#EFEFEF",
+            }}
+          >
+            <div className="p-4">
+              <h3 className="mt-4">{error}</h3>
+
+              <button
+                onClick={() => history.push("/")}
+                className="btn btn-default btn-color-green px-4 text-dark text-bold fs-5 mt-4 fw-bold"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
       ) : (
         <div
           className="mt-4 container bg-white pb-1"
