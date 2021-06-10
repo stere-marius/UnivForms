@@ -41,6 +41,8 @@ const FormAttributes = ({ form, history }) => {
 
   const [isActiveModalDeleteForm, setActiveModalDeleteForm] = useState(false);
 
+  const [textLinkCopy, setTextLinkCopy] = useState("Obtine link formular");
+
   const date = new Date();
   date.setDate(date.getDate() + 1);
 
@@ -68,6 +70,16 @@ const FormAttributes = ({ form, history }) => {
 
   const handleDelete = () => {
     setActiveModalDeleteForm(true);
+  };
+
+  const handleCopyLinkForm = () => {
+    const protocol = window.location.protocol;
+    const host = window.location.host;
+    navigator.clipboard.writeText(`${protocol + "//" + host}/form/${form._id}`);
+    setTextLinkCopy("Link copiat cu succes");
+    setTimeout(() => {
+      setTextLinkCopy("Obtine link formular");
+    }, 3000);
   };
 
   const handleConfirmDeleteForm = async () => {
@@ -265,6 +277,13 @@ const FormAttributes = ({ form, history }) => {
       )}
 
       <div className="d-flex flex-column align-items-start">
+        <button
+          className="btn btn-color-green px-3 mt-5 fw-bold"
+          onClick={handleCopyLinkForm}
+        >
+          {textLinkCopy}
+        </button>
+
         <button
           className="btn btn-color-green px-3 mt-5 fw-bold"
           onClick={handleSave}
