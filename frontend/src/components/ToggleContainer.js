@@ -17,15 +17,15 @@ const ToggleContainer = ({
 
   return (
     <div className={` ${classes ? [...classes].join(" ") : ""}`}>
-      <div className="d-flex">
+      <div className="d-flex  py-2">
         <p
-          className="toggle-container-text cursor-pointer py-2"
+          className="cursor-pointer"
+          onClick={handleToggleContainer}
           aria-expanded={`${isActive}`}
           aria-controls={containerID}
-          onClick={handleToggleContainer}
         >
           <i
-            className={`fas fa-arrow-right ${isActive ? "open" : ""}`}
+            className={`fas fa-caret-right ${isActive ? "open" : ""}`}
             style={{ marginRight: "0.5rem" }}
           />
           {title}

@@ -162,6 +162,22 @@ const UserAnswerTab = ({ answerID, formID, isFormOwner }) => {
           )}
         </div>
       ))}
+
+      <div
+        className="fs-4 d-flex flex-column p-4 m-4 position-relative"
+        style={{
+          borderRadius: "22px",
+          boxShadow: `0px 0px 6px rgba(0, 0, 0, 0.25)`,
+          backgroundColor: "#EFEFEF",
+        }}
+      >
+        <p>Nume: {specificAnswer.utilizator.nume || " NULL"}</p>
+        <p>Prenume: {specificAnswer.utilizator.prenume || " NULL"}</p>
+        <p>Email: {specificAnswer.utilizator.email || " NULL"}</p>
+        {specificAnswer.punctajTotal > 0 && (
+          <p>Scor total: {specificAnswer.punctajUtilizator || " NULL"}</p>
+        )}
+      </div>
     </>
   );
 };

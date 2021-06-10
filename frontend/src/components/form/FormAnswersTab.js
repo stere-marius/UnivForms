@@ -9,7 +9,6 @@ const FormAnswersTab = ({ onAnswerChange, onAnswerDelete }) => {
   const {
     loading: loadingAnswers,
     raspunsuri: answers,
-    raspunsuriTotale: totalAnswers,
     error: errorAnswers,
   } = formAnswers;
 
@@ -31,7 +30,6 @@ const FormAnswersTab = ({ onAnswerChange, onAnswerDelete }) => {
               </tr>
             </thead>
             <tbody>
-              {console.log(`${JSON.stringify(answers, null, 2)}`)}
               {answers.map((answer, index) => (
                 <tr key={answer.id}>
                   <td>

@@ -39,12 +39,12 @@ code {
   transform: scaleY(1);
 }
 
-.fa-arrow-right {
+.fa-caret-right {
   transform: rotate(0deg);
   transition: transform 0.5s linear;
 }
 
-.fa-arrow-right.open {
+.fa-caret-right.open {
   transform: rotate(90deg);
   transition: transform 0.5s linear;
 }

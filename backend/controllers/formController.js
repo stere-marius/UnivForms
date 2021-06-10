@@ -64,10 +64,11 @@ const getFormByID = asyncHandler(async (request, response) => {
 // @access  Public
 const getFormView = asyncHandler(async (request, response) => {
   request.form.intrebari.forEach(question => {
-    if (
-      question.tip === RADIO_BUTTON_QUESTION ||
-      question.tip === CHECKBOX_QUESTION
-    ) {
+    const type = question.tip;
+    const isBoxQuestion =
+      type === RADIO_BUTTON_QUESTION || type === CHECKBOX_QUESTION;
+
+    if (isBoxQuestion) {
       question.raspunsuri = question.raspunsuri.map(answer => ({
         ...answer.toObject(),
         atribute: undefined,
@@ -496,6 +497,16 @@ const getSpecificAnswer = asyncHandler(async (request, response) => {
     return response.status(201).json({ raspunsuri: [] });
   }
 
+  const user = await User.findById(formResponse.utilizator).select({
+    nume: 1,
+    prenume: 1,
+    email: 1,
+  });
+
+  if (!user) {
+    return response.status(201).json({ raspunsuri: [] });
+  }
+
   const timeLeft =
     form.timpTransmitere && +form.timpTransmitere - +formResponse.timpRamas;
 
@@ -638,6 +649,7 @@ const getSpecificAnswer = asyncHandler(async (request, response) => {
   });
 
   return response.status(201).json({
+    utilizator: user,
     timpRamas: isNaN(timeLeft) ? undefined : timeLeft,
     punctajTotal: totalScore,
     punctajUtilizator: userScore,
