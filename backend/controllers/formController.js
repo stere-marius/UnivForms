@@ -13,7 +13,7 @@ import {
 import path from "path";
 import fs from "fs";
 import mongoose from "mongoose";
-import { arraysHaveSaveValues } from "../utils/utilities.js";
+import { arraysHaveSaveValues, shuffleArray } from "../utils/utilities.js";
 import {
   RADIO_BUTTON_QUESTION,
   CHECKBOX_QUESTION,
@@ -67,12 +67,20 @@ const getFormView = asyncHandler(async (request, response) => {
     const type = question.tip;
     const isBoxQuestion =
       type === RADIO_BUTTON_QUESTION || type === CHECKBOX_QUESTION;
+    const attributes = question.atribute;
 
     if (isBoxQuestion) {
       question.raspunsuri = question.raspunsuri.map(answer => ({
         ...answer.toObject(),
         atribute: undefined,
       }));
+      console.log(
+        `attributes.afisareRaspunsuriOrdineAleatorie = ${attributes.afisareRaspunsuriOrdineAleatorie}`
+      );
+      if (attributes && attributes.afisareRaspunsuriOrdineAleatorie) {
+        console.log(`Am dat shuffle la array`);
+        shuffleArray(question.raspunsuri);
+      }
     }
 
     if (question.tip === SHORT_TEXT_QUESTION) {
@@ -610,7 +618,7 @@ const getSpecificAnswer = asyncHandler(async (request, response) => {
           ? questionScore
           : 0
         : undefined;
-      userScore += +responseQuestion.punctaj || 0;
+      userScore += +responseQuestion.punctajUtilizator || 0;
       responseQuestion.raspuns = answer.raspuns;
       responseQuestion.esteCorect = correctUserAnswer;
       questionResponses.push(responseQuestion);
@@ -627,7 +635,7 @@ const getSpecificAnswer = asyncHandler(async (request, response) => {
 
       responseQuestion.punctajUtilizator =
         questionScore && scoreCreator ? scoreCreator : undefined;
-      userScore += +responseQuestion.punctaj || 0;
+      userScore += +responseQuestion.punctajUtilizator || 0;
       responseQuestion.raspuns = userAnswer;
       responseQuestion.esteCorect = Boolean(responseQuestion.punctajUtilizator);
       questionResponses.push(responseQuestion);
@@ -640,7 +648,7 @@ const getSpecificAnswer = asyncHandler(async (request, response) => {
 
       responseQuestion.punctajUtilizator =
         questionScore && scoreCreator ? scoreCreator : undefined;
-      userScore += +responseQuestion.punctaj || 0;
+      userScore += +responseQuestion.punctajUtilizator || 0;
       responseQuestion.caleFisier = answer.fisier;
       questionResponses.push(responseQuestion);
     }
@@ -1043,12 +1051,17 @@ const handleTextResponse = (
   addError,
   addResponse
 ) => {
-  if (attributes && answerText && attributes.descriereValidare && canAnswer) {
+  if (
+    questionDB.atribute &&
+    answerText &&
+    questionDB.atribute.descriereValidare &&
+    canAnswer
+  ) {
     const {
       validareRaspuns: answerValidate,
       descriereValidare: validationDescription,
       textRaspunsInvalid: invalidAnswerMessage,
-    } = attributes;
+    } = questionDB.atribute;
 
     if (validationDescription === "NUMAR" && !/^\d+$/.test(answerText.trim())) {
       addError(questionDB, invalidAnswerMessage);

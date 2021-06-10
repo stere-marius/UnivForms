@@ -95,9 +95,9 @@ const QuestionMarkBoxAttributesPanel = ({ questionDB, onAttributeChange }) => {
           type="checkbox"
           checked={attributes.afisareRaspunsuriOrdineAleatorie || false}
           onChange={handleRandomOrder}
-          id="checkboxIntrebareObligatorie"
+          id="checkboxRaspunsuriRandom"
         />
-        <label className="form-check-label" for="checkboxIntrebareObligatorie">
+        <label className="form-check-label" for="checkboxRaspunsuriRandom">
           Afisare raspunsuri in ordine aleatorie
         </label>
       </div>

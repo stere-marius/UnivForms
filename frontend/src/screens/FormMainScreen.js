@@ -21,7 +21,7 @@ const FormMainScreen = ({ match, history }) => {
       return;
     }
 
-    dispatch(listFormDetails(match.params.id));
+    dispatch(listFormDetails(match.params.id, true));
   }, [match, dispatch, history, userInfo]);
 
   const handleAccept = () => {
