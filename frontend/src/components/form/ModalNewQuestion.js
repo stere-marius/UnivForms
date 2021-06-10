@@ -7,7 +7,8 @@ import {
   CHECKBOX_QUESTION,
   FILE_UPLOAD,
   RADIO_BUTTON_QUESTION,
-  TEXT_QUESTION,
+  SHORT_TEXT_QUESTION,
+  PARAGRAPH_QUESTION,
 } from "../../constants/questionTypesConstants";
 
 const ModalNewQuestion = ({ formID, showModal, onClose, onCreate }) => {
@@ -21,7 +22,8 @@ const ModalNewQuestion = ({ formID, showModal, onClose, onCreate }) => {
     RADIO_BUTTON_QUESTION,
     CHECKBOX_QUESTION,
     FILE_UPLOAD,
-    TEXT_QUESTION,
+    SHORT_TEXT_QUESTION,
+    PARAGRAPH_QUESTION,
   ]);
 
   const [questionType, setQuestionType] = useState(CHECKBOX_QUESTION);

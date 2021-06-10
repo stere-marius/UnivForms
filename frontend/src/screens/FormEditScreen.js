@@ -5,10 +5,18 @@ import ModalNewQuestion from "../components/form/ModalNewQuestion";
 import { useSelector, useDispatch } from "react-redux";
 import { listFormDetails, deleteQuestion } from "../actions/formActions";
 import EditFileUploadQuestion from "../components/form/EditFileUploadQuestion";
-import EditTextQuestion from "../components/form/EditTextQuestion";
+import EditShortTextQuestion from "../components/form/EditShortTextQuestion";
+import EditParagraphQuestion from "../components/form/EditParagraphQuestion";
 import ConfirmationModal from "../components/ConfirmationModal";
 import FormAttributes from "../components/form/FormAttributes";
 import FormEditRadioQuestion from "../components/form/FormEditRadioQuestion";
+import {
+  RADIO_BUTTON_QUESTION,
+  CHECKBOX_QUESTION,
+  SHORT_TEXT_QUESTION,
+  FILE_UPLOAD,
+  PARAGRAPH_QUESTION,
+} from "../constants/questionTypesConstants";
 
 const FormEditScreen = ({ match, history }) => {
   const dispatch = useDispatch();
@@ -138,7 +146,7 @@ const FormEditScreen = ({ match, history }) => {
       return <> </>;
     }
 
-    if (currentQuestion.tip === "Caseta de selectare") {
+    if (currentQuestion.tip === CHECKBOX_QUESTION) {
       return (
         <CreateMarkBox
           formID={match.params.id}
@@ -148,7 +156,7 @@ const FormEditScreen = ({ match, history }) => {
       );
     }
 
-    if (currentQuestion.tip === "Buton radio") {
+    if (currentQuestion.tip === RADIO_BUTTON_QUESTION) {
       return (
         <FormEditRadioQuestion
           formID={match.params.id}
@@ -158,7 +166,7 @@ const FormEditScreen = ({ match, history }) => {
       );
     }
 
-    if (currentQuestion.tip === "Incarcare fisier") {
+    if (currentQuestion.tip === FILE_UPLOAD) {
       return (
         <EditFileUploadQuestion
           formID={match.params.id}
@@ -168,9 +176,19 @@ const FormEditScreen = ({ match, history }) => {
       );
     }
 
-    if (currentQuestion.tip === "Raspuns text") {
+    if (currentQuestion.tip === SHORT_TEXT_QUESTION) {
       return (
-        <EditTextQuestion
+        <EditShortTextQuestion
+          formID={match.params.id}
+          formQuestionDB={currentQuestion}
+          handleNewQuestion={handleNewQuestion}
+        />
+      );
+    }
+
+    if (currentQuestion.tip === PARAGRAPH_QUESTION) {
+      return (
+        <EditParagraphQuestion
           formID={match.params.id}
           formQuestionDB={currentQuestion}
           handleNewQuestion={handleNewQuestion}

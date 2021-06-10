@@ -152,6 +152,7 @@ export const formAnswersReducer = (
         loading: false,
         raspunsuri: action.payload.raspunsuri,
         raspunsuriTotale: action.payload.raspunsuriTotale,
+        creatorFormular: action.payload.creatorFormular,
       };
     case FORM_ANSWERS_FAIL:
       return { loading: false, error: action.payload };

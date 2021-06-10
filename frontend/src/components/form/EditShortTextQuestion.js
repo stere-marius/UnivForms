@@ -6,7 +6,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateQuestion, listFormDetails } from "../../actions/formActions";
 import Loader from "../Loader";
 
-const EditTextQuestion = ({ formID, formQuestionDB, handleNewQuestion }) => {
+const EditShortTextQuestion = ({
+  formID,
+  formQuestionDB,
+  handleNewQuestion,
+}) => {
   const dispatch = useDispatch();
 
   const [formQuestion, setFormQuestion] = useState(formQuestionDB);
@@ -431,4 +435,4 @@ const EditTextQuestion = ({ formID, formQuestionDB, handleNewQuestion }) => {
   );
 };
 
-export default EditTextQuestion;
+export default EditShortTextQuestion;

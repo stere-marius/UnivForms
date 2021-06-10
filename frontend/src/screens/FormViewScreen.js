@@ -9,12 +9,14 @@ import CountdownTimer from "../components/CountdownTimer";
 import Message from "../components/Message";
 import { Button, Table } from "react-bootstrap";
 import {
-  RADIO_BUTTON_QUESTION,
   CHECKBOX_QUESTION,
-  TEXT_QUESTION,
   FILE_UPLOAD,
+  RADIO_BUTTON_QUESTION,
+  SHORT_TEXT_QUESTION,
+  PARAGRAPH_QUESTION,
 } from "../constants/questionTypesConstants";
 import QuestionFileUpload from "../components/form/QuestionFileUpload";
+import QuestionParagraph from "../components/form/QuestionParagraph";
 
 const FormViewScreen = ({ match, history }) => {
   const tabs = [
@@ -172,19 +174,16 @@ const FormViewScreen = ({ match, history }) => {
           )
       );
 
-    console.log(`${JSON.stringify(mandatoryQuestions, null, 40)}`);
+    console.log(`${JSON.stringify(raspunsuriIntrebariUtilizator, null, 40)}`);
 
     if (mandatoryQuestions.length > 0) {
-      // Iau toate intrebarile care nu se gasesc cu ID-ul în răspunsuriIntrebăriUtilizator
-
       const setErrors = new Set([...errorsSubmit]);
 
       mandatoryQuestions.forEach(question => {
-        setErrors.add(`Nu ati oferit un raspuns la "${question.titlu}"`);
+        setErrors.add(`Nu ati furnizat un raspuns la "${question.titlu}"`);
       });
 
       setErrorsSubmit([...setErrors]);
-      console.log(`mandatoryQuestions`);
       return;
     }
 
@@ -265,9 +264,20 @@ const FormViewScreen = ({ match, history }) => {
         />
       );
 
-    if (tipIntrebare === TEXT_QUESTION) {
+    if (tipIntrebare === SHORT_TEXT_QUESTION) {
       return (
         <QuestionInputBox
+          question={form.intrebari[indexQuestion]}
+          indexQuestion={indexQuestion}
+          raspunsuriIntrebariUtilizator={raspunsuriIntrebariUtilizator}
+          handleNextQuestion={handleNextQuestion}
+        />
+      );
+    }
+
+    if (tipIntrebare === PARAGRAPH_QUESTION) {
+      return (
+        <QuestionParagraph
           question={form.intrebari[indexQuestion]}
           indexQuestion={indexQuestion}
           raspunsuriIntrebariUtilizator={raspunsuriIntrebariUtilizator}

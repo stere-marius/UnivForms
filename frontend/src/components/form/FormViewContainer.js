@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { getDifferenceInDays } from "../../utilities";
 import { useSelector } from "react-redux";
 
-const FormViewContainer = ({ form }) => {
+const FormViewContainer = ({ form, history }) => {
   const userLogin = useSelector(state => state.userLogin);
   const { userInfo } = userLogin;
 
@@ -25,19 +25,17 @@ const FormViewContainer = ({ form }) => {
             </p>
           </div>
           <div className="formular__body">
-            <div className="body__attribute">
+            <div
+              className="body__attribute cursor-pointer"
+              onClick={() => history.push(`/form/${form._id}/answers`)}
+            >
               <div className="attribute__left">
                 <p className="__raspunsuri">Raspunsuri</p>
                 <p className="__attribute--value">{form.raspunsuri}</p>
               </div>
-              <Link
-                to={`/form/${form._id}/answers`}
-                className="text-decoration-none"
-              >
-                <div className="attribute__right">
-                  <i className="fas fa-copy" />
-                </div>
-              </Link>
+              <div className="attribute__right">
+                <i className="fas fa-copy" />
+              </div>
             </div>
             <div className="body__attribute">
               <div className="attribute__left">

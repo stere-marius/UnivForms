@@ -14,6 +14,13 @@ import path from "path";
 import fs from "fs";
 import mongoose from "mongoose";
 import { arraysHaveSaveValues } from "../utils/utilities.js";
+import {
+  RADIO_BUTTON_QUESTION,
+  CHECKBOX_QUESTION,
+  SHORT_TEXT_QUESTION,
+  FILE_UPLOAD,
+  PARAGRAPH_QUESTION,
+} from "../utils/questionTypesConstants.js";
 
 // @desc    Verifică ID-ul formularului și-l pune în obiectul request
 const findFormID = asyncHandler(async (request, response, next) => {
@@ -58,8 +65,8 @@ const getFormByID = asyncHandler(async (request, response) => {
 const getFormView = asyncHandler(async (request, response) => {
   request.form.intrebari.forEach(question => {
     if (
-      question.tip === "Buton radio" ||
-      question.tip === "Caseta de selectare"
+      question.tip === RADIO_BUTTON_QUESTION ||
+      question.tip === CHECKBOX_QUESTION
     ) {
       question.raspunsuri = question.raspunsuri.map(answer => ({
         ...answer.toObject(),
@@ -67,7 +74,7 @@ const getFormView = asyncHandler(async (request, response) => {
       }));
     }
 
-    if (question.tip === "Raspuns text") {
+    if (question.tip === SHORT_TEXT_QUESTION) {
       question.raspunsuri = [];
     }
   });
@@ -184,7 +191,7 @@ const createForm = asyncHandler(async (request, response) => {
     utilizator: request.user._id,
     intrebari: {
       titlu: "Titlul intrebarii",
-      tip: "Caseta de selectare",
+      tip: CHECKBOX_QUESTION,
     },
     titlu: titlu,
   });
@@ -212,7 +219,9 @@ const createForm = asyncHandler(async (request, response) => {
 const createQuestion = asyncHandler(async (request, response) => {
   const form = request.form;
 
-  const { title, type } = request.body;
+  const { titlu: title, tip: type } = request.body;
+
+  console.log(`Am primit în body ${title} ${type}`);
 
   if (!title) {
     return response
@@ -227,10 +236,11 @@ const createQuestion = asyncHandler(async (request, response) => {
   }
 
   const questionTypes = [
-    "Caseta de selectare",
-    "Incarcare fisier",
-    "Buton radio",
-    "Raspuns text",
+    CHECKBOX_QUESTION,
+    FILE_UPLOAD,
+    RADIO_BUTTON_QUESTION,
+    SHORT_TEXT_QUESTION,
+    PARAGRAPH_QUESTION,
   ];
 
   if (!questionTypes.includes(type.trim())) {
@@ -281,7 +291,7 @@ const updateQuestion = asyncHandler(async (request, response) => {
   questionDB.punctaj = +question.punctaj;
 
   if (
-    question.tip === "Buton radio" &&
+    question.tip === RADIO_BUTTON_QUESTION &&
     question.raspunsuri.filter(question => question.atribute?.raspunsCorect)
       .length > 1
   ) {
@@ -291,7 +301,7 @@ const updateQuestion = asyncHandler(async (request, response) => {
     });
   }
 
-  if (question.tip === "Caseta de selectare" && question.atribute) {
+  if (question.tip === CHECKBOX_QUESTION && question.atribute) {
     const attributes = question.atribute;
     const answerValidation = attributes.validareRaspuns || {};
 
@@ -516,7 +526,7 @@ const getSpecificAnswer = asyncHandler(async (request, response) => {
     };
 
     if (
-      (type === "Caseta de selectare" || type === "Buton radio") &&
+      (type === CHECKBOX_QUESTION || type === RADIO_BUTTON_QUESTION) &&
       answer.raspunsuri
     ) {
       const correctAnswersDB = questionAnswers
@@ -545,15 +555,6 @@ const getSpecificAnswer = asyncHandler(async (request, response) => {
         return { id: answerDB._id, titlu: answerDB.toObject().titlu };
       });
 
-      console.log(`${title}`);
-      console.log(`answersUser = ${JSON.stringify(answersUser, null, 2)}`);
-      console.log(
-        `correctAnswersDB = ${JSON.stringify(correctAnswersDB, null, 2)}`
-      );
-      console.log(
-        `arrayEqual = ${arraysHaveSaveValues(answersUser, correctAnswersDB)}`
-      );
-
       responseQuestion.punctajUtilizator = questionScore
         ? arraysHaveSaveValues(answersUser, correctAnswersDB)
           ? questionScore
@@ -566,7 +567,7 @@ const getSpecificAnswer = asyncHandler(async (request, response) => {
       return;
     }
 
-    if (type === "Raspuns text" && answer.raspuns !== undefined) {
+    if (type === SHORT_TEXT_QUESTION && answer.raspuns !== undefined) {
       let userAnswer = answer.raspuns.trim();
       let correctUserAnswer = false;
       // const flags = raspuns.match(/\/[a-z]/);
@@ -606,17 +607,30 @@ const getSpecificAnswer = asyncHandler(async (request, response) => {
       return;
     }
 
-    if (type === "Incarcare fisier" && answer.fisier) {
-      let correctUserAnswer = true;
+    if (type === PARAGRAPH_QUESTION && answer.raspuns !== undefined) {
+      let userAnswer = answer.raspuns.trim();
+      const scoreCreator = answer.punctajUtilizator;
 
-      responseQuestion.punctajUtilizator = questionScore
-        ? correctUserAnswer
-          ? questionScore
-          : 0
-        : undefined;
+      // Acest răspuns a fost apreciat de creatorul formularului cu 20 de puncte
+      // const flags = raspuns.match(/\/[a-z]/);
+
+      responseQuestion.punctajUtilizator =
+        questionScore && scoreCreator ? scoreCreator : undefined;
+      userScore += +responseQuestion.punctaj || 0;
+      responseQuestion.raspuns = userAnswer;
+      responseQuestion.esteCorect = Boolean(responseQuestion.punctajUtilizator);
+      questionResponses.push(responseQuestion);
+
+      return;
+    }
+
+    if (type === FILE_UPLOAD && answer.fisier) {
+      const scoreCreator = answer.punctajUtilizator;
+
+      responseQuestion.punctajUtilizator =
+        questionScore && scoreCreator ? scoreCreator : undefined;
       userScore += +responseQuestion.punctaj || 0;
       responseQuestion.caleFisier = answer.fisier;
-      responseQuestion.esteCorect = true;
       questionResponses.push(responseQuestion);
     }
 
@@ -641,8 +655,6 @@ const getFormAnswers = asyncHandler(async (request, response) => {
   const page = (request.body.pagina > 0 && request.body.pagina) || 0;
 
   const search = request.query.search;
-
-  const queryResponse = { formular: form._id };
 
   const totalAnswers = await FormResponses.countDocuments({
     formular: form._id,
@@ -692,16 +704,77 @@ const getFormAnswers = asyncHandler(async (request, response) => {
   return response.status(201).json({
     raspunsuri: responseArray,
     raspunsuriTotale: search ? responseArray.length : totalAnswers,
+    creatorFormular: form.utilizator,
   });
+});
+
+// @desc    Ofera un punctaj raspunsurile de tip paragraf sau file upload
+// @route   PUT /api/forms/:id/answer/:answerID/:questionID/score
+// @access  Private
+
+const setScoreAnswer = asyncHandler(async (request, response) => {
+  const answer = await FormResponses.findById(request.params.answerID);
+
+  if (!answer) {
+    response.status(404);
+    throw new Error(`Raspunsul cu ID-ul ${request.params.answerID} nu exista`);
+  }
+
+  const questionParamID = request.params.questionID;
+  const questionFound = request.form.intrebari.find(
+    questionDB => questionDB._id.toString() === questionParamID
+  );
+
+  if (!questionFound) {
+    response.status(404);
+    throw new Error(`Intrebarea nu a fost gasită!`);
+  }
+
+  console.log(`Tipul întrebării este ${questionFound.tip}`);
+
+  if (
+    questionFound.tip !== FILE_UPLOAD &&
+    questionFound.tip !== PARAGRAPH_QUESTION
+  ) {
+    response.status(400);
+    throw new Error(`Tipul acesta de intrebare nu poate primi un punctaj!`);
+  }
+
+  const { punctaj: score } = request.body;
+  const answerFound = answer.raspunsuri.find(
+    answerDB => answerDB.intrebare.toString() === questionParamID
+  );
+
+  if (!score) {
+    answerFound.punctajUtilizator = undefined;
+    await answer.markModified("raspunsuri");
+    await answer.save();
+
+    return response
+      .status(201)
+      .json({ message: "Punctajul a șters cu success!" });
+  }
+
+  if (!answerFound) {
+    response.status(404);
+    throw new Error(
+      `Această întrebare nu se află printre răspunsurile utilizatorului!`
+    );
+  }
+
+  answerFound.punctajUtilizator = +score;
+  await answer.markModified("raspunsuri");
+  await answer.save();
+
+  return response
+    .status(201)
+    .json({ message: "Punctajul a fost adăugat cu succes!" });
 });
 
 // @desc    Sterge raspunsul formularului
 // @route   DELETE /api/forms/:id/answer/:answerID
 // @access  Private
-
 const deleteAnswer = asyncHandler(async (request, response) => {
-  const form = request.form;
-
   const answer = await FormResponses.findById(request.params.answerID);
 
   if (!answer) {
@@ -806,12 +879,29 @@ const sendAnswer = asyncHandler(async (request, response) => {
 
       if (!questionDB) return;
 
-      if (questionType === "Incarcare fisier") {
+      const hasTime = timeLeft > 5;
+      const canAnswer = hasTime || !timeLeft;
+
+      console.log();
+      const isAnswer =
+        files[`${question.id}`] ||
+        question.raspuns ||
+        question.raspunsuri.length > 0;
+
+      if (canAnswer && questionDB.obligatoriu && !isAnswer) {
+        addError(
+          questionDB,
+          `Nu ati furnizat un raspuns intrebarii obligatorii "${questionDB.titlu}"`
+        );
+        return;
+      }
+
+      if (questionType === FILE_UPLOAD) {
         handleFileUploadQuestion(
           questionDB,
           formID,
           request.user._id.toString(),
-          timeLeft,
+          canAnswer,
           files[`${question.id}`],
           addError,
           addResponse
@@ -820,10 +910,10 @@ const sendAnswer = asyncHandler(async (request, response) => {
         return;
       }
 
-      if (questionType === "Raspuns text") {
+      if (questionType === SHORT_TEXT_QUESTION) {
         handleTextResponse(
           questionDB,
-          timeLeft,
+          canAnswer,
           question.raspuns,
           addError,
           addResponse
@@ -831,13 +921,18 @@ const sendAnswer = asyncHandler(async (request, response) => {
         return;
       }
 
+      if (questionType === PARAGRAPH_QUESTION) {
+        handleParagraphQuestion(questionDB, question.raspuns, addResponse);
+        return;
+      }
+
       if (
-        questionType === "Caseta de selectare" ||
-        questionType === "Buton radio"
+        questionType === CHECKBOX_QUESTION ||
+        questionType === RADIO_BUTTON_QUESTION
       ) {
         handleMarkBoxResponse(
           questionDB,
-          timeLeft,
+          canAnswer,
           question.raspunsuri,
           addError,
           addResponse
@@ -869,35 +964,19 @@ const handleFileUploadQuestion = (
   questionDB,
   formID,
   userID,
-  timeLeft,
+  canAnswer,
   file,
   addError,
   addResponse
 ) => {
-  const { obligatoriu: isMandatoryQuestion, atribute } = questionDB;
-
-  const hasTime = timeLeft > 5;
-
-  const canAnswer = hasTime || !timeLeft;
-
-  // prezenta atributului timeLeft indica faptul ca exista un timp pentru intrebare
-
-  if (canAnswer && isMandatoryQuestion && !file) {
-    addError(
-      questionDB,
-      `Nu ati transmis un fisier pentru "${questionDB.titlu}"`
-    );
-    return;
-  }
-
-  if (atribute && file && canAnswer) {
+  if (questionDB.atribute && file && canAnswer) {
     const extension = file.name.split(".")[1].toUpperCase();
     const sizeInMb = file.size / 1024 / 1024;
     const {
       extensiiFisierPermise: fileTypes,
       textRaspunsInvalid: invalidAnswer,
       dimensiuneMaximaFisier: maxSize,
-    } = atribute;
+    } = questionDB.atribute;
 
     const isValidExtension = fileTypes && fileTypes.includes(extension);
     const isValidSize = maxSize && sizeInMb <= maxSize;
@@ -947,33 +1026,17 @@ const handleFileUploadQuestion = (
 
 const handleTextResponse = (
   questionDB,
-  timeLeft,
+  canAnswer,
   answerText,
   addError,
   addResponse
 ) => {
-  const { obligatoriu: isMandatoryQuestion, atribute } = questionDB;
-
-  const { titlu: questionTitle } = questionDB;
-
-  const hasTime = timeLeft > 5;
-
-  const canAnswer = hasTime || !timeLeft;
-
-  if (canAnswer && isMandatoryQuestion && !answerText) {
-    addError(
-      questionDB,
-      `Nu ati transmit un raspuns pentru "${questionTitle}"`
-    );
-    return;
-  }
-
-  if (atribute && answerText && atribute.descriereValidare && canAnswer) {
+  if (attributes && answerText && attributes.descriereValidare && canAnswer) {
     const {
       validareRaspuns: answerValidate,
       descriereValidare: validationDescription,
       textRaspunsInvalid: invalidAnswerMessage,
-    } = atribute;
+    } = attributes;
 
     if (validationDescription === "NUMAR" && !/^\d+$/.test(answerText.trim())) {
       addError(questionDB, invalidAnswerMessage);
@@ -1014,35 +1077,31 @@ const handleTextResponse = (
   });
 };
 
+const handleParagraphQuestion = (questionDB, answerText, addResponse) => {
+  if (!answerText) return;
+
+  addResponse({
+    intrebare: questionDB.id,
+    raspuns: answerText,
+  });
+};
+
 const handleMarkBoxResponse = (
   questionDB,
-  timeLeft,
+  canAnswer,
   answers,
   addError,
   addResponse
 ) => {
-  const hasTime = timeLeft > 5;
-
-  const canAnswer = hasTime || !timeLeft;
-
   const isAnswer = answers.length > 0;
+  let { attributes: attributes } = questionDB;
 
-  let { obligatoriu: isMandatoryQuestion, atribute } = questionDB;
-
-  if (canAnswer && isMandatoryQuestion && !isAnswer) {
-    addError(
-      questionDB,
-      `Intrebare obligatorie! Nu ati oferit un raspuns pentru "${questionDB.titlu}"`
-    );
-    return;
-  }
-
-  if (atribute && atribute.validareRaspuns && canAnswer && isAnswer) {
+  if (attributes && attributes.validareRaspuns && canAnswer && isAnswer) {
     const {
       selectareExacta: exactSelection,
       selectareMinima: minSelection,
       textRaspunsInvalid: invalidAnswerMessage,
-    } = atribute.validareRaspuns;
+    } = attributes.validareRaspuns;
 
     const isExactSelection = answers.length === exactSelection;
     const isMinSelection = answers.length >= minSelection;
@@ -1084,4 +1143,5 @@ export {
   checkFormAdmin,
   userCanAnswer,
   deleteAnswer,
+  setScoreAnswer,
 };

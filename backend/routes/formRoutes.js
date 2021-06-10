@@ -20,6 +20,7 @@ import {
   checkFormAdmin,
   userCanAnswer,
   deleteAnswer,
+  setScoreAnswer,
 } from "../controllers/formController.js";
 
 const router = express.Router();
@@ -41,6 +42,10 @@ router
 router
   .route("/:id/answers/:answerID/:questionID/downloadFile")
   .get(protect, findFormID, downloadFile);
+
+router
+  .route("/:id/answers/:answerID/:questionID/score")
+  .put(protect, findFormID, checkFormAdmin, setScoreAnswer);
 
 router
   .route("/:id/answers/:answerID")

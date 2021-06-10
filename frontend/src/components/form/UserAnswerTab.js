@@ -6,8 +6,14 @@ import AnswerMarkBox from "./AnswerMarkBox";
 import AnswerTextQuestion from "./AnswerTextQuestion";
 import Loader from "../Loader";
 import Message from "../Message";
+import AnswerScore from "./AnswerScore";
+import AnswerParagraph from "./AnswerParagraph";
+import {
+  FILE_UPLOAD,
+  PARAGRAPH_QUESTION,
+} from "../../constants/questionTypesConstants";
 
-const UserAnswerTab = ({ answerID, formID }) => {
+const UserAnswerTab = ({ answerID, formID, isFormOwner }) => {
   const dispatch = useDispatch();
 
   const formSpecificAnswer = useSelector(state => state.formAnswer);
@@ -20,6 +26,78 @@ const UserAnswerTab = ({ answerID, formID }) => {
   useEffect(() => {
     dispatch(getFormAnswer(formID, answerID));
   }, [formID, answerID, dispatch]);
+
+  const getBoxShadowQuestion = question => {
+    const {
+      punctajIntrebare: score,
+      tip: type,
+      punctajUtilizator: userScore,
+    } = question;
+
+    if (score === 0) return "0px 0px 6px rgba(0, 0, 0, 0.25)";
+
+    if (type === FILE_UPLOAD || type === PARAGRAPH_QUESTION)
+      return userScore
+        ? "0px 0px 6px rgba(1, 223, 155, 0.75)"
+        : "0px 0px 6px rgba(52, 152, 219, 1)";
+
+    return `0px 0px 6px ${
+      question.punctajUtilizator !== question.punctajIntrebare
+        ? "#FF0000"
+        : "rgba(1, 223, 155, 0.75)"
+    }`;
+  };
+
+  const getIconQuestion = question => {
+    if (question.punctajIntrebare === 0) return <> </>;
+
+    const { tip: type, punctajUtilizator: userScore } = question;
+
+    if ((type === FILE_UPLOAD || type === PARAGRAPH_QUESTION) && !userScore) {
+      if (!userScore) {
+        return (
+          <i
+            class="fs-4 fas fa-exclamation  position-absolute inline-block"
+            style={{ color: "#2980b9", top: "5px", left: "14px" }}
+          />
+        );
+      }
+    }
+
+    if ((type === FILE_UPLOAD || type === PARAGRAPH_QUESTION) && userScore) {
+      return (
+        <div
+          className="position-absolute"
+          style={{ color: "#01df9b", top: "5px", left: "14px" }}
+        >
+          <i className="fs-4 fas fa-exclamation" />
+          <p className="d-inline d-sm-block fw-bold">
+            +{question.punctajUtilizator}
+          </p>
+        </div>
+      );
+    }
+
+    if (question.punctajUtilizator !== question.punctajIntrebare)
+      return (
+        <i
+          className="fs-4 fas fa-times position-absolute inline-block"
+          style={{ color: "red", top: "5px", left: "14px" }}
+        />
+      );
+
+    return (
+      <div
+        className="position-absolute"
+        style={{ color: "#01df9b", top: "5px", left: "14px" }}
+      >
+        <i className="fs-4 fas fa-check" />
+        <p className="d-inline d-sm-block fw-bold">
+          +{question.punctajUtilizator}
+        </p>
+      </div>
+    );
+  };
 
   if (loadingSpecificAnswer) return <Loader />;
 
@@ -36,47 +114,49 @@ const UserAnswerTab = ({ answerID, formID }) => {
           className="d-flex flex-column p-4 m-4 position-relative"
           style={{
             borderRadius: "22px",
-            boxShadow: `0px 0px 6px ${
-              question.punctajIntrebare === 0
-                ? "rgba(0, 0, 0, 0.25)"
-                : question.punctajUtilizator !== question.punctajIntrebare
-                ? "#FF0000"
-                : "rgba(1, 223, 155, 0.75)"
-            }`,
+            boxShadow: `${getBoxShadowQuestion(question)}`,
             backgroundColor: "#EFEFEF",
           }}
         >
-          {question.punctajIntrebare === 0 ? (
-            <> </>
-          ) : question.punctajUtilizator !== question.punctajIntrebare ? (
-            <i
-              className="fs-4 fas fa-times position-absolute inline-block"
-              style={{ color: "red", top: "5px", left: "14px" }}
-            />
-          ) : (
-            <div
-              className="position-absolute"
-              style={{ color: "#01df9b", top: "5px", left: "14px" }}
-            >
-              <i className="fs-4 fas fa-check" />
-              <p className="d-inline d-sm-block fw-bold">
-                +{question.punctajUtilizator}
-              </p>
-            </div>
-          )}
-
+          {getIconQuestion(question)}
           <h4 className="text-center">{question.titlu}</h4>
           {question.tip === "Caseta de selectare" ||
           question.tip === "Buton radio" ? (
             <AnswerMarkBox question={question} />
-          ) : question.tip === "Raspuns text" ? (
+          ) : question.tip === "Raspuns text scurt" ? (
             <AnswerTextQuestion question={question} />
+          ) : question.tip === "Raspuns paragraf" ? (
+            <>
+              <AnswerParagraph
+                formID={formID}
+                answerID={answerID}
+                question={question}
+              />
+              {isFormOwner && (
+                <AnswerScore
+                  formID={formID}
+                  questionID={question.id}
+                  answerDB={question}
+                  answerID={answerID}
+                />
+              )}
+            </>
           ) : question.tip === "Incarcare fisier" ? (
-            <AnswerFileUpload
-              formID={formID}
-              answerID={answerID}
-              question={question}
-            />
+            <>
+              <AnswerFileUpload
+                formID={formID}
+                answerID={answerID}
+                question={question}
+              />
+              {isFormOwner && (
+                <AnswerScore
+                  formID={formID}
+                  questionID={question.id}
+                  answerDB={question}
+                  answerID={answerID}
+                />
+              )}
+            </>
           ) : (
             <> </>
           )}

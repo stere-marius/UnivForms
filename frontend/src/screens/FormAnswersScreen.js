@@ -32,6 +32,7 @@ const FormAnswersScreen = ({ match, history }) => {
     loading: loadingAnswers,
     raspunsuri: answers,
     raspunsuriTotale: totalAnswers = 0,
+    creatorFormular: formOwner = "",
     error: errorAnswers,
   } = formAnswers;
 
@@ -165,7 +166,13 @@ const FormAnswersScreen = ({ match, history }) => {
       return;
     }
 
-    return <UserAnswerTab formID={match.params.id} answerID={currentAnswer} />;
+    return (
+      <UserAnswerTab
+        formID={match.params.id}
+        answerID={currentAnswer}
+        isFormOwner={formOwner === userInfo._id}
+      />
+    );
   };
 
   const renderTabNav = () => (
