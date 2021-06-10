@@ -153,7 +153,7 @@ const FormViewScreen = ({ match, history }) => {
     if (!raspunsuriIntrebariUtilizator.length) {
       const setErrors = new Set([
         ...errorsSubmit,
-        "Nu ați oferit niciun răspuns pentru acest formular",
+        { title: "Nu ați oferit niciun răspuns pentru acest formular" },
       ]);
       setErrorsSubmit([...setErrors]);
       console.log(`raspunsuriIntrebariUtilizator.length`);
@@ -180,7 +180,10 @@ const FormViewScreen = ({ match, history }) => {
       const setErrors = new Set([...errorsSubmit]);
 
       mandatoryQuestions.forEach(question => {
-        setErrors.add(`Nu ati furnizat un raspuns la "${question.titlu}"`);
+        setErrors.add({
+          title: `Nu ati furnizat un raspuns la "${question.titlu}"`,
+          questionID: question.id,
+        });
       });
 
       setErrorsSubmit([...setErrors]);
@@ -189,6 +192,17 @@ const FormViewScreen = ({ match, history }) => {
 
     console.log(`Sending user answers `);
     sendUserAnswers();
+  };
+
+  const handleChangeQuestion = questionID => {
+    const indexQuestion = form.intrebari.findIndex(
+      question => question._id === questionID
+    );
+
+    if (indexQuestion === -1) return;
+
+    setIndexQuestion(indexQuestion);
+    setSelectedTab("Intrebare curenta");
   };
 
   // TODO: Sa-i afisez intrebarile anterioare ca fiind intrebarile carora le-a dat skip sau la care a raspuns
@@ -408,7 +422,12 @@ const FormViewScreen = ({ match, history }) => {
               errorsSendResponse.map(error => (
                 <div className="alert alert-danger">
                   {error.title} - {error.error}
-                  <span> Treci la intrebare</span>
+                  <u
+                    className="cursor-pointer"
+                    onClick={() => handleChangeQuestion(error.id)}
+                  >
+                    Treci la intrebare
+                  </u>
                 </div>
               ))
             ) : (
@@ -417,7 +436,17 @@ const FormViewScreen = ({ match, history }) => {
 
           {errorsSubmit.length > 0 &&
             errorsSubmit.map(error => (
-              <div className="alert alert-danger">{error}</div>
+              <div className="alert alert-danger">
+                {error.title}
+                {error.questionID && (
+                  <u
+                    className="cursor-pointer px-1"
+                    onClick={() => handleChangeQuestion(error.questionID)}
+                  >
+                    Treci la intrebare
+                  </u>
+                )}
+              </div>
             ))}
 
           <Button

@@ -329,15 +329,7 @@ const FormEditScreen = ({ match, history }) => {
         className="mt-4 container bg-white pb-1 pt-1"
         style={{ borderRadius: "16px" }}
       >
-        <h2
-          className="text-center p-3 border-bottom"
-          spellCheck={false}
-          onChange={e => setFormTitle(e.value)}
-          onClick={e => e.target.setAttribute("contentEditable", true)}
-          onBlur={e => e.target.setAttribute("contentEditable", false)}
-        >
-          {formTitle}
-        </h2>
+        <h2 className="text-center p-3 border-bottom">{formTitle}</h2>
 
         <div
           className="d-flex flex-column p-4 m-4"

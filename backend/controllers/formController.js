@@ -107,7 +107,14 @@ const deleteForm = asyncHandler(async (request, response) => {
 const updateForm = asyncHandler(async (request, response) => {
   const form = request.form;
 
-  const { title, multipleAnswers, validDate, expireDate, time } = request.body;
+  console.log(`Am primit în body ${JSON.stringify(request.body, null, 2)}`);
+  const {
+    titlu: title,
+    raspunsuriMultipleUtilizator: multipleAnswers,
+    dataValiditate: validDate,
+    dataExpirare: expireDate,
+    timpTransmitere: time,
+  } = request.body;
 
   if (title) {
     form.titlu = title;
