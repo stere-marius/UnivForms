@@ -4,9 +4,16 @@ import ModalDeleteForm from "./ModalDeleteForm";
 import { useDispatch, useSelector } from "react-redux";
 import { updateGroupTitle } from "../../actions/groupActions";
 import Message from "../Message";
+import { withRouter } from "react-router";
+import ConfirmationModal from "../ConfirmationModal";
+import axios from "axios";
 
-const GroupAdminTab = ({ groupID, forms, groupTitle }) => {
+const GroupAdminTab = ({ groupID, forms, groupTitle, history }) => {
   const dispatch = useDispatch();
+
+  const [loading, setLoading] = useState(false);
+
+  const [errors, setErrors] = useState(new Set());
 
   const [title, setTitle] = useState(groupTitle);
 
@@ -14,18 +21,47 @@ const GroupAdminTab = ({ groupID, forms, groupTitle }) => {
 
   const [isActiveModalDeleteForm, setActiveModalDeleteForm] = useState(false);
 
+  const [isActiveModalDeleteGroup, setActiveModalDeleteGroup] = useState(false);
+
   const groupTitleState = useSelector(state => state.groupTitle);
-  const { loading, title: updatedTitle, success, error } = groupTitleState;
+  const {
+    loading: loadingTitle,
+    title: updatedTitle,
+    success,
+    error: errorTitle,
+  } = groupTitleState;
+
+  const userLogin = useSelector(state => state.userLogin);
+  const { userInfo } = userLogin;
 
   useEffect(() => {
-    if (success && !loading && !error && updatedTitle) {
-      console.log(`updatedTitle = ${JSON.stringify(updatedTitle, null, 2)}`);
+    if (success && !loadingTitle && !errorTitle && updatedTitle) {
       setTitle(updatedTitle);
     }
-  }, [success, loading, error, updatedTitle]);
+  }, [success, loadingTitle, errorTitle, updatedTitle]);
 
   const handleSave = () => {
     dispatch(updateGroupTitle(groupID, title));
+  };
+
+  const handleConfirmDeleteGroup = async () => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+      await axios.delete(`/api/groups/${groupID}`, config);
+      history.push(`/`);
+    } catch (error) {
+      setErrors(
+        new Set(errors).add(
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message
+        )
+      );
+    }
   };
 
   return (
@@ -60,13 +96,22 @@ const GroupAdminTab = ({ groupID, forms, groupTitle }) => {
         >
           Sterge formular
         </button>
-        <button className="btn btn-danger text-dark my-3">Sterge grup</button>
-        {success && !loading && (
+        <button
+          className="btn btn-danger text-dark my-3"
+          onClick={() => setActiveModalDeleteGroup(true)}
+        >
+          Sterge grup
+        </button>
+        {success && !loadingTitle && (
           <Message variant="success">
             Titlul formularului a fost actulizat cu success
           </Message>
         )}
-        {error && !loading && <Message variant="danger">{error}</Message>}
+        {errorTitle && !loadingTitle && (
+          <Message variant="danger">{errorTitle}</Message>
+        )}
+        {errors &&
+          [...errors].map(error => <Message variant="danger">{error}</Message>)}
       </div>
       <ModalAddForm
         groupID={groupID}
@@ -80,8 +125,22 @@ const GroupAdminTab = ({ groupID, forms, groupTitle }) => {
         showModal={isActiveModalDeleteForm}
         onClose={() => setActiveModalDeleteForm(false)}
       />
+
+      <ConfirmationModal
+        showModal={isActiveModalDeleteGroup}
+        body={
+          <>
+            <p>Confirmati stergerea</p>
+          </>
+        }
+        title={"Stergeti grupul?"}
+        textConfirm={"Da"}
+        textClose={"Nu"}
+        onConfirm={handleConfirmDeleteGroup}
+        onClose={() => setActiveModalDeleteGroup(false)}
+      />
     </>
   );
 };
 
-export default GroupAdminTab;
+export default withRouter(GroupAdminTab);

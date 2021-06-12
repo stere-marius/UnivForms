@@ -161,9 +161,11 @@ const deleteGroup = asyncHandler(async (request, response) => {
   if (group.creator.toString() !== request.user._id.toString()) {
     return response.status(401).json({
       message:
-        "Nu sunteți administratorul acestui grup pentru a efectua această acțiune!",
+        "Nu sunteți creatorul acestui grup pentru a efectua această acțiune!",
     });
   }
+
+  await group.remove();
 
   return response
     .status(200)

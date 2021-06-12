@@ -76,9 +76,10 @@ const GroupMainScreen = ({ match, history }) => {
         {renderTabs()}
       </ul>
 
-      {renderFormsNav()}
+      {forms && renderAdminTab()}
+      {forms && renderFormsNav()}
+
       {renderMembersTab()}
-      {renderAdminTab()}
     </>
   );
 
