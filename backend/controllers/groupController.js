@@ -46,13 +46,64 @@ const groupAdmin = asyncHandler(async (request, response, next) => {
   next();
 });
 
-// @desc    Obtine grup folosind ID
-// @route   GET /api/groups/:id
-// @access  Private
-const getGroupByID = asyncHandler(async (request, response) => {
-  const group = await Group.findById(request.group);
+const checkGroupUser = asyncHandler(async (request, response, next) => {
+  const group = request.group;
 
-  return response.json(group);
+  if (
+    !group.utilizatori.some(
+      user => user.utilizatorID.toString() === request.user._id.toString()
+    )
+  ) {
+    return response
+      .status(401)
+      .json({ message: "Nu faceti parte din acest grup!" });
+  }
+
+  next();
+});
+
+// @desc    Obtine grup folosind ID
+// @route   GET /api/groups/:id/forms
+// @access  Private
+const getGroupForms = asyncHandler(async (request, response) => {
+  const forms = await Promise.all(
+    request.group.formulare.map(async form => {
+      const formDbFound = await Form.findById(form._id.toString());
+
+      if (!formDbFound) return null;
+
+      const formAnswers = await FormResponses.countDocuments({
+        formular: form._id,
+      });
+
+      return {
+        _id: form._id,
+        titlu: formDbFound.titlu,
+        raspunsuri: formAnswers,
+        intrebari: formDbFound.intrebari.length,
+        createdAt: formDbFound.createdAt,
+        utilizator: formDbFound.utilizator,
+      };
+    })
+  );
+
+  return response.json(forms.filter(Boolean));
+});
+
+// @desc    Obtine administratorii grupului
+// @route   GET /api/groups/:id/forms
+// @access  Private
+const getGroupAdmins = asyncHandler(async (request, response) => {
+  const creator = request.group.creator;
+  const admins = request.group.utilizatori
+    .filter(user => user.administrator)
+    .map(user => ({
+      id: user.utilizatorID,
+      creatorFormular:
+        creator.toString() === user.utilizatorID.toString() || undefined,
+    }));
+
+  return response.json(admins);
 });
 
 // @desc    Creeaza grup
@@ -63,7 +114,7 @@ const createGroup = asyncHandler(async (request, response) => {
 
   if (!name || !name.trim()) {
     return response
-      .status(401)
+      .status(400)
       .json({ message: "Numele grupului nu trebuie să fie vid!" });
   }
 
@@ -100,6 +151,34 @@ const deleteGroup = asyncHandler(async (request, response) => {
     .json({ message: "Grupul a fost șters cu succes!" });
 });
 
+// @desc    Obtine membrii grupului
+// @route   GET /api/groups/:id/users
+// @access  Private
+const getGroupUsers = asyncHandler(async (request, response) => {
+  const group = request.group;
+
+  const users = await Promise.all(
+    group.utilizatori.map(async groupUser => {
+      const userDB = await User.findById(groupUser.utilizatorID);
+      const { utilizatorID, administrator } = groupUser;
+      const isCreator = utilizatorID.toString() === group.creator.toString();
+
+      console.log(`Group user = ${JSON.stringify(groupUser, null, 2)}`);
+
+      return {
+        id: utilizatorID,
+        administrator,
+        nume: userDB.nume,
+        prenume: userDB.prenume,
+        email: userDB.email,
+        creator: isCreator || undefined,
+      };
+    })
+  );
+
+  return response.status(200).json(users);
+});
+
 // @desc    Sterge membru grup
 // @route   DELETE /api/groups/:id/users/:userID
 // @access  Private/Group admin
@@ -108,10 +187,16 @@ const removeUser = asyncHandler(async (request, response) => {
 
   const userID = request.params.userID;
 
-  if (!userID) {
+  if (!mongoose.Types.ObjectId.isValid(userID)) {
     return response
       .status(400)
       .json({ message: "Introduceti un utilizator valid!" });
+  }
+
+  if (userID === group.creator.toString()) {
+    return response
+      .status(400)
+      .json({ message: "Nu puteti șterge creatorul grupului!" });
   }
 
   const removeIndex = group.utilizatori.findIndex(
@@ -291,13 +376,16 @@ const removeGroupForm = asyncHandler(async (request, response) => {
 
 export {
   findGroupID,
+  checkGroupUser,
   groupAdmin,
-  getGroupByID,
   createGroup,
   deleteGroup,
   removeUser,
+  getGroupUsers,
   addUser,
+  getGroupAdmins,
   setGroupAdmin,
+  getGroupForms,
   addGroupForm,
   removeGroupForm,
 };

@@ -311,7 +311,7 @@ const FormEditScreen = ({ match, history }) => {
     });
 
   const renderTabNav = () => (
-    <div>
+    <>
       <ul className="nav nav-tabs flex-column align-items-center align-items-sm-start flex-sm-row justify-content-center">
         {renderTabs()}
       </ul>
@@ -319,7 +319,7 @@ const FormEditScreen = ({ match, history }) => {
       {renderCurrentQuestionTab()}
       {renderPreviousQuestionsTab()}
       {renderFormAttributesTab()}
-    </div>
+    </>
   );
 
   return (

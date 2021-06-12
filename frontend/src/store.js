@@ -19,7 +19,12 @@ import {
   formAnswersReducer,
   formAnswerDeleteReducer,
 } from "./reducers/formReducers";
-import { groupCreateReducer } from "./reducers/groupReducers";
+import {
+  groupAdminsReducer,
+  groupCreateReducer,
+  groupFormsReducer,
+  groupUsersReducer,
+} from "./reducers/groupReducers";
 
 const reducer = combineReducers({
   userLogin: userLoginReducer,
@@ -37,6 +42,9 @@ const reducer = combineReducers({
   formAnswer: formAnswerReducer,
   formAnswerDelete: formAnswerDeleteReducer,
   groupCreate: groupCreateReducer,
+  groupForms: groupFormsReducer,
+  groupAdmins: groupAdminsReducer,
+  groupUsers: groupUsersReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")

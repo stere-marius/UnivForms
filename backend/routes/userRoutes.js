@@ -10,6 +10,7 @@ import {
   getUserProfile,
   getUserGroups,
   getUserForms,
+  searchUser,
 } from "../controllers/userController.js";
 import { requestValidatorResult } from "../validators/requestValidatorResult.js";
 import {
@@ -21,7 +22,7 @@ const router = express.Router();
 router
   .route("/")
   .post(registerUserValidator(), requestValidatorResult, registerUser)
-  .get(protect, getUsers);
+  .get(protect, searchUser);
 
 router
   .route("/profile")

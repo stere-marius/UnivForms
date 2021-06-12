@@ -81,6 +81,23 @@ const getUserByID = asyncHandler(async (request, response) => {
   throw new Error(`Utilizatorul cu id-ul ${request.params.id} nu a fost gasit`);
 });
 
+// @desc    Obtine utilizator folosind ID
+// @route   POST /api/users/:id
+// @access  Public
+const searchUser = asyncHandler(async (request, response) => {
+  const { email } = request.query;
+
+  const user = await User.find({
+    email: new RegExp(`.*${email}.*`, "ig"),
+  }).select({ email: 1 });
+
+  if (user) {
+    return response.json(user);
+  }
+  response.status(404);
+  throw new Error(`Utilizatorul nu a fost gasit`);
+});
+
 // @desc    Actualizeaza profilul utilizatorului
 // @route   PUT /api/users/profile
 // @access  Private/Admin
@@ -210,6 +227,7 @@ export {
   authUser,
   registerUser,
   getUserByID,
+  searchUser,
   updateUserProfile,
   deleteUser,
   getUsers,

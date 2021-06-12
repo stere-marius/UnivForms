@@ -83,7 +83,14 @@ const HomeScreen = ({ history }) => {
                             {group.utilizatori.length}
                           </p>
                           <div className="d-flex align-items-center justify-content-center m-3">
-                            <Button variant="primary">Vezi grup</Button>
+                            <Button
+                              variant="primary"
+                              onClick={() =>
+                                history.push(`/group/${group._id}`)
+                              }
+                            >
+                              Vezi grup
+                            </Button>
                           </div>
                         </div>
                       </Col>

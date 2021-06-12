@@ -16,13 +16,14 @@ const LoginScreen = ({ location, history }) => {
   const userLogin = useSelector(state => state.userLogin);
   const { loading, error, userInfo } = userLogin;
 
-  const redirect = location.search ? location.search.split("=")[1] : "/";
+  const isRedirect = location.search.includes("redirect=");
+  const redirectLink = location.search.split("redirect=")[1] || "/";
 
   useEffect(() => {
-    if (userInfo) {
-      history.push(redirect);
+    if (userInfo && location.search.includes("redirect=")) {
+      history.push(redirectLink);
     }
-  }, [history, userInfo, redirect]);
+  }, [history, userInfo, location.search, redirectLink]);
 
   const submitHandler = e => {
     e.preventDefault();
@@ -67,7 +68,7 @@ const LoginScreen = ({ location, history }) => {
             <Col className="text-color-white font-weight-bold">
               New User?{" "}
               <Link
-                to={redirect ? `/register?redirect=${redirect}` : "/register"}
+                to={`/register${isRedirect ? `?redirect=${redirectLink}` : ""}`}
               >
                 Register
               </Link>
