@@ -26,34 +26,6 @@ const GroupFormsTab = ({ groupID, forms, isAdmin }) => {
           <h2>Acest grup nu contine niciun formular</h2>
         </div>
       )}
-      {isAdmin && (
-        <div className="mx-2 my-3">
-          <button
-            className="btn btn-color-green"
-            onClick={() => setActiveModalAddForm(true)}
-          >
-            Adauga formular
-          </button>
-          <button
-            className="btn btn-color-green mx-3"
-            onClick={() => setActiveModalDeleteForm(true)}
-          >
-            Sterge formular
-          </button>
-        </div>
-      )}
-      <ModalAddForm
-        groupID={groupID}
-        currentForms={forms}
-        showModal={isActiveModalAddForm}
-        onClose={() => setActiveModalAddForm(false)}
-      />
-      <ModalDeleteForm
-        groupID={groupID}
-        currentForms={forms}
-        showModal={isActiveModalDeleteForm}
-        onClose={() => setActiveModalDeleteForm(false)}
-      />
     </>
   );
 };

@@ -23,6 +23,7 @@ import {
   groupAdminsReducer,
   groupCreateReducer,
   groupFormsReducer,
+  groupTitleReducer,
   groupUsersReducer,
 } from "./reducers/groupReducers";
 
@@ -45,6 +46,7 @@ const reducer = combineReducers({
   groupForms: groupFormsReducer,
   groupAdmins: groupAdminsReducer,
   groupUsers: groupUsersReducer,
+  groupTitle: groupTitleReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")

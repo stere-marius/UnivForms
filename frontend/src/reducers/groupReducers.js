@@ -14,6 +14,10 @@ import {
   GROUP_USERS_SUCCESS,
   GROUP_USERS_FAIL,
   GROUP_USERS_RESET,
+  GROUP_TITLE_REQUEST,
+  GROUP_TITLE_SUCCESS,
+  GROUP_TITLE_FAIL,
+  GROUP_TITLE_RESET,
 } from "../constants/groupConstants";
 
 export const groupCreateReducer = (state = {}, action) => {
@@ -34,7 +38,11 @@ export const groupFormsReducer = (state = { forms: [] }, action) => {
     case GROUP_FORMS_REQUEST:
       return { loading: true };
     case GROUP_FORMS_SUCCESS:
-      return { loading: false, forms: action.payload };
+      return {
+        loading: false,
+        forms: action.payload.forms,
+        groupTitle: action.payload.titlu,
+      };
     case GROUP_FORMS_FAIL:
       return { loading: false, error: action.payload };
     case GROUP_FORMS_RESET:
@@ -69,6 +77,21 @@ export const groupUsersReducer = (state = { users: [] }, action) => {
       return { loading: false, error: action.payload };
     case GROUP_USERS_RESET:
       return { users: [] };
+    default:
+      return state;
+  }
+};
+
+export const groupTitleReducer = (state = {}, action) => {
+  switch (action.type) {
+    case GROUP_TITLE_REQUEST:
+      return { loading: true };
+    case GROUP_TITLE_SUCCESS:
+      return { loading: false, title: action.payload.title, success: true };
+    case GROUP_TITLE_FAIL:
+      return { loading: false, error: action.payload };
+    case GROUP_TITLE_RESET:
+      return {};
     default:
       return state;
   }

@@ -62,6 +62,22 @@ const checkGroupUser = asyncHandler(async (request, response, next) => {
   next();
 });
 
+// @desc    Schimba titlul formularului
+// @route   PUT /api/groups/:id
+// @access  Private
+const updateGroupTitle = asyncHandler(async (request, response) => {
+  const { title } = request.body;
+
+  if (!title) {
+    response.status(400);
+    throw new Error("Titlul formularului nu trebuie să fie vid!");
+  }
+
+  request.group.nume = title;
+  const savedGroup = await request.group.save();
+  return response.status(200).json({ title: savedGroup.nume });
+});
+
 // @desc    Obtine grup folosind ID
 // @route   GET /api/groups/:id/forms
 // @access  Private
@@ -87,7 +103,10 @@ const getGroupForms = asyncHandler(async (request, response) => {
     })
   );
 
-  return response.json(forms.filter(Boolean));
+  return response.json({
+    titlu: request.group.nume,
+    forms: forms.filter(Boolean),
+  });
 });
 
 // @desc    Obtine administratorii grupului
@@ -375,6 +394,7 @@ const removeGroupForm = asyncHandler(async (request, response) => {
 export {
   findGroupID,
   checkGroupUser,
+  updateGroupTitle,
   groupAdmin,
   createGroup,
   deleteGroup,

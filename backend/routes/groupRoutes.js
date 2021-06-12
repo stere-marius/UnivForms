@@ -14,13 +14,17 @@ import {
   getGroupForms,
   getGroupAdmins,
   checkGroupUser,
+  updateGroupTitle,
 } from "../controllers/groupController.js";
 
 const router = express.Router();
 
 router.route("/").put(protect, createGroup);
 
-router.route("/:id").delete(protect, findGroupID, groupAdmin, deleteGroup);
+router
+  .route("/:id")
+  .put(protect, findGroupID, groupAdmin, updateGroupTitle)
+  .delete(protect, findGroupID, groupAdmin, deleteGroup);
 
 router
   .route("/:id/forms")

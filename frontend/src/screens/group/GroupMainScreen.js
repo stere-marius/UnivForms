@@ -5,6 +5,7 @@ import { getGroupForms, getGroupAdmins } from "../../actions/groupActions";
 import FormViewContainer from "../../components/form/FormViewContainer";
 import GroupUsersTab from "../../components/group/GroupUsersTab";
 import GroupFormsTab from "../../components/group/GroupFormsTab";
+import GroupAdminTab from "../../components/group/GroupAdminTab";
 import Header from "../../components/Header";
 import Loader from "../../components/Loader";
 import Message from "../../components/Message";
@@ -22,7 +23,12 @@ const GroupMainScreen = ({ match, history }) => {
   const { userInfo } = userLogin;
 
   const groupForms = useSelector(state => state.groupForms);
-  const { loading: loadingForms, forms, error: errorForms } = groupForms;
+  const {
+    loading: loadingForms,
+    forms,
+    groupTitle,
+    error: errorForms,
+  } = groupForms;
 
   const groupAdmins = useSelector(state => state.groupAdmins);
   const { loading: loadingAdmins, admins } = groupAdmins;
@@ -72,7 +78,7 @@ const GroupMainScreen = ({ match, history }) => {
 
       {renderFormsNav()}
       {renderMembersTab()}
-      {/* {renderFormAttributesTab()} */}
+      {renderAdminTab()}
     </>
   );
 
@@ -93,6 +99,17 @@ const GroupMainScreen = ({ match, history }) => {
   const renderMembersTab = () => {
     if (selectedTab !== "Membrii") return <> </>;
     return <GroupUsersTab groupID={match.params.id} />;
+  };
+
+  const renderAdminTab = () => {
+    if (selectedTab !== "Administreaza grup") return <> </>;
+    return (
+      <GroupAdminTab
+        groupID={match.params.id}
+        forms={forms}
+        groupTitle={groupTitle}
+      />
+    );
   };
 
   return (

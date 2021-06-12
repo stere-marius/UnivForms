@@ -13,6 +13,10 @@ import {
   GROUP_USERS_SUCCESS,
   GROUP_USERS_REQUEST,
   GROUP_USERS_FAIL,
+  GROUP_TITLE_REQUEST,
+  GROUP_TITLE_SUCCESS,
+  GROUP_TITLE_FAIL,
+  GROUP_TITLE_RESET,
 } from "../constants/groupConstants";
 
 export const createGroup = groupName => async (dispatch, getState) => {
@@ -126,3 +130,39 @@ export const getGroupUsers = groupID => async (dispatch, getState) => {
     });
   }
 };
+
+export const updateGroupTitle =
+  (groupID, groupTitle) => async (dispatch, getState) => {
+    try {
+      dispatch({ type: GROUP_TITLE_REQUEST });
+
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+          "Content-Type": "application/json",
+        },
+      };
+
+      const { data } = await axios.put(
+        `/api/groups/${groupID}`,
+        { title: groupTitle },
+        config
+      );
+      dispatch({ type: GROUP_TITLE_SUCCESS, payload: data });
+      setTimeout(() => {
+        dispatch({ type: GROUP_TITLE_RESET });
+      }, 3000);
+    } catch (error) {
+      dispatch({
+        type: GROUP_TITLE_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      });
+    }
+  };
