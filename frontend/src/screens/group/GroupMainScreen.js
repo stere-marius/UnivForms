@@ -80,12 +80,6 @@ const GroupMainScreen = ({ match, history }) => {
     if (selectedTab !== "Formulare") return <> </>;
     if (loadingForms) return <Loader />;
     if (errorForms) return <Message variant="danger">{errorForms}</Message>;
-    if (forms.length === 0)
-      return (
-        <div>
-          <h2>Acest grup nu contine niciun formular</h2>
-        </div>
-      );
 
     return (
       <GroupFormsTab

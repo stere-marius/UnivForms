@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import Loader from "../Loader";
 import axios from "axios";
 import { getForms } from "../../actions/userActions";
-import { getGroupForms } from "../../actions/groupActions";
 import Message from "../Message";
+import { getGroupForms } from "../../actions/groupActions";
 
-const ModalAddForm = ({ groupID, currentForms, showModal, onClose }) => {
+const ModalDeleteForm = ({ groupID, currentForms, showModal, onClose }) => {
   const dispatch = useDispatch();
 
   const userForms = useSelector(state => state.userForms);
@@ -42,8 +42,8 @@ const ModalAddForm = ({ groupID, currentForms, showModal, onClose }) => {
 
   useEffect(() => {
     if (!loadingForms && !errorForms && forms) {
-      const formsFound = forms.filter(
-        form => !currentForms.some(groupForm => groupForm._id === form._id)
+      const formsFound = forms.filter(form =>
+        currentForms.some(groupForm => groupForm._id === form._id)
       );
 
       setFormsFound(formsFound);
@@ -51,7 +51,7 @@ const ModalAddForm = ({ groupID, currentForms, showModal, onClose }) => {
     }
   }, [loadingForms, errorForms, forms, currentForms]);
 
-  const handleAddForm = async () => {
+  const handleDeleteForm = async () => {
     if (!selectedForm) {
       setErrors(new Set().add("Nu ați selectat un formular!"));
       return;
@@ -64,9 +64,8 @@ const ModalAddForm = ({ groupID, currentForms, showModal, onClose }) => {
         },
       };
 
-      await axios.post(
-        `/api/groups/${groupID}/forms`,
-        { formID: selectedForm },
+      await axios.delete(
+        `/api/groups/${groupID}/forms/${selectedForm}`,
         config
       );
 
@@ -89,7 +88,7 @@ const ModalAddForm = ({ groupID, currentForms, showModal, onClose }) => {
     <>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Adaugare formular grup</Modal.Title>
+          <Modal.Title>Stergere formular grup</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="d-flex flex-column justify-content-between">
@@ -119,13 +118,10 @@ const ModalAddForm = ({ groupID, currentForms, showModal, onClose }) => {
           {!loadingForms &&
             !errorForms &&
             ((forms.length === 0 && (
-              <p>Nu ați creat niciun formular pentru a fi adăugat în grup</p>
+              <p>Nu ați adăugat niciun formular pentru a fi șters din grup</p>
             )) ||
               (formsFound.length === 0 && (
-                <p>
-                  Nu am gasit un formular care să poată fi adăugat în acest
-                  grup!
-                </p>
+                <p>Nu am gasit un formular care să poată fi șters din grup!</p>
               )))}
 
           {errors.size > 0 && (
@@ -150,9 +146,9 @@ const ModalAddForm = ({ groupID, currentForms, showModal, onClose }) => {
           </button>
           <button
             className="btn btn-default btn-color-green fw-bold"
-            onClick={handleAddForm}
+            onClick={handleDeleteForm}
           >
-            Adauga
+            Șterge
           </button>
         </Modal.Footer>
       </Modal>
@@ -160,4 +156,4 @@ const ModalAddForm = ({ groupID, currentForms, showModal, onClose }) => {
   );
 };
 
-export default ModalAddForm;
+export default ModalDeleteForm;

@@ -355,7 +355,7 @@ const removeGroupForm = asyncHandler(async (request, response) => {
   }
 
   const formIndex = group.formulare.findIndex(
-    form => form.formularID.toString() === formID
+    form => form._id.toString() === formID
   );
 
   if (formIndex === -1) {
