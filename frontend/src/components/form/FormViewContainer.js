@@ -27,7 +27,13 @@ const FormViewContainer = ({ form, history }) => {
           <div className="formular__body">
             <div
               className="body__attribute cursor-pointer"
-              onClick={() => history.push(`/form/${form._id}/answers`)}
+              onClick={() =>
+                history.push(
+                  form.utilizator === userInfo._id
+                    ? `/form/${form._id}/answers`
+                    : `/form/${form._id}`
+                )
+              }
             >
               <div className="attribute__left">
                 <p className="__raspunsuri">Raspunsuri</p>
@@ -43,7 +49,11 @@ const FormViewContainer = ({ form, history }) => {
                 <p className="__attribute--value">{form.intrebari}</p>
               </div>
               <Link
-                to={`/form/${form._id}/edit`}
+                to={
+                  form.utilizator === userInfo._id
+                    ? `/form/${form._id}/edit`
+                    : `/form/${form._id}`
+                }
                 className="text-decoration-none"
               >
                 <div className="attribute__right">
@@ -54,7 +64,13 @@ const FormViewContainer = ({ form, history }) => {
           </div>
           {form.utilizator === userInfo._id && (
             <div className="formular__footer">
-              <Link to={`/form/${form._id}/edit`}>
+              <Link
+                to={
+                  form.utilizator === userInfo._id
+                    ? `/form/${form._id}/edit`
+                    : `/form/${form._id}`
+                }
+              >
                 <button className="administreaza__btn">Administreaza</button>
               </Link>
             </div>

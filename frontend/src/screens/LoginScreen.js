@@ -20,9 +20,15 @@ const LoginScreen = ({ location, history }) => {
   const redirectLink = location.search.split("redirect=")[1] || "/";
 
   useEffect(() => {
-    if (userInfo && location.search.includes("redirect=")) {
+    if (!userInfo) return;
+
+    if (location.search.includes("redirect=")) {
       history.push(redirectLink);
+      console.log(`History push redirect = ${redirectLink}`);
+      return;
     }
+
+    history.push("/");
   }, [history, userInfo, location.search, redirectLink]);
 
   const submitHandler = e => {

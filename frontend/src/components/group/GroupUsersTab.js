@@ -113,7 +113,7 @@ const GroupUsersTab = ({ groupID }) => {
                 <th>Nume</th>
                 <th>Prenume</th>
                 <th>Administrator</th>
-                <th></th>
+                {isGroupAdmin && <th></th>}
               </tr>
             </thead>
             <tbody>
@@ -136,25 +136,29 @@ const GroupUsersTab = ({ groupID }) => {
                       <i className="fas fa-times" style={{ color: "red" }} />
                     )}
                   </td>
-                  <td>
-                    <button
-                      className={`btn-sm btn btn-color-green text-dark text-bold fw-bold ${
-                        user.creator ? "disabled" : ""
-                      }`}
-                      onClick={() => changeAdminRole(user)}
-                    >
-                      {user.administrator
-                        ? "Sterge administrator"
-                        : "Promoveaza administrator"}
-                    </button>
-                  </td>
-                  <td>
-                    <i
-                      className="fas fa-trash cursor-pointer"
-                      style={{ color: "red" }}
-                      onClick={() => handleDeleteUser(user.id)}
-                    />
-                  </td>
+                  {isGroupAdmin && (
+                    <>
+                      <td>
+                        <button
+                          className={`btn-sm btn btn-color-green text-dark text-bold fw-bold ${
+                            user.creator ? "disabled" : ""
+                          }`}
+                          onClick={() => changeAdminRole(user)}
+                        >
+                          {user.administrator
+                            ? "Sterge administrator"
+                            : "Promoveaza administrator"}
+                        </button>
+                      </td>
+                      <td>
+                        <i
+                          className="fas fa-trash cursor-pointer"
+                          style={{ color: "red" }}
+                          onClick={() => handleDeleteUser(user.id)}
+                        />
+                      </td>
+                    </>
+                  )}
                 </tr>
               ))}
             </tbody>
