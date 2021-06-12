@@ -24,7 +24,7 @@ router.route("/:id").delete(protect, findGroupID, groupAdmin, deleteGroup);
 
 router
   .route("/:id/forms")
-  .put(protect, findGroupID, groupAdmin, addGroupForm)
+  .post(protect, findGroupID, groupAdmin, addGroupForm)
   .get(protect, findGroupID, checkGroupUser, getGroupForms);
 
 router

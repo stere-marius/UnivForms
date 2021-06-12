@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { getGroupForms, getGroupAdmins } from "../../actions/groupActions";
 import FormViewContainer from "../../components/form/FormViewContainer";
 import GroupUsersTab from "../../components/group/GroupUsersTab";
+import GroupFormsTab from "../../components/group/GroupFormsTab";
 import Header from "../../components/Header";
 import Loader from "../../components/Loader";
 import Message from "../../components/Message";
@@ -12,6 +13,8 @@ const GroupMainScreen = ({ match, history }) => {
   const dispatch = useDispatch();
 
   const [tabs, setTabs] = useState(["Formulare", "Membrii"]);
+
+  const [isAdmin, setAdmin] = useState(false);
 
   const [selectedTab, setSelectedTab] = useState("Formulare");
 
@@ -34,6 +37,7 @@ const GroupMainScreen = ({ match, history }) => {
     const isAdmin = admins && admins.some(admin => admin.id === userInfo._id);
     if (!loadingAdmins && !includesTabAdmin && isAdmin) {
       setTabs([...tabs, `Administreaza grup`]);
+      setAdmin(isAdmin);
     }
   }, [loadingAdmins, admins, tabs, userInfo._id]);
 
@@ -84,15 +88,11 @@ const GroupMainScreen = ({ match, history }) => {
       );
 
     return (
-      <Row>
-        {forms.map(form => (
-          <>
-            <Col key={form._id} sm={6} md={6} lg={6} xl={3}>
-              <FormViewContainer form={form} />
-            </Col>
-          </>
-        ))}
-      </Row>
+      <GroupFormsTab
+        groupID={match.params.id}
+        forms={forms}
+        isAdmin={isAdmin}
+      />
     );
   };
 

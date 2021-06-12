@@ -317,9 +317,7 @@ const addGroupForm = asyncHandler(async (request, response) => {
       .json({ message: "Formularul nu a fost găsit!" });
   }
 
-  const form = group.formulare.find(
-    form => form.formularID.toString() === formID
-  );
+  const form = group.formulare.find(form => form._id.toString() === formID);
 
   if (form) {
     return response
@@ -327,7 +325,7 @@ const addGroupForm = asyncHandler(async (request, response) => {
       .json({ message: "Acest formular se află deja în grup!" });
   }
 
-  group.formulare.push({ formularID: formID });
+  group.formulare.push({ _id: formID });
   await group.save();
 
   return response
