@@ -49,14 +49,18 @@ function App() {
           render={props => (
             <>
               <Header />
-              <UserAnswerTab
-                formID={props.match.params.id}
-                answerID={props.match.params.answerID}
-              />
+              <div
+                className="mt-4 container bg-white py-2"
+                style={{ borderRadius: "16px" }}
+              >
+                <UserAnswerTab
+                  formID={props.match.params.id}
+                  answerID={props.match.params.answerID}
+                />
+              </div>
             </>
           )}
         />
-        {/* http://localhost:3000/form/60b723ab3623b65f187927b7/answers/60c773cd0190ad44108b4cd9 */}
         <Route path="/login" component={LoginScreen} />
         <Route path="/register" component={RegisterScreen} />
         <Route path="/resetPassword" component={ResetPasswordScreen} />

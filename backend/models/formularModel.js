@@ -35,9 +35,6 @@ const formularSchema = mongoose.Schema(
           type: String,
           required: true,
         },
-        imagine: {
-          type: String,
-        },
         obligatoriu: {
           type: Boolean,
           default: false,
