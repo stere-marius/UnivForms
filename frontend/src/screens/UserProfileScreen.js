@@ -6,6 +6,7 @@ import { updateProfile } from "../actions/userActions";
 import Loader from "../components/Loader";
 import { USER_LOGIN_SUCCESS } from "../constants/userConstants";
 import axios from "axios";
+import { Form } from "react-bootstrap";
 
 const UserProfileScreen = () => {
   const dispatch = useDispatch();
@@ -148,89 +149,78 @@ const UserProfileScreen = () => {
   return (
     <div className="container d-flex flex-column">
       <Header />
-      <div className="d-flex justify-content-center">
+      <div className="">
         <div
-          className="d-flex flex-column align-items-start p-5 "
+          className="p-5 "
           style={{
             borderRadius: "22px",
             boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)",
             backgroundColor: "#EFEFEF",
           }}
         >
-          <div class="mt-3">
-            <label for="formControlNume" class="form-label">
-              Nume
-            </label>
-            <input
-              type="text"
-              class="form-control form-input-green"
-              id="formControlNume"
-              value={lastName}
-              onChange={e => setLastName(e.target.value)}
-            />
-          </div>
-          <div class="mt-3">
-            <label for="formControlPrenume" class="form-label">
-              Prenume
-            </label>
-            <input
-              type="text"
-              class="form-control form-input-green"
-              id="formControlPrenume"
-              value={firstName}
-              onChange={e => setFirstName(e.target.value)}
-            />
-          </div>
-          <div class="mt-3">
-            <label for="formControlEmail" class="form-label">
-              Email
-            </label>
-            <input
-              type="email"
-              class="form-control form-input-green"
-              id="formControlEmail"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-            />
-          </div>
-          {loading && <Loader />}
+          <div className="d-flex justify-content-center">
+            <div style={{ minWidth: "50%" }}>
+              <Form.Group controlId="formControlNume">
+                <Form.Label>Nume</Form.Label>
+                <Form.Control
+                  type="email"
+                  placeholder="Introduceti adresa de email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                ></Form.Control>
+              </Form.Group>
+              <div class="mt-3">
+                <label for="formControlNume" class="form-label">
+                  Nume
+                </label>
+                <input
+                  type="text"
+                  class="form-control form-input-green"
+                  id="formControlNume"
+                  value={lastName}
+                  onChange={e => setLastName(e.target.value)}
+                />
+              </div>
+              <div class="mt-3">
+                <label for="formControlPrenume" class="form-label">
+                  Prenume
+                </label>
+                <input
+                  type="text"
+                  class="form-control form-input-green"
+                  id="formControlPrenume"
+                  value={firstName}
+                  onChange={e => setFirstName(e.target.value)}
+                />
+              </div>
+              <div class="mt-3">
+                <label for="formControlEmail" class="form-label">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  class="form-control form-input-green"
+                  id="formControlEmail"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                />
+              </div>
 
-          {successfullyUpdated && (
-            <Message variant="success" className="mt-3">
-              Profilul a fost actualizat cu success!
-            </Message>
-          )}
-          {errors.size > 0 &&
-            [...errors].map((error, index) => (
-              <Message key={index} variant="danger" className="mt-3">
-                {error}
-              </Message>
-            ))}
-          {successMessages.size > 0 &&
-            [...successMessages].map((message, index) => (
-              <Message key={index} variant="success" className="mt-3">
-                {message}
-              </Message>
-            ))}
-          {messages.size > 0 &&
-            [...messages].map((message, index) => (
-              <Message key={index} variant="info" className="mt-3">
-                {message}
-              </Message>
-            ))}
-          <div className="d-flex flex-column">
-            <button
-              className="btn btn-color-green px-2 mt-3"
-              onClick={handleSave}
-            >
-              Salveaza
-            </button>
-            <button
-              className="btn btn-color-green px-2 mt-3"
-              onClick={handleResetPassword}
-            >
-              Reseteaza parola
-            </button>
+              <div className="d-flex flex-column flex-md-row justify-content-md-between">
+                <button
+                  className="btn btn-color-green px-2 mt-3"
+                  onClick={handleSave}
+                >
+                  Salveaza
+                </button>
+                <button
+                  className="btn btn-color-green px-2 mt-3"
+                  onClick={handleResetPassword}
+                >
+                  Reseteaza parola
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -324,11 +324,30 @@ const updateUserProfile = asyncHandler(async (request, response) => {
       from: process.env.SENDGRID_EMAIL,
       subject: "Confirmare schimbare adresa email",
       html: `
-      <strong>
-      Adresa dumneavoastră de email a fost schimbată.
-      <br>Pentru a confirma accesați localhost:3000/?resetEmailToken=${tokenSchimbareEmail}&email=${email.trim()}
-      <br>Acest link este valabil 10 minute!
-      </strong>
+
+      <div
+        style="border-radius: 16px, margin-top: 4rem, background-color: #FFF, padding-bottom: 1rem"
+      >
+        <div style="display: flex, flex-direction: column">
+          <h4 style="text-align='center'"> Link schimbare email </h4>
+
+        <table cellspacing="0" cellpadding="0">
+          <tr>
+            <td align="center" width="150" height="40" bgcolor="#01df9b" style="-webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; color: #000; display: block;">
+            <a target="_blank" href="http://localhost:3000/?resetEmailToken=${tokenSchimbareEmail}&email=${email.trim()}" style="font-size:16px; font-family: Montserrat, Helvetica, Arial, sans-serif; text-decoration: none; line-height:40px; width:100%; display:inline-block">
+            <span style="color: #000">
+            Accesati link
+            </span>
+            </a>
+            </td>
+          </tr>
+        </table>
+
+
+          <p>Acest link este valabil 10 minute!</p>
+        </div>
+        
+      </div>
       `,
     };
     sgMail.send(msg);
