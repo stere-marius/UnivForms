@@ -21,6 +21,7 @@ import {
   FILE_UPLOAD,
   PARAGRAPH_QUESTION,
 } from "../utils/questionTypesConstants.js";
+import sgMail from "@sendgrid/mail";
 
 // @desc    Verifică ID-ul formularului și-l pune în obiectul request
 const findFormID = asyncHandler(async (request, response, next) => {
@@ -666,6 +667,7 @@ const getSpecificAnswer = asyncHandler(async (request, response) => {
   return response.status(201).json({
     utilizator: user,
     timpRamas: isNaN(timeLeft) ? undefined : timeLeft,
+    dataTransmitere: formResponse.createdAt,
     punctajTotal: totalScore,
     punctajUtilizator: userScore,
     intrebari: questionResponses,
@@ -1157,6 +1159,56 @@ const handleMarkBoxResponse = (
   });
 };
 
+const sendAnswerLinkEmail = asyncHandler(async (request, response) => {
+  const { email } = request.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    response.status(404);
+    throw new Error(`Utilizatorul cu adresa de email ${email} nu există!`);
+  }
+
+  const answerID = request.params.answerID;
+
+  const { titlu: formTitle, _id } = request.form;
+
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  const msg = {
+    to: email.trim(),
+    from: process.env.SENDGRID_EMAIL,
+    subject: `Raspunsuri formular ${formTitle}`,
+    html: `
+
+    <div
+      style="border-radius: 16px, margin-top: 4rem, background-color: #FFF, padding-bottom: 1rem"
+    >
+      <div style="display: flex, flex-direction: column">
+        <h4 style="text-align='center'"> Raspunsurile dvs la formularul ${formTitle} </h4>
+
+      <table cellspacing="0" cellpadding="0">
+        <tr>
+          <td align="center" width="150" height="40" bgcolor="#01df9b" style="-webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; color: #000; display: block;">
+          <a target="_blank" href="http://localhost:3000/form/${_id}/answers/${answerID}" style="font-size:16px; font-family: Montserrat, Helvetica, Arial, sans-serif; text-decoration: none; line-height:40px; width:100%; display:inline-block">
+          <span style="color: #000">
+          Accesati link
+          </span>
+          </a>
+          </td>
+        </tr>
+      </table>
+      </div>
+      
+    </div>
+    `,
+  };
+  sgMail.send(msg);
+
+  return response
+    .status(200)
+    .json({ message: "Răspunsul a fost transmis cu succes!" });
+});
+
 export {
   createForm,
   getFormByID,
@@ -1176,4 +1228,5 @@ export {
   userCanAnswer,
   deleteAnswer,
   setScoreAnswer,
+  sendAnswerLinkEmail,
 };

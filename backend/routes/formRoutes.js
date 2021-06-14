@@ -21,6 +21,7 @@ import {
   userCanAnswer,
   deleteAnswer,
   setScoreAnswer,
+  sendAnswerLinkEmail,
 } from "../controllers/formController.js";
 
 const router = express.Router();
@@ -40,6 +41,10 @@ router
   .post(protect, findFormID, checkFormAdmin, getFormAnswers);
 
 router
+  .route("/:id/answers/:answerID/sendUserAnswer")
+  .post(protect, findFormID, checkFormAdmin, sendAnswerLinkEmail);
+
+router
   .route("/:id/answers/:answerID/:questionID/downloadFile")
   .get(protect, findFormID, downloadFile);
 
@@ -49,8 +54,8 @@ router
 
 router
   .route("/:id/answers/:answerID")
-  .get(protect, findFormID, getSpecificAnswer)
-  .delete(protect, findFormID, deleteAnswer);
+  .get(findFormID, getSpecificAnswer)
+  .delete(protect, findFormID, checkFormAdmin, deleteAnswer);
 
 router.route("/:id/userAnswers").get(protect, getUserAnswers);
 

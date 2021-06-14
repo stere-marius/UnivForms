@@ -134,22 +134,22 @@ const FormAnswersScreen = ({ match, history }) => {
           </div>
         )}
         {answers.length < totalAnswers && (
-          <ul class="pagination">
+          <ul className="pagination">
             {currentPage > 0 && (
-              <li class="page-item" onClick={handlePreviousPage}>
-                <span class="page-link">Inapoi</span>
+              <li className="page-item" onClick={handlePreviousPage}>
+                <span className="page-link">Inapoi</span>
               </li>
             )}
 
-            <li class="page-item active">
-              <span class="page-link">{currentPage + 1}</span>
+            <li className="page-item active">
+              <span className="page-link">{currentPage + 1}</span>
             </li>
 
             {currentPage + 1 < Math.floor(totalAnswers / perPageAnswers) && (
-              <li class="page-item" onClick={handleNextPage}>
-                <a class="page-link" href="#">
+              <li className="page-item" onClick={handleNextPage}>
+                <button className="page-link" href="#">
                   Inainte
-                </a>
+                </button>
               </li>
             )}
           </ul>

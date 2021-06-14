@@ -13,6 +13,8 @@ import UserProfileScreen from "./screens/UserProfileScreen";
 import PrivateRoute from "./components/PrivateRoute";
 import GroupMainScreen from "./screens/group/GroupMainScreen";
 import ResetPasswordScreen from "./screens/ResetPasswordScreen";
+import UserAnswerTab from "./components/form/UserAnswerTab";
+import Header from "./components/Header";
 
 function App() {
   document.body.style = "background: #191722";
@@ -35,12 +37,26 @@ function App() {
         <PrivateRoute path="/form/:id/summary">
           <FormSummaryScreen />
         </PrivateRoute>
-        <PrivateRoute path="/form/:id/answers">
+        <PrivateRoute exact path="/form/:id/answers">
           <FormAnswersScreen />
         </PrivateRoute>
         <PrivateRoute path="/my-profile">
           <UserProfileScreen />
         </PrivateRoute>
+        <Route
+          path="/form/:id/answers/:answerID"
+          exact
+          render={props => (
+            <>
+              <Header />
+              <UserAnswerTab
+                formID={props.match.params.id}
+                answerID={props.match.params.answerID}
+              />
+            </>
+          )}
+        />
+        {/* http://localhost:3000/form/60b723ab3623b65f187927b7/answers/60c773cd0190ad44108b4cd9 */}
         <Route path="/login" component={LoginScreen} />
         <Route path="/register" component={RegisterScreen} />
         <Route path="/resetPassword" component={ResetPasswordScreen} />

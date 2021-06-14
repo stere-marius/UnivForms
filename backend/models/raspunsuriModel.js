@@ -13,7 +13,7 @@ const raspunsuriSchema = mongoose.Schema(
     raspunsuri: [{}],
   },
   {
-    timeStamps: true,
+    timestamps: { createdAt: "createdAt" },
   }
 );
 

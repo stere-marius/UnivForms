@@ -119,6 +119,10 @@ const UserAnswerTab = ({ answerID, formID, isFormOwner }) => {
         <p>Nume: {specificAnswer.utilizator.nume || " NULL"}</p>
         <p>Prenume: {specificAnswer.utilizator.prenume || " NULL"}</p>
         <p>Email: {specificAnswer.utilizator.email || " NULL"}</p>
+        <p>
+          Data transmitere:{" "}
+          {new Date(specificAnswer.dataTransmitere).toLocaleString()}
+        </p>
         {specificAnswer.punctajTotal > 0 && (
           <p>Scor total: {specificAnswer.punctajUtilizator || " NULL"}</p>
         )}
