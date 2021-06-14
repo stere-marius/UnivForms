@@ -11,6 +11,7 @@ import GroupCreateModal from "../components/group/GroupCreateModal";
 import FormViewContainer from "../components/form/FormViewContainer";
 import ModalChangeEmail from "../components/ModalChangeEmail";
 import ModalResetPassword from "../components/ModalResetPassword";
+import GroupViewContainer from "../components/group/GroupViewContainer";
 
 const HomeScreen = ({ history, location }) => {
   const userLogin = useSelector(state => state.userLogin);
@@ -52,95 +53,70 @@ const HomeScreen = ({ history, location }) => {
             }}
           >
             <div>
-              <h3 className="text-color-white px-5 pt-2 text-center">
+              <h3 className="text-color-white my-4 text-center">
                 Grupurile tale
               </h3>
-              {loadingGroups ? (
-                <Loader />
-              ) : errorGroups ? (
-                <Message variant="danger">{errorGroups}</Message>
-              ) : (
-                <Row>
-                  {groups.map(group => (
-                    <>
-                      <Col key={group._id} sm={12} md={6} lg={4} xl={3}>
-                        <div
-                          className="d-flex flex-column text-dark bg-white mx-4 my-4"
-                          style={{ borderRadius: "10px" }}
-                        >
-                          <h4 className="text-center p-2 border-bottom">
-                            {group.nume}
-                          </h4>
-                          <p className="p-3">
-                            <i className="fas fa-calendar-alt mx-1 inline-block" />
-                            {group.createdAt}
-                          </p>
-                          <p className="p-3">
-                            <i className="fas fa-pen mx-1 inline-block" />
-                            {group.updatedAt}
-                          </p>
-                          <p className="p-3">
-                            <i className="fas fa-users mx-1 inline-block" />
-                            {group.utilizatori.length}
-                          </p>
-                          <div className="d-flex align-items-center justify-content-center m-3">
-                            <Button
-                              variant="primary"
-                              onClick={() =>
-                                history.push(`/group/${group._id}`)
-                              }
-                            >
-                              Vezi grup
-                            </Button>
-                          </div>
-                        </div>
-                      </Col>
-                    </>
-                  ))}
-                </Row>
-              )}
-              <button
-                className="btn btn-default btn-color-green mx-4 my-4 p-3"
-                onClick={() => setActiveModalCreateGroup(true)}
-              >
-                Grup nou
-              </button>
-              <GroupCreateModal
-                showModal={isActiveModalCreateGroup}
-                onClose={() => setActiveModalCreateGroup(false)}
-              />
+              <div className="mx-4">
+                {loadingGroups ? (
+                  <Loader />
+                ) : errorGroups ? (
+                  <Message variant="danger">{errorGroups}</Message>
+                ) : (
+                  <Row>
+                    {groups.map(group => (
+                      <>
+                        <Col key={group._id} sm={12} md={6} lg={4} xl={3}>
+                          <GroupViewContainer group={group} />
+                        </Col>
+                      </>
+                    ))}
+                  </Row>
+                )}
+                <button
+                  className="btn btn-default btn-color-green my-4 p-3"
+                  onClick={() => setActiveModalCreateGroup(true)}
+                >
+                  Grup nou
+                </button>
+                <GroupCreateModal
+                  showModal={isActiveModalCreateGroup}
+                  onClose={() => setActiveModalCreateGroup(false)}
+                />
+              </div>
             </div>
 
             <div>
-              <h3 className="text-color-white px-5 pt-2 text-center">
-                Formularele tale
-              </h3>
-              {loadingForms ? (
-                <Loader />
-              ) : errorForms ? (
-                <Message variant="danger">{errorForms}</Message>
-              ) : (
-                <Row>
-                  {forms.map(form => (
-                    <>
-                      <Col key={form._id} sm={6} md={6} lg={6} xl={3}>
-                        <FormViewContainer form={form} />
-                      </Col>
-                    </>
-                  ))}
-                </Row>
-              )}
-              <button
-                className="btn btn-default btn-color-green mx-4 my-4 p-3"
-                onClick={() => setActiveModalCreateForm(true)}
-              >
-                Formular nou
-              </button>
-              <FormCreateModal
-                showModal={isActiveModalCreateForm}
-                onClose={() => setActiveModalCreateForm(false)}
-                userGroups={groups}
-              />
+              <div className="mx-4 bg-color-white">
+                <h3 className="text-color-white text-center my-4 ">
+                  Formularele tale
+                </h3>
+                {loadingForms ? (
+                  <Loader />
+                ) : errorForms ? (
+                  <Message variant="danger">{errorForms}</Message>
+                ) : (
+                  <Row>
+                    {forms.map(form => (
+                      <>
+                        <Col key={form._id} sm={6} md={6} lg={6} xl={3}>
+                          <FormViewContainer form={form} />
+                        </Col>
+                      </>
+                    ))}
+                  </Row>
+                )}
+                <button
+                  className="btn btn-default btn-color-green  my-4 p-3"
+                  onClick={() => setActiveModalCreateForm(true)}
+                >
+                  Formular nou
+                </button>
+                <FormCreateModal
+                  showModal={isActiveModalCreateForm}
+                  onClose={() => setActiveModalCreateForm(false)}
+                  userGroups={groups}
+                />
+              </div>
             </div>
           </div>
         </>

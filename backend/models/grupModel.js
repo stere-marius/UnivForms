@@ -32,7 +32,10 @@ const grupSchema = mongoose.Schema(
     ],
   },
   {
-    timeStamps: true,
+    timestamps: {
+      createdAt: "createdAt",
+      updatedAt: "modifiedAt",
+    },
   }
 );
 
