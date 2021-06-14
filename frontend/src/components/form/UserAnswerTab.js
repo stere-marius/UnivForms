@@ -147,13 +147,15 @@ const UserAnswerTab = ({ answerID, formID, isFormOwner }) => {
                 answerID={answerID}
                 question={question}
               />
-              {isFormOwner && (
+              {isFormOwner && question.punctajIntrebare ? (
                 <AnswerScore
                   formID={formID}
                   questionID={question.id}
                   answerDB={question}
                   answerID={answerID}
                 />
+              ) : (
+                <> </>
               )}
             </>
           ) : question.tip === "Incarcare fisier" ? (
@@ -163,13 +165,15 @@ const UserAnswerTab = ({ answerID, formID, isFormOwner }) => {
                 answerID={answerID}
                 question={question}
               />
-              {isFormOwner && (
+              {isFormOwner && question.punctajIntrebare ? (
                 <AnswerScore
                   formID={formID}
                   questionID={question.id}
                   answerDB={question}
                   answerID={answerID}
                 />
+              ) : (
+                <> </>
               )}
             </>
           ) : (
