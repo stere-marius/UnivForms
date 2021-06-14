@@ -6,11 +6,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { getForms, getGroups } from "../actions/userActions";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import { Link } from "react-router-dom";
 import FormCreateModal from "../components/form/FormCreateModal";
 import GroupCreateModal from "../components/group/GroupCreateModal";
 import FormViewContainer from "../components/form/FormViewContainer";
 import ModalChangeEmail from "../components/ModalChangeEmail";
+import ModalResetPassword from "../components/ModalResetPassword";
 
 const HomeScreen = ({ history, location }) => {
   const userLogin = useSelector(state => state.userLogin);
@@ -144,6 +144,7 @@ const HomeScreen = ({ history, location }) => {
             </div>
           </div>
           <ModalChangeEmail location={location} />
+          <ModalResetPassword location={location} />
         </>
       ) : (
         <Container>

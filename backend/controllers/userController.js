@@ -7,27 +7,6 @@ import FormResponses from "../models/raspunsuriModel.js";
 import sgMail from "@sendgrid/mail";
 import crypto from "crypto";
 
-const sendMailResetEmail = asyncHandler(async (request, response) => {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-  const msg = {
-    to: "marius.nikusor2015@gmail.com", // Change to your recipient
-    from: "stere.marius99@gmail.com", // Change to your verified sender
-    subject: "Sending with SendGrid is Fun",
-    text: "and easy to do anywhere, even with Node.js",
-    html: "<strong>and easy to do anywhere, even with Node.js</strong>",
-  };
-  sgMail
-    .send(msg)
-    .then(() => {
-      response.status(201).json({ message: "Email sent" });
-      console.log("Email sent");
-    })
-    .catch(error => {
-      console.error(error);
-      response.status(400).json({ error: error });
-    });
-});
-
 // @desc    Logheaza utilizator & obtine token
 // @route   POST /api/users/login
 // @access  Public
@@ -120,6 +99,121 @@ const searchUser = asyncHandler(async (request, response) => {
   throw new Error(`Utilizatorul nu a fost gasit`);
 });
 
+// @desc    Schimba parola utilizatorului
+// @route   PUT /api/users/profile/changePassword
+// @access  Private/Admin
+const generatePasswordResetLink = asyncHandler(async (request, response) => {
+  const user = await User.findById(request.user._id).select("-parola");
+
+  if (!user) {
+    response.status(404);
+    throw new Error(
+      `Utilizatorul cu id-ul ${request.user._id} nu a fost gasit`
+    );
+  }
+
+  if (
+    user.tokenResetareParola &&
+    new Date(user.expirareResetareParola) > Date.now()
+  ) {
+    response.status(400);
+    throw new Error(
+      `Link-ul pentru resetarea parola a fost deja generat! Verificați mesajele inbox sau spam!`
+    );
+  }
+
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  const tokenResetareParola = crypto.randomBytes(20).toString("hex");
+  user.tokenResetareParola = tokenResetareParola;
+  user.expirareResetareParola = Date.now() + 600000;
+  const msg = {
+    to: user.email,
+    from: process.env.SENDGRID_EMAIL,
+    subject: "Confirmare schimbare parola",
+    html: `
+      <div
+        style="border-radius: 16px, margin-top: 4rem, background-color: #FFF, padding-bottom: 1rem"
+      >
+        <div style="display: flex, flex-direction: column">
+          <h4 style="text-align='center'"> Link schimbare parola </h4>
+
+        <table cellspacing="0" cellpadding="0">
+          <tr>
+            <td align="center" width="150" height="40" bgcolor="#01df9b" style="-webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; color: #000; display: block;">
+            <a target="_blank" href="http://localhost:3000/?resetPasswordToken=${tokenResetareParola}" style="font-size:16px; font-family: Montserrat, Helvetica, Arial, sans-serif; text-decoration: none; line-height:40px; width:100%; display:inline-block">
+            <span style="color: #000">
+            Accesati link
+            </span>
+            </a>
+            </td>
+          </tr>
+        </table>
+
+
+          <p>Acest link este valabil 10 minute!</p>
+        </div>
+        
+      </div>
+      `,
+  };
+  await user.save();
+  sgMail.send(msg);
+  return response.status(200).json({
+    message:
+      "Un link de schimbare al parolei a fost trimis pe adresa dvs de email!",
+  });
+});
+
+// @desc    Actualizeaza parola utilizatorului
+// @route   PUT /api/users/profile/password
+// @access  Private/Admin
+const updateUserPassword = asyncHandler(async (request, response) => {
+  const user = await User.findById(request.user._id).select("-parola");
+
+  if (!user) {
+    response.status(404);
+    throw new Error(
+      `Utilizatorul cu id-ul ${request.user._id} nu a fost gasit`
+    );
+  }
+
+  const { resetToken, newPassword } = request.body;
+
+  if (!newPassword) {
+    response.status(400);
+    throw new Error(`Noua parola nu trebuie să fie vidă!`);
+  }
+
+  if (newPassword.length < 8) {
+    response.status(400);
+    throw new Error(`Noua parola trebuie să fie mai lungă de 7 caractere!`);
+  }
+
+  if (new Date(user.expirareResetareParola) < Date.now()) {
+    user.tokenResetareParola = undefined;
+    user.expirareResetareParola = undefined;
+    user.save();
+    response.status(400);
+    throw new Error(`Link-ul a expirat!`);
+  }
+
+  if (resetToken.trim() !== user.tokenResetareParola) {
+    user.tokenResetareParola = undefined;
+    user.expirareResetareParola = undefined;
+    user.save();
+    response.status(400);
+    throw new Error(
+      `Link-ul de confirmare este invalid! Generați un nou link de resetare al parolei!`
+    );
+  }
+
+  user.parola = newPassword;
+  await user.save();
+  return response
+    .status(200)
+    .json({ message: "Parola a fost schimbată cu succes!" });
+});
+
 // @desc    Actualizeaza email utilizatorului
 // @route   PUT /api/users/profile/email
 // @access  Private/Admin
@@ -199,6 +293,16 @@ const updateUserProfile = asyncHandler(async (request, response) => {
   console.log(`isEmailChanged ${isEmailChanged}`);
 
   if (isEmailChanged) {
+    if (
+      user.tokenSchimbareEmail &&
+      new Date(user.expirareSchimbareEmail) > Date.now()
+    ) {
+      response.status(400);
+      throw new Error(
+        `Link-ul pentru schimbarea adresei de email a fost deja generat! Verificați mesajele inbox sau spam!`
+      );
+    }
+
     const isAlreadyEmail = await User.findOne({
       email: email.trim(),
     });
@@ -214,7 +318,7 @@ const updateUserProfile = asyncHandler(async (request, response) => {
     user.expirareSchimbareEmail = Date.now() + 600000;
     const msg = {
       to: user.email,
-      from: "stere.marius99@gmail.com",
+      from: process.env.SENDGRID_EMAIL,
       subject: "Confirmare schimbare adresa email",
       html: `
       <strong>
@@ -348,6 +452,7 @@ export {
   getUserProfile,
   getUserGroups,
   getUserForms,
-  sendMailResetEmail,
   updateUserEmail,
+  generatePasswordResetLink,
+  updateUserPassword,
 };

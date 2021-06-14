@@ -11,8 +11,9 @@ import {
   getUserGroups,
   getUserForms,
   searchUser,
-  sendMailResetEmail,
   updateUserEmail,
+  generatePasswordResetLink,
+  updateUserPassword,
 } from "../controllers/userController.js";
 import { requestValidatorResult } from "../validators/requestValidatorResult.js";
 import {
@@ -23,7 +24,6 @@ import {
 
 const router = express.Router();
 
-router.route("/sendEmail").get(sendMailResetEmail);
 router
   .route("/")
   .post(registerUserValidator(), requestValidatorResult, registerUser)
@@ -38,6 +38,12 @@ router
     requestValidatorResult,
     updateUserProfile
   );
+
+router
+  .route("/profile/generatePasswordLink")
+  .put(protect, generatePasswordResetLink);
+
+router.route("/profile/password").put(protect, updateUserPassword);
 
 router
   .route("/profile/email")

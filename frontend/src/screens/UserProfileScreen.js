@@ -42,7 +42,37 @@ const UserProfileScreen = () => {
     setSuccessfullyUpdated(false);
   }, [firstName, lastName, email]);
 
-  const handleResetPassword = () => {};
+  const handleResetPassword = async () => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+          "Content-Type": "application/json",
+        },
+      };
+
+      setLoading(true);
+
+      const { data } = await axios.put(
+        "/api/users/profile/generatePasswordLink",
+        {},
+        config
+      );
+
+      setMessages(new Set(messages).add(data.message));
+      setSuccessfullyUpdated(true);
+    } catch (error) {
+      setErrors(
+        new Set(errors).add(
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message
+        )
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSave = async () => {
     if (!lastName) {

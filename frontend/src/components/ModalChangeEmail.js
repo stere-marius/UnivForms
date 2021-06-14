@@ -56,12 +56,12 @@ const ModalChangeEmail = ({ location }) => {
 
     const handleResetEmail = async (resetToken, email) => {
       if (!resetToken) {
-        setErrors(new Set().add("Link invalid resetare parola!"));
+        setErrors(new Set().add("Link invalid resetare email!"));
         return;
       }
 
       if (!email) {
-        setErrors(new Set().add("Email invalid resetare parola!"));
+        setErrors(new Set().add("Email invalid!"));
         return;
       }
 
