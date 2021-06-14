@@ -812,7 +812,7 @@ const deleteAnswer = asyncHandler(async (request, response) => {
     throw new Error(`Raspunsul cu ID-ul ${request.params.answerID} nu exista`);
   }
 
-  await answer.remove();
+  await answer.deleteOne();
 
   return response
     .status(201)

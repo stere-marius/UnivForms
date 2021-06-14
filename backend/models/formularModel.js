@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 import Group from "../models/grupModel.js";
 import User from "../models/utilizatorModel.js";
 import FormResponses from "../models/raspunsuriModel.js";
+import path from "path";
+import fs from "fs";
 
 const formularSchema = mongoose.Schema(
   {
@@ -69,16 +71,17 @@ const formularSchema = mongoose.Schema(
 formularSchema.pre("deleteOne", { document: true }, function (next) {
   console.log(`Formular schema remove id = ${this._id}`);
   FormResponses.deleteMany({ formular: this._id }).exec();
+  const __dirname = path.resolve();
+  const filePath = path.join(__dirname, `../uploads/${this._id.toString()}`);
+  console.log(`File path = ${filePath}`);
+  fs.rmSync(filePath, { recursive: true });
   Group.find({ "formulare._id": this._id }).exec((err, groups) => {
     if (err) {
       console.log(err);
       return;
     }
-    console.log(`groups =${typeof groups}`);
-    console.log(`groups length ${groups}`);
 
     groups.map(group => {
-      console.log(`Group = ${group.nume}`);
       const removeIndex = group
         .toObject()
         .formulare.find(form => form._id.toString() === this._id.toString());
@@ -89,9 +92,8 @@ formularSchema.pre("deleteOne", { document: true }, function (next) {
       group.formulare.splice(removeIndex, 1);
       group.save();
     });
-
-    next();
   });
+  next();
 });
 
 const Formular = mongoose.model("Formular", formularSchema, "formulare");
