@@ -10,8 +10,9 @@ import { Link } from "react-router-dom";
 import FormCreateModal from "../components/form/FormCreateModal";
 import GroupCreateModal from "../components/group/GroupCreateModal";
 import FormViewContainer from "../components/form/FormViewContainer";
+import ModalChangeEmail from "../components/ModalChangeEmail";
 
-const HomeScreen = ({ history }) => {
+const HomeScreen = ({ history, location }) => {
   const userLogin = useSelector(state => state.userLogin);
   const { userInfo } = userLogin;
 
@@ -142,6 +143,7 @@ const HomeScreen = ({ history }) => {
               />
             </div>
           </div>
+          <ModalChangeEmail location={location} />
         </>
       ) : (
         <Container>

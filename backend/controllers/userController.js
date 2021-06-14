@@ -4,6 +4,29 @@ import Form from "../models/formularModel.js";
 import asyncHandler from "express-async-handler";
 import generateToken from "../utils/generateToken.js";
 import FormResponses from "../models/raspunsuriModel.js";
+import sgMail from "@sendgrid/mail";
+import crypto from "crypto";
+
+const sendMailResetEmail = asyncHandler(async (request, response) => {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  const msg = {
+    to: "marius.nikusor2015@gmail.com", // Change to your recipient
+    from: "stere.marius99@gmail.com", // Change to your verified sender
+    subject: "Sending with SendGrid is Fun",
+    text: "and easy to do anywhere, even with Node.js",
+    html: "<strong>and easy to do anywhere, even with Node.js</strong>",
+  };
+  sgMail
+    .send(msg)
+    .then(() => {
+      response.status(201).json({ message: "Email sent" });
+      console.log("Email sent");
+    })
+    .catch(error => {
+      console.error(error);
+      response.status(400).json({ error: error });
+    });
+});
 
 // @desc    Logheaza utilizator & obtine token
 // @route   POST /api/users/login
@@ -35,7 +58,6 @@ const registerUser = asyncHandler(async (request, response) => {
 
   if (userExists) {
     response.status(400);
-    console.log(`Utilizator deja existent`);
     throw new Error("Utilizator deja existent");
   }
 
@@ -98,35 +120,127 @@ const searchUser = asyncHandler(async (request, response) => {
   throw new Error(`Utilizatorul nu a fost gasit`);
 });
 
+// @desc    Actualizeaza email utilizatorului
+// @route   PUT /api/users/profile/email
+// @access  Private/Admin
+const updateUserEmail = asyncHandler(async (request, response) => {
+  const user = await User.findById(request.user._id).select("-parola");
+
+  if (!user) {
+    response.status(404);
+    throw new Error(
+      `Utilizatorul cu id-ul ${request.user._id} nu a fost gasit`
+    );
+  }
+
+  const { resetToken, email } = request.body;
+
+  if (resetToken !== user.tokenSchimbareEmail) {
+    user.tokenSchimbareEmail = undefined;
+    user.expirareSchimbareEmail = undefined;
+    user.save();
+    response.status(400);
+    throw new Error(
+      `Link-ul de confirmare este invalid! Pentru a genera un nou link, schimbați adresa de email!`
+    );
+  }
+
+  if (new Date(user.expirareSchimbareEmail) < Date.now()) {
+    user.tokenSchimbareEmail = undefined;
+    user.expirareSchimbareEmail = undefined;
+    user.save();
+    response.status(400);
+    throw new Error(`Link-ul a expirat!`);
+  }
+
+  const isAlreadyEmail = await User.findOne({
+    email: email.trim(),
+  });
+
+  if (isAlreadyEmail) {
+    response.status(400);
+    throw new Error(`Adresa de email ${email} este asociată altui cont!`);
+  }
+
+  user.email = email;
+  user.tokenSchimbareEmail = undefined;
+  user.expirareSchimbareEmail = undefined;
+  const updatedUser = await user.save();
+
+  return response.json({
+    _id: updatedUser._id,
+    nume: updatedUser.nume,
+    prenume: updatedUser.prenume,
+    email: updatedUser.email,
+    token: generateToken(updatedUser._id),
+  });
+});
+
 // @desc    Actualizeaza profilul utilizatorului
 // @route   PUT /api/users/profile
 // @access  Private/Admin
 const updateUserProfile = asyncHandler(async (request, response) => {
-  const user = await User.findById(request.params.id).select("-parola");
-  if (user) {
-    user.nume = request.body.nume || user.nume;
-    user.prenume = request.body.prenume || user.prenume;
-    user.email = request.body.email || user.email;
-    user.esteAdministrator = request.body.esteAdministrator;
+  const user = await User.findById(request.user._id).select("-parola");
 
-    if (request.body.password) {
-      user.password = request.body.password;
+  if (!user) {
+    response.status(404);
+    throw new Error(
+      `Utilizatorul cu id-ul ${request.user._id} nu a fost gasit`
+    );
+  }
+  const { nume, prenume, email } = request.body;
+  user.nume = nume || user.nume;
+  user.prenume = prenume || user.prenume;
+
+  const isEmailChanged = email && user.email.trim() !== email.trim();
+
+  console.log(`Am primit email ${email.trim()}`);
+  console.log(`Email curent ${user.email.trim()}`);
+  console.log(`isEmailChanged ${isEmailChanged}`);
+
+  if (isEmailChanged) {
+    const isAlreadyEmail = await User.findOne({
+      email: email.trim(),
+    });
+
+    if (isAlreadyEmail) {
+      response.status(400);
+      throw new Error(`Adresa de email ${email} este asociată altui cont!`);
     }
 
-    const updatedUser = await user.save();
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    const tokenSchimbareEmail = crypto.randomBytes(20).toString("hex");
+    user.tokenSchimbareEmail = tokenSchimbareEmail;
+    user.expirareSchimbareEmail = Date.now() + 600000;
+    const msg = {
+      to: user.email,
+      from: "stere.marius99@gmail.com",
+      subject: "Confirmare schimbare adresa email",
+      html: `
+      <strong>
+      Adresa dumneavoastră de email a fost schimbată.
+      <br>Pentru a confirma accesați localhost:3000/?resetEmailToken=${tokenSchimbareEmail}&email=${email.trim()}
+      <br>Acest link este valabil 10 minute!
+      </strong>
+      `,
+    };
+    sgMail.send(msg);
+  }
 
-    return response.json({
+  const updatedUser = await user.save();
+
+  return response.json({
+    user: {
       _id: updatedUser._id,
       nume: updatedUser.nume,
       prenume: updatedUser.prenume,
       email: updatedUser.email,
-      esteAdministrator: updatedUser.esteAdministrator,
       token: generateToken(updatedUser._id),
-    });
-  }
-
-  response.status(404);
-  throw new Error(`Utilizatorul cu id-ul ${request.params.id} nu a fost gasit`);
+    },
+    message: isEmailChanged
+      ? "Confirmati schimbarea adresei de email folosind link-ul transmis pe adresa de email asociată contului dvs!"
+      : undefined,
+  });
 });
 
 // @desc    Obtine profilul utilizatorului
@@ -234,4 +348,6 @@ export {
   getUserProfile,
   getUserGroups,
   getUserForms,
+  sendMailResetEmail,
+  updateUserEmail,
 };

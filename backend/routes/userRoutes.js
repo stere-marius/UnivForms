@@ -11,14 +11,19 @@ import {
   getUserGroups,
   getUserForms,
   searchUser,
+  sendMailResetEmail,
+  updateUserEmail,
 } from "../controllers/userController.js";
 import { requestValidatorResult } from "../validators/requestValidatorResult.js";
 import {
   registerUserValidator,
   updateUserProfileValidator,
+  updateUserEmailValidator,
 } from "../validators/userValidator.js";
 
 const router = express.Router();
+
+router.route("/sendEmail").get(sendMailResetEmail);
 router
   .route("/")
   .post(registerUserValidator(), requestValidatorResult, registerUser)
@@ -32,6 +37,15 @@ router
     updateUserProfileValidator(),
     requestValidatorResult,
     updateUserProfile
+  );
+
+router
+  .route("/profile/email")
+  .put(
+    protect,
+    updateUserEmailValidator(),
+    requestValidatorResult,
+    updateUserEmail
   );
 
 router.get("/groups", protect, getUserGroups);

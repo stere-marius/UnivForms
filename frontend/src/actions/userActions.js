@@ -14,6 +14,9 @@ import {
   USER_FORMS_SUCCESS,
   USER_FORMS_FAIL,
   USER_FORMS_RESET,
+  USER_UPDATE_PROFILE_REQUEST,
+  USER_UPDATE_PROFILE_SUCCESS,
+  USER_UPDATE_PROFILE_FAIL,
 } from "../constants/userConstants";
 
 import axios from "axios";
@@ -99,7 +102,6 @@ export const register =
         payload: data,
       });
 
-      console.log(`User login success`);
       localStorage.setItem("userInfo", JSON.stringify(data));
     } catch (error) {
       console.log(`Error is ${JSON.stringify(error.response.data, null, 2)}`);
@@ -116,6 +118,60 @@ export const register =
 
       dispatch({
         type: USER_REGISTER_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      });
+    }
+  };
+export const updateProfile =
+  (firstName, lastName, email) => async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: USER_UPDATE_PROFILE_REQUEST,
+      });
+
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+          "Content-Type": "application/json",
+        },
+      };
+
+      const { data } = await axios.put(
+        "/api/users/profile",
+        { prenume: lastName, nume: firstName, email },
+        config
+      );
+
+      dispatch({
+        type: USER_UPDATE_PROFILE_SUCCESS,
+        payload: data,
+      });
+
+      dispatch({
+        type: USER_LOGIN_SUCCESS,
+        payload: data.user,
+      });
+    } catch (error) {
+      if (error.response.data.errors) {
+        dispatch({
+          type: USER_UPDATE_PROFILE_FAIL,
+          payload:
+            error.response && error.response.data.errors
+              ? error.response.data.errors
+              : error.message,
+        });
+        return;
+      }
+
+      dispatch({
+        type: USER_UPDATE_PROFILE_FAIL,
         payload:
           error.response && error.response.data.message
             ? error.response.data.message

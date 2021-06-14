@@ -9,6 +9,7 @@ import FormMainScreen from "./screens/FormMainScreen";
 import FormEditScreen from "./screens/FormEditScreen";
 import FormSummaryScreen from "./screens/FormSummaryScreen";
 import FormAnswersScreen from "./screens/FormAnswersScreen";
+import UserProfileScreen from "./screens/UserProfileScreen";
 import PrivateRoute from "./components/PrivateRoute";
 import GroupMainScreen from "./screens/group/GroupMainScreen";
 
@@ -35,6 +36,9 @@ function App() {
         </PrivateRoute>
         <PrivateRoute path="/form/:id/answers">
           <FormAnswersScreen />
+        </PrivateRoute>
+        <PrivateRoute path="/my-profile">
+          <UserProfileScreen />
         </PrivateRoute>
         <Route path="/login" component={LoginScreen} />
         <Route path="/register" component={RegisterScreen} />

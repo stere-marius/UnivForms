@@ -19,11 +19,11 @@ const Header = ({ width }) => {
 
   return (
     <header
-      className="d-flex justify-content-center align-items-center my-1 mx-auto"
+      className="d-flex justify-content-between align-items-center "
       style={{ width }}
     >
       <LinkContainer to="/">
-        <div style={{ marginRight: "auto" }}>
+        <div className="cursor-pointer">
           <Image
             src="/images/logo.png"
             style={{ width: "64px", display: "block" }}
@@ -32,7 +32,7 @@ const Header = ({ width }) => {
         </div>
       </LinkContainer>
 
-      <Form.Group
+      {/* <Form.Group
         className="nav-search-form d-none d-sm-block"
         style={{ width: "40%", margin: "auto" }}
       >
@@ -48,7 +48,7 @@ const Header = ({ width }) => {
             boxSizing: "border-box",
           }}
         ></Form.Control>
-      </Form.Group>
+      </Form.Group> */}
 
       <div className="nav-buttons" style={{ display: "flex" }}>
         {!userInfo ? (

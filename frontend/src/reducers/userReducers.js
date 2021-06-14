@@ -15,6 +15,10 @@ import {
   USER_FORMS_FAIL,
   USER_FORMS_RESET,
   USER_GROUPS_RESET,
+  USER_UPDATE_PROFILE_REQUEST,
+  USER_UPDATE_PROFILE_SUCCESS,
+  USER_UPDATE_PROFILE_FAIL,
+  USER_UPDATE_PROFILE_RESET,
 } from "../constants/userConstants";
 
 export const userLoginReducer = (state = {}, action) => {
@@ -41,6 +45,26 @@ export const userRegisterReducer = (state = {}, action) => {
     case USER_REGISTER_FAIL:
       return { loading: false, error: action.payload };
     case USER_REGISTER_RESET:
+      return {};
+    default:
+      return state;
+  }
+};
+
+export const userProfileReducer = (state = {}, action) => {
+  switch (action.type) {
+    case USER_UPDATE_PROFILE_REQUEST:
+      return { loading: true };
+    case USER_UPDATE_PROFILE_SUCCESS:
+      return {
+        loading: false,
+        userInfo: action.payload.user,
+        message: action.payload.message,
+        success: true,
+      };
+    case USER_UPDATE_PROFILE_FAIL:
+      return { loading: false, error: action.payload };
+    case USER_UPDATE_PROFILE_RESET:
       return {};
     default:
       return state;

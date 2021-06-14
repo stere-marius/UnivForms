@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 const utilizatorSchema = mongoose.Schema(
   {
@@ -20,10 +21,34 @@ const utilizatorSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    esteAdministrator: {
-      type: Boolean,
-      required: true,
-      default: false,
+    tokenResetareParola: {
+      type: String,
+      required: false,
+    },
+
+    expirareResetareParola: {
+      type: Date,
+      required: false,
+    },
+
+    tokenStergereCont: {
+      type: String,
+      required: false,
+    },
+
+    expirareStergereCont: {
+      type: Date,
+      required: false,
+    },
+
+    tokenSchimbareEmail: {
+      type: String,
+      required: false,
+    },
+
+    expirareSchimbareEmail: {
+      type: Date,
+      required: false,
     },
   },
   {
@@ -34,6 +59,21 @@ const utilizatorSchema = mongoose.Schema(
 utilizatorSchema.methods.matchPassword = async function (parolaIntrodusa) {
   return await bcrypt.compare(parolaIntrodusa, this.parola);
 };
+
+// utilizatorSchema.methods.generatePasswordResetToken = () => {
+//   this.tokenResetareParola = crypto.randomBytes(20).toString("hex");
+//   this.expirareResetareParola = Date.now() + 600000;
+// };
+
+// utilizatorSchema.methods.generateDeleteAccountToken = () => {
+//   this.tokenStergereCont = crypto.randomBytes(20).toString("hex");
+//   this.expirareStergereCont = Date.now() + 600000;
+// };
+
+// utilizatorSchema.methods.generateChangeEmailToken = () => {
+//   this.tokenSchimbareEmail = crypto.randomBytes(20).toString("hex");
+//   this.expirareSchimbareEmail = Date.now() + 600000;
+// };
 
 utilizatorSchema.pre("save", async function (next) {
   if (!this.isModified("parola")) {

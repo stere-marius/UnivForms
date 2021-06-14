@@ -6,6 +6,7 @@ import {
   userRegisterReducer,
   userGroupsReducer,
   userFormsReducer,
+  userProfileReducer,
 } from "./reducers/userReducers";
 import {
   formCreateQuestionReducer,
@@ -28,6 +29,7 @@ import {
 } from "./reducers/groupReducers";
 
 const reducer = combineReducers({
+  userProfile: userProfileReducer,
   userLogin: userLoginReducer,
   userRegister: userRegisterReducer,
   userGroups: userGroupsReducer,
