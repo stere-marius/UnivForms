@@ -25,7 +25,7 @@ const GroupViewContainer = ({ group }) => {
             <p className="__attribute--value">{group.utilizatori.length}</p>
           </div>
           <div className="attribute__right">
-            <i className="fas fa-copy" />
+            <i className="fas fa-users" />
           </div>
         </div>
         <div className="body__attribute">
@@ -35,7 +35,7 @@ const GroupViewContainer = ({ group }) => {
           </div>
 
           <div className="attribute__right">
-            <i className="fas fa-question" />
+            <i className="fas fa-file-invoice" />
           </div>
         </div>
       </div>

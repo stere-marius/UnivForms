@@ -64,7 +64,21 @@ const getFormByID = asyncHandler(async (request, response) => {
 // @route   GET /api/forms/:id/view
 // @access  Public
 const getFormView = asyncHandler(async (request, response) => {
-  request.form.intrebari.forEach(question => {
+  const formGroup = await Group.findOne({ "formulare._id": request.form._id });
+
+  if (
+    formGroup &&
+    !formGroup.utilizatori.some(
+      user => user.utilizatorID.toString() === request.user._id.toString()
+    )
+  ) {
+    response.status(401);
+    throw new Error(
+      "Formularul se află într-un grup din care nu faceți parte!"
+    );
+  }
+
+  const formGroups = request.form.intrebari.forEach(question => {
     const type = question.tip;
     const isBoxQuestion =
       type === RADIO_BUTTON_QUESTION || type === CHECKBOX_QUESTION;
@@ -75,9 +89,7 @@ const getFormView = asyncHandler(async (request, response) => {
         ...answer.toObject(),
         atribute: undefined,
       }));
-      console.log(
-        `attributes.afisareRaspunsuriOrdineAleatorie = ${attributes.afisareRaspunsuriOrdineAleatorie}`
-      );
+
       if (attributes && attributes.afisareRaspunsuriOrdineAleatorie) {
         console.log(`Am dat shuffle la array`);
         shuffleArray(question.raspunsuri);
@@ -108,7 +120,6 @@ const deleteForm = asyncHandler(async (request, response) => {
 const updateForm = asyncHandler(async (request, response) => {
   const form = request.form;
 
-  console.log(`Am primit în body ${JSON.stringify(request.body, null, 2)}`);
   const {
     titlu: title,
     raspunsuriMultipleUtilizator: multipleAnswers,
