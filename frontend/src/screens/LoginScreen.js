@@ -7,6 +7,7 @@ import Loader from "../components/Loader";
 import FormContainer from "../components/form/FormContainer";
 import { login } from "../actions/userActions";
 import Header from "../components/Header";
+import PasswordInput from "../components/PasswordInput";
 
 const LoginScreen = ({ location, history }) => {
   const [email, setEmail] = useState("");
@@ -41,42 +42,44 @@ const LoginScreen = ({ location, history }) => {
       <Header />
       <div className="my-5">
         <FormContainer>
-          <h1 className="text-color-white font-weight-bold mb-3">Sign In</h1>
+          <h1 className="text-color-white font-weight-bold mb-3">Logare</h1>
           {error && <Message variant="danger">{error}</Message>}
           {loading && <Loader />}
           <Form onSubmit={submitHandler}>
             <Form.Group controlId="email">
-              <Form.Label className="text-color-white">
-                Email Address
-              </Form.Label>
+              <Form.Label className="text-color-white">Adresa email</Form.Label>
               <Form.Control
                 type="email"
-                placeholder="Enter email"
+                placeholder="Introduceti adresa de email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
               ></Form.Control>
             </Form.Group>
-            <Form.Group controlId="password" className="my-3">
-              <Form.Label className="text-color-white">Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Enter password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-              ></Form.Control>
-            </Form.Group>
+            <PasswordInput
+              password={password}
+              setPassword={setPassword}
+              id="password"
+              labelText="Parola"
+              inputPlaceholder="Introduceti parola"
+              textColor="text-color-white"
+            />
 
-            <Button type="submit" variant="primary" className="mt-3">
-              Sign In
-            </Button>
+            <button type="submit" className="btn btn-color-green mt-3">
+              Login
+            </button>
           </Form>
           <Row className="py-3">
             <Col className="text-color-white font-weight-bold">
-              New User?{" "}
+              <Link to={`/resetPassword`}>Am uitat parola</Link>
+            </Col>
+          </Row>
+          <Row className="py-1">
+            <Col className="text-color-white font-weight-bold">
+              Utilizator nou?{" "}
               <Link
                 to={`/register${isRedirect ? `?redirect=${redirectLink}` : ""}`}
               >
-                Register
+                Inregistrare
               </Link>
             </Col>
           </Row>

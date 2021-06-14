@@ -4,12 +4,12 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import Message from "./Message";
 import Loader from "./Loader";
+import PasswordInput from "./PasswordInput";
 
 const ModalResetPassword = ({ location }) => {
-  const userLogin = useSelector(state => state.userLogin);
-  const { userInfo } = userLogin;
-
   const [resetToken, setResetToken] = useState("");
+
+  const [email, setEmail] = useState("");
 
   const [show, setShow] = useState(false);
 
@@ -41,14 +41,21 @@ const ModalResetPassword = ({ location }) => {
 
     const query = new URLSearchParams(location.search);
     const resetPasswordToken = query.get("resetPasswordToken");
+    const email = query.get("email");
 
     if (!resetPasswordToken) {
       setShow(false);
       return;
     }
 
+    if (!email) {
+      setShow(false);
+      return;
+    }
+
     setShow(true);
     setResetToken(resetPasswordToken);
+    setEmail(email);
   }, []);
 
   const handleSave = async () => {
@@ -60,7 +67,6 @@ const ModalResetPassword = ({ location }) => {
     try {
       const config = {
         headers: {
-          Authorization: `Bearer ${userInfo.token}`,
           "Content-Type": "application/json",
         },
       };
@@ -68,7 +74,7 @@ const ModalResetPassword = ({ location }) => {
 
       await axios.put(
         `/api/users/profile/password`,
-        { resetToken: resetToken, newPassword: password },
+        { resetToken, newPassword: password, email },
         config
       );
       setSuccessfullyUpdated(true);
@@ -93,18 +99,15 @@ const ModalResetPassword = ({ location }) => {
           <Modal.Title>Schimbare parola</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="d-flex flex-column justify-content-between">
-            <p>Introduceti noua parola</p>
-
-            <div className="input-group">
-              <input
-                type="password"
-                className="form-control form-input-green"
-                placeholder="Noua parola"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-              />
-            </div>
+          <div className="d-flex flex-column">
+            <PasswordInput
+              password={password}
+              setPassword={setPassword}
+              id="password"
+              labelText="Introduceti noua parola"
+              inputPlaceholder="Noua parola"
+              textColor="text-dark"
+            />
           </div>
 
           <div className="mt-3">

@@ -143,8 +143,6 @@ const HomeScreen = ({ history, location }) => {
               />
             </div>
           </div>
-          <ModalChangeEmail location={location} />
-          <ModalResetPassword location={location} />
         </>
       ) : (
         <Container>
@@ -193,6 +191,8 @@ const HomeScreen = ({ history, location }) => {
           </LinkContainer>
         </Container>
       )}
+      <ModalChangeEmail location={location} />
+      <ModalResetPassword location={location} />
     </>
   );
 };

@@ -12,6 +12,7 @@ import FormAnswersScreen from "./screens/FormAnswersScreen";
 import UserProfileScreen from "./screens/UserProfileScreen";
 import PrivateRoute from "./components/PrivateRoute";
 import GroupMainScreen from "./screens/group/GroupMainScreen";
+import ResetPasswordScreen from "./screens/ResetPasswordScreen";
 
 function App() {
   document.body.style = "background: #191722";
@@ -42,6 +43,7 @@ function App() {
         </PrivateRoute>
         <Route path="/login" component={LoginScreen} />
         <Route path="/register" component={RegisterScreen} />
+        <Route path="/resetPassword" component={ResetPasswordScreen} />
         <Route path="/" component={HomeScreen} exact />
       </Switch>
     </Router>

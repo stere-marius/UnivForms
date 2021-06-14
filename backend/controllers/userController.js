@@ -103,13 +103,18 @@ const searchUser = asyncHandler(async (request, response) => {
 // @route   PUT /api/users/profile/changePassword
 // @access  Private/Admin
 const generatePasswordResetLink = asyncHandler(async (request, response) => {
-  const user = await User.findById(request.user._id).select("-parola");
+  const { email } = request.body;
+
+  if (!email) {
+    response.status(404);
+    throw new Error(`Adresa de email nu trebuie să fie vidă!`);
+  }
+
+  const user = await User.findOne({ email: email }).select("-parola");
 
   if (!user) {
     response.status(404);
-    throw new Error(
-      `Utilizatorul cu id-ul ${request.user._id} nu a fost gasit`
-    );
+    throw new Error(`Nu exista un utilizator cu aceasta adresa de email`);
   }
 
   if (
@@ -140,7 +145,7 @@ const generatePasswordResetLink = asyncHandler(async (request, response) => {
         <table cellspacing="0" cellpadding="0">
           <tr>
             <td align="center" width="150" height="40" bgcolor="#01df9b" style="-webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; color: #000; display: block;">
-            <a target="_blank" href="http://localhost:3000/?resetPasswordToken=${tokenResetareParola}" style="font-size:16px; font-family: Montserrat, Helvetica, Arial, sans-serif; text-decoration: none; line-height:40px; width:100%; display:inline-block">
+            <a target="_blank" href="http://localhost:3000/?resetPasswordToken=${tokenResetareParola}&email=${email}" style="font-size:16px; font-family: Montserrat, Helvetica, Arial, sans-serif; text-decoration: none; line-height:40px; width:100%; display:inline-block">
             <span style="color: #000">
             Accesati link
             </span>
@@ -168,16 +173,7 @@ const generatePasswordResetLink = asyncHandler(async (request, response) => {
 // @route   PUT /api/users/profile/password
 // @access  Private/Admin
 const updateUserPassword = asyncHandler(async (request, response) => {
-  const user = await User.findById(request.user._id).select("-parola");
-
-  if (!user) {
-    response.status(404);
-    throw new Error(
-      `Utilizatorul cu id-ul ${request.user._id} nu a fost gasit`
-    );
-  }
-
-  const { resetToken, newPassword } = request.body;
+  const { resetToken, newPassword, email } = request.body;
 
   if (!newPassword) {
     response.status(400);
@@ -187,6 +183,13 @@ const updateUserPassword = asyncHandler(async (request, response) => {
   if (newPassword.length < 8) {
     response.status(400);
     throw new Error(`Noua parola trebuie să fie mai lungă de 7 caractere!`);
+  }
+
+  const user = await User.findOne({ email }).select("-parola");
+
+  if (!user) {
+    response.status(404);
+    throw new Error(`Utilizatorul cu adresa de email ${email} nu exista!`);
   }
 
   if (new Date(user.expirareResetareParola) < Date.now()) {

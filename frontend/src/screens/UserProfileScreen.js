@@ -46,7 +46,6 @@ const UserProfileScreen = () => {
     try {
       const config = {
         headers: {
-          Authorization: `Bearer ${userInfo.token}`,
           "Content-Type": "application/json",
         },
       };
@@ -55,7 +54,7 @@ const UserProfileScreen = () => {
 
       const { data } = await axios.put(
         "/api/users/profile/generatePasswordLink",
-        {},
+        { email: userInfo.email },
         config
       );
 

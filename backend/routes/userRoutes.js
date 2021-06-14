@@ -39,11 +39,9 @@ router
     updateUserProfile
   );
 
-router
-  .route("/profile/generatePasswordLink")
-  .put(protect, generatePasswordResetLink);
+router.route("/profile/generatePasswordLink").put(generatePasswordResetLink);
 
-router.route("/profile/password").put(protect, updateUserPassword);
+router.route("/profile/password").put(updateUserPassword);
 
 router
   .route("/profile/email")
