@@ -123,6 +123,10 @@ const UserAnswerTab = ({ answerID, formID, isFormOwner }) => {
           Data transmitere:{" "}
           {new Date(specificAnswer.dataTransmitere).toLocaleString()}
         </p>
+        <p>
+          Ultima actualizare:{" "}
+          {new Date(specificAnswer.dataActualizare).toLocaleString()}
+        </p>
         {specificAnswer.punctajTotal > 0 && (
           <p>Scor total: {specificAnswer.punctajUtilizator || " NULL"}</p>
         )}

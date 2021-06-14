@@ -668,6 +668,7 @@ const getSpecificAnswer = asyncHandler(async (request, response) => {
     utilizator: user,
     timpRamas: isNaN(timeLeft) ? undefined : timeLeft,
     dataTransmitere: formResponse.createdAt,
+    dataActualizare: formResponse.updatedAt,
     punctajTotal: totalScore,
     punctajUtilizator: userScore,
     intrebari: questionResponses,
