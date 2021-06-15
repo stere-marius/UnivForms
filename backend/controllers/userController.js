@@ -131,6 +131,7 @@ const generatePasswordResetLink = asyncHandler(async (request, response) => {
   const tokenResetareParola = crypto.randomBytes(20).toString("hex");
   user.tokenResetareParola = tokenResetareParola;
   user.expirareResetareParola = Date.now() + 600000;
+  const siteURL = request.protocol + "://" + request.hostname;
   const msg = {
     to: user.email,
     from: process.env.SENDGRID_EMAIL,
@@ -145,7 +146,7 @@ const generatePasswordResetLink = asyncHandler(async (request, response) => {
         <table cellspacing="0" cellpadding="0">
           <tr>
             <td align="center" width="150" height="40" bgcolor="#01df9b" style="-webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; color: #000; display: block;">
-            <a target="_blank" href="http://localhost:3000/?resetPasswordToken=${tokenResetareParola}&email=${email}" style="font-size:16px; font-family: Montserrat, Helvetica, Arial, sans-serif; text-decoration: none; line-height:40px; width:100%; display:inline-block">
+            <a target="_blank" href="${siteURL}/?resetPasswordToken=${tokenResetareParola}&email=${email}" style="font-size:16px; font-family: Montserrat, Helvetica, Arial, sans-serif; text-decoration: none; line-height:40px; width:100%; display:inline-block">
             <span style="color: #000">
             Accesati link
             </span>
@@ -315,6 +316,7 @@ const updateUserProfile = asyncHandler(async (request, response) => {
     const tokenSchimbareEmail = crypto.randomBytes(20).toString("hex");
     user.tokenSchimbareEmail = tokenSchimbareEmail;
     user.expirareSchimbareEmail = Date.now() + 600000;
+    const siteURL = request.protocol + "://" + request.hostname;
     const msg = {
       to: user.email,
       from: process.env.SENDGRID_EMAIL,
@@ -330,7 +332,7 @@ const updateUserProfile = asyncHandler(async (request, response) => {
         <table cellspacing="0" cellpadding="0">
           <tr>
             <td align="center" width="150" height="40" bgcolor="#01df9b" style="-webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; color: #000; display: block;">
-            <a target="_blank" href="http://localhost:3000/?resetEmailToken=${tokenSchimbareEmail}&email=${email.trim()}" style="font-size:16px; font-family: Montserrat, Helvetica, Arial, sans-serif; text-decoration: none; line-height:40px; width:100%; display:inline-block">
+            <a target="_blank" href="${siteURL}/?resetEmailToken=${tokenSchimbareEmail}&email=${email.trim()}" style="font-size:16px; font-family: Montserrat, Helvetica, Arial, sans-serif; text-decoration: none; line-height:40px; width:100%; display:inline-block">
             <span style="color: #000">
             Accesati link
             </span>

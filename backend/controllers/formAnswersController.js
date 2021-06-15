@@ -591,6 +591,8 @@ const handleFileUploadQuestion = (
       `/uploads/${formID}/${userID}/${questionDB.id}/${uniqueID}`
     );
 
+    console.log(`File path = ${newPath}`);
+
     let errorRename = null;
 
     fs.mkdirSync(newPath, { recursive: true });
@@ -739,6 +741,7 @@ const sendAnswerLinkEmail = asyncHandler(async (request, response) => {
   const { titlu: formTitle, _id } = request.form;
 
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  const siteURL = request.protocol + "://" + request.hostname;
   const msg = {
     to: email.trim(),
     from: process.env.SENDGRID_EMAIL,
@@ -754,7 +757,7 @@ const sendAnswerLinkEmail = asyncHandler(async (request, response) => {
         <table cellspacing="0" cellpadding="0">
           <tr>
             <td align="center" width="150" height="40" bgcolor="#01df9b" style="-webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; color: #000; display: block;">
-            <a target="_blank" href="http://localhost:3000/form/${_id}/answers/${answerID}" style="font-size:16px; font-family: Montserrat, Helvetica, Arial, sans-serif; text-decoration: none; line-height:40px; width:100%; display:inline-block">
+            <a target="_blank" href="${siteURL}/form/${_id}/answers/${answerID}" style="font-size:16px; font-family: Montserrat, Helvetica, Arial, sans-serif; text-decoration: none; line-height:40px; width:100%; display:inline-block">
             <span style="color: #000">
             Accesati link
             </span>
