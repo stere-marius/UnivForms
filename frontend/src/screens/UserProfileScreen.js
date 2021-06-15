@@ -26,10 +26,6 @@ const UserProfileScreen = () => {
 
   const [errors, setErrors] = useState(new Set());
 
-  const [successMessages, setSuccessMessages] = useState(new Set());
-
-  const [successfullyUpdated, setSuccessfullyUpdated] = useState(false);
-
   useEffect(() => {
     if (!userInfo) return;
 
@@ -40,7 +36,6 @@ const UserProfileScreen = () => {
 
   useEffect(() => {
     setErrors(new Set());
-    setSuccessfullyUpdated(false);
   }, [firstName, lastName, email]);
 
   const handleResetPassword = async () => {
@@ -60,7 +55,6 @@ const UserProfileScreen = () => {
       );
 
       setMessages(new Set(messages).add(data.message));
-      setSuccessfullyUpdated(true);
     } catch (error) {
       setErrors(
         new Set(errors).add(
@@ -111,8 +105,6 @@ const UserProfileScreen = () => {
         config
       );
 
-      console.log(`Data = ${JSON.stringify(data, null, 2)}`);
-
       if (data.message) {
         setMessages(new Set(messages).add(data.message));
       }
@@ -121,7 +113,6 @@ const UserProfileScreen = () => {
         type: USER_LOGIN_SUCCESS,
         payload: data.user,
       });
-      setSuccessfullyUpdated(true);
     } catch (error) {
       if (error.response.data.errors) {
         setErrors(
@@ -205,6 +196,19 @@ const UserProfileScreen = () => {
                   onChange={e => setEmail(e.target.value)}
                 />
               </div>
+
+              {errors.size > 0 &&
+                [...errors].map((error, index) => (
+                  <Message key={index} variant="danger">
+                    {error}
+                  </Message>
+                ))}
+              {messages.size > 0 &&
+                [...messages].map((message, index) => (
+                  <Message key={index} variant="info">
+                    {message}
+                  </Message>
+                ))}
 
               <div className="d-flex flex-column flex-md-row justify-content-md-between">
                 <button

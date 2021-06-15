@@ -291,10 +291,6 @@ const updateUserProfile = asyncHandler(async (request, response) => {
 
   const isEmailChanged = email && user.email.trim() !== email.trim();
 
-  console.log(`Am primit email ${email.trim()}`);
-  console.log(`Email curent ${user.email.trim()}`);
-  console.log(`isEmailChanged ${isEmailChanged}`);
-
   if (isEmailChanged) {
     if (
       user.tokenSchimbareEmail &&
