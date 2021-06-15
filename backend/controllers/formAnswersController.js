@@ -588,7 +588,7 @@ const handleFileUploadQuestion = (
     const uniqueID = mongoose.Types.ObjectId();
     const newPath = path.join(
       __dirname,
-      `../uploads/${formID}/${userID}/${questionDB.id}/${uniqueID}`
+      `/uploads/${formID}/${userID}/${questionDB.id}/${uniqueID}`
     );
 
     let errorRename = null;
