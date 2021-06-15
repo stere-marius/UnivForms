@@ -10,19 +10,22 @@ import {
   createQuestion,
   updateQuestion,
   deleteQuestion,
-  sendAnswer,
   updateForm,
-  getUserAnswers,
-  getFormAnswers,
-  getSpecificAnswer,
   downloadFile,
   findFormID,
   checkFormAdmin,
   userCanAnswer,
+} from "../controllers/formController.js";
+import {
+  sendAnswer,
+  getUserAnswers,
+  getFormAnswers,
+  getSpecificAnswer,
   deleteAnswer,
   setScoreAnswer,
   sendAnswerLinkEmail,
-} from "../controllers/formController.js";
+  getFormAnswersStatistics,
+} from "../controllers/formAnswersController.js";
 
 const router = express.Router();
 
@@ -39,6 +42,10 @@ router.route("/:id/view").get(protect, findFormID, userCanAnswer, getFormView);
 router
   .route("/:id/answers")
   .post(protect, findFormID, checkFormAdmin, getFormAnswers);
+
+router
+  .route("/:id/answers/statistics")
+  .get(protect, findFormID, checkFormAdmin, getFormAnswersStatistics);
 
 router
   .route("/:id/answers/:answerID/sendUserAnswer")

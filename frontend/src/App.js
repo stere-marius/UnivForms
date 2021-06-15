@@ -15,6 +15,7 @@ import GroupMainScreen from "./screens/group/GroupMainScreen";
 import ResetPasswordScreen from "./screens/ResetPasswordScreen";
 import UserAnswerTab from "./components/form/UserAnswerTab";
 import Header from "./components/Header";
+import NotFound from "./components/NotFound";
 
 function App() {
   document.body.style = "background: #191722";
@@ -65,6 +66,7 @@ function App() {
         <Route path="/register" component={RegisterScreen} />
         <Route path="/resetPassword" component={ResetPasswordScreen} />
         <Route path="/" component={HomeScreen} exact />
+        <Route component={NotFound} />
       </Switch>
     </Router>
   );
