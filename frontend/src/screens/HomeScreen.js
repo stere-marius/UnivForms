@@ -41,15 +41,14 @@ const HomeScreen = ({ history, location }) => {
   return (
     <>
       {userInfo ? (
-        <>
-          <Header width={"95%"} />
+        <div className="mx-sm-5 pb-5">
+          <Header />
 
           <div
-            className="mt-3 d-flex flex-column mx-auto"
+            className="mt-3 d-flex flex-column"
             style={{
-              width: "94%",
               backgroundColor: "#2C2938",
-              borderRadius: "35px",
+              borderRadius: "24px",
             }}
           >
             <div>
@@ -98,7 +97,7 @@ const HomeScreen = ({ history, location }) => {
                   <Row>
                     {forms.map(form => (
                       <>
-                        <Col key={form._id} sm={6} md={6} lg={6} xl={3}>
+                        <Col key={form._id} sm={12} md={6} lg={4} xl={3}>
                           <FormViewContainer form={form} />
                         </Col>
                       </>
@@ -119,7 +118,7 @@ const HomeScreen = ({ history, location }) => {
               </div>
             </div>
           </div>
-        </>
+        </div>
       ) : (
         <Container>
           <Header />

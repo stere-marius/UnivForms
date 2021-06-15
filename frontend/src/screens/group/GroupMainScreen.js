@@ -117,11 +117,10 @@ const GroupMainScreen = ({ match, history }) => {
     <>
       <Header />
       <div
-        className="mt-4 container bg-white pb-1 pt-1"
+        className="mt-2 mt-sm-4 container bg-white py-4 py-sm-1"
         style={{ borderRadius: "16px" }}
       >
         {renderTabNav()}
-        {/* <h2 className="text-center p-3 border-bottom">{formTitle}</h2> */}
       </div>
     </>
   );

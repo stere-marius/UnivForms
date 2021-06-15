@@ -6,6 +6,7 @@ import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { getFormAnswers, deleteFormAnswer } from "../actions/formActions";
 import UserAnswerTab from "../components/form/UserAnswerTab";
+import AnswerStatisticsTab from "../components/form/AnswerStatisticsTab";
 
 const FormAnswersScreen = ({ match, history }) => {
   const dispatch = useDispatch();
@@ -175,6 +176,12 @@ const FormAnswersScreen = ({ match, history }) => {
     );
   };
 
+  const renderStatisticsTab = () => {
+    if (selectedTab !== "Statistici") return <> </>;
+
+    return <AnswerStatisticsTab formID={match.params.id} />;
+  };
+
   const renderTabNav = () => (
     <div>
       <ul className="nav nav-tabs flex-column align-items-center align-items-sm-start flex-sm-row justify-content-center">
@@ -189,6 +196,7 @@ const FormAnswersScreen = ({ match, history }) => {
         <>
           {renderAnswersTab()}
           {renderUserAnswerTab()}
+          {renderStatisticsTab()}
         </>
       )}
     </div>

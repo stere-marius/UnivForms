@@ -26,9 +26,6 @@ code {
 }
 
 .toggle-container {
-  /* background-color: #eee;
-  transition: transform 1s ease;
-  transform: scaleY(1); */
   background-color: #eee;
   transform: scaleY(0);
   transform-origin: top;
@@ -95,10 +92,11 @@ code {
   pointer-events: none;
 }
 
-.btn-color-white:hover {
-  background: #fff;
+.btn-color-white:active .btn-color-white:hover {
+  background-color: #fff !important;
   border-color: #fff;
   opacity: 0.8;
+  box-shadow: none !important;
   transition: all 0.2s ease-out;
 }
 
@@ -107,7 +105,7 @@ code {
 .btn-color-white:visited {
   background-color: #fff !important;
   border-color: #fff;
-  box-shadow: none;
+  box-shadow: none !important;
 }
 
 .bg-primary-green {
