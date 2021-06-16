@@ -13,8 +13,6 @@ const FormCreateModal = ({ showModal, onClose, userGroups, history }) => {
 
   const [formTitle, setFormTitle] = useState("Formular");
 
-  const [selectedGroup, setSelectedGroup] = useState({});
-
   const [errors, setErrors] = useState(new Set());
 
   const formCreate = useSelector(state => state.formCreate);
@@ -33,7 +31,6 @@ const FormCreateModal = ({ showModal, onClose, userGroups, history }) => {
   useEffect(() => {
     setShow(showModal);
     setFormTitle("");
-    setSelectedGroup({});
     setErrors(new Set());
   }, [showModal]);
 
@@ -52,16 +49,8 @@ const FormCreateModal = ({ showModal, onClose, userGroups, history }) => {
     dispatch(
       createForm({
         titlu: formTitle,
-        grup: selectedGroup.id,
       })
     );
-  };
-
-  const handleSelectGroup = e => {
-    setSelectedGroup({
-      id: e.split("_")[1],
-      title: e.split("_")[0],
-    });
   };
 
   const handleChangeFormTitle = e => {
@@ -88,27 +77,6 @@ const FormCreateModal = ({ showModal, onClose, userGroups, history }) => {
                 onChange={handleChangeFormTitle}
               />
             </div>
-
-            {userGroups && userGroups.length > 0 && (
-              <div className="my-3">
-                <p>Grupul formularului</p>
-                {selectedGroup && selectedGroup.title && (
-                  <p>{selectedGroup.title}</p>
-                )}
-                <DropdownButton
-                  id="dropdown-groups"
-                  title="Selectati un grup"
-                  className="fw-bold txt-dark"
-                  onSelect={handleSelectGroup}
-                >
-                  {userGroups.map(group => (
-                    <Dropdown.Item eventKey={`${group.nume}_${group._id}`}>
-                      {group.nume}
-                    </Dropdown.Item>
-                  ))}
-                </DropdownButton>
-              </div>
-            )}
           </div>
 
           {errors.size > 0 && (

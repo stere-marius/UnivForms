@@ -132,7 +132,18 @@ const FormEditScreen = ({ match, history }) => {
   const renderCurrentQuestionTab = () => {
     if (selectedTab !== "Intrebare curenta") return <> </>;
 
-    if (formQuestions.length === 0) return <> </>;
+    if (formQuestions.length === 0) {
+      return (
+        <div className="d-flex mt-5">
+          <button
+            className="btn btn-default btn-color-green text-dark fw-bold"
+            onClick={() => handleNewQuestion()}
+          >
+            Intrebare noua
+          </button>
+        </div>
+      );
+    }
 
     if (currentQuestion.tip === CHECKBOX_QUESTION) {
       return (
