@@ -132,18 +132,18 @@ const QuestionMarkBox = ({
         )}
 
         <div className="d-flex flex-column flex-sm-row mx-4 my-3 justify-content-between">
-          <Button
+          <button
             onClick={handleSubmit}
-            className="mb-4 mb-sm-0 btn btn-color-green text-dark text-bold fw-bold"
+            className="btn btn-color-green mb-4 mb-sm-0 btn btn-color-green text-dark text-bold fw-bold"
           >
             Memoreaza raspuns
-          </Button>
-          <Button
+          </button>
+          <button
             className="btn btn-color-green text-dark text-bold fw-bold"
             onClick={handleNextQuestion}
           >
             Urmatoarea intrebare
-          </Button>
+          </button>
         </div>
       </div>
     </div>

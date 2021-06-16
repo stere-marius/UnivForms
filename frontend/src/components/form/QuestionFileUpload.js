@@ -130,16 +130,15 @@ const QuestionFileUpload = ({
         )}
 
         <div className="d-flex flex-column flex-sm-row mx-4 my-3 justify-content-between">
-          <Button
-            variant="primary"
+          <button
             onClick={handleSubmit}
-            className="mb-4 mb-sm-0"
+            className="btn btn-color-green mb-4 mb-sm-0"
           >
             Memoreaza raspuns
-          </Button>
-          <Button variant="primary" onClick={handleNextQuestion}>
+          </button>
+          <button className="btn btn-color-green" onClick={handleNextQuestion}>
             Urmatoarea intrebare
-          </Button>
+          </button>
         </div>
       </div>
     </div>

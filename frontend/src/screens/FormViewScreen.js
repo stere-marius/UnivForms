@@ -49,6 +49,7 @@ const FormViewScreen = ({ match, history }) => {
   const {
     loading: loadingSendResponse,
     success: successSendResponse,
+    canAnswer = true,
     error: errorsSendResponse,
   } = formResponse;
 
@@ -84,7 +85,20 @@ const FormViewScreen = ({ match, history }) => {
   }, [form.dataExpirare, history, match.params.id]);
 
   useEffect(() => {
-    if (progressSendResponse === 100 && successSendResponse) {
+    if (progressSendResponse !== 100) return;
+
+    console.log(`canAnswer = ${canAnswer}`);
+
+    if (!canAnswer) {
+      history.push({
+        pathname: `/form/${match.params.id}/summary`,
+        state: { formName: `${form.titlu}` },
+        errorMessage: errorsSendResponse[0],
+      });
+      return;
+    }
+
+    if (successSendResponse) {
       history.push({
         pathname: `/form/${match.params.id}/summary`,
         state: { formName: `${form.titlu}` },
@@ -98,6 +112,8 @@ const FormViewScreen = ({ match, history }) => {
     form.titlu,
     history,
     match.params.id,
+    canAnswer,
+    errorsSendResponse,
   ]);
 
   useEffect(() => {
@@ -111,7 +127,6 @@ const FormViewScreen = ({ match, history }) => {
   };
 
   const onTimeExpire = () => {
-    // TODO: Transmitere formular
     sendUserAnswers();
   };
 
@@ -136,14 +151,12 @@ const FormViewScreen = ({ match, history }) => {
     formData.append("formID", form._id);
     formData.append("timeLeft", timeLeft.current);
     formData.append("answers", JSON.stringify(raspunsuriIntrebariUtilizator));
-    console.log(`formData: ${JSON.stringify(formData, null, 40)}`);
 
     dispatch(
       sendFormResponse(formData, progressEv => {
         const completed = Math.round(
           (progressEv.loaded * 100) / progressEv.total
         );
-        console.log(`progress ${completed}`);
         setProgressSendResponse(completed);
       })
     );
@@ -173,8 +186,6 @@ const FormViewScreen = ({ match, history }) => {
             answer => answer.id === question.id
           )
       );
-
-    console.log(`${JSON.stringify(raspunsuriIntrebariUtilizator, null, 40)}`);
 
     if (mandatoryQuestions.length > 0) {
       const setErrors = new Set([...errorsSubmit]);

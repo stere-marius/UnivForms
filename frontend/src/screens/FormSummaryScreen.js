@@ -1,7 +1,10 @@
 import React, { useEffect } from "react";
 import Header from "../components/Header";
 
-const FormSummaryScreen = ({ location: { state, isTimeExpired }, history }) => {
+const FormSummaryScreen = ({
+  location: { state, isTimeExpired, errorMessage },
+  history,
+}) => {
   const handleButtonClick = () => {
     history.push(`/`);
   };
@@ -38,7 +41,7 @@ const FormSummaryScreen = ({ location: { state, isTimeExpired }, history }) => {
               </div>
             )}
             <h3 className="fw-bold mt-4">
-              Raspunsurile au fost transmise cu succes!
+              {errorMessage || "Raspunsurile au fost transmise cu succes!"}
             </h3>
 
             <button

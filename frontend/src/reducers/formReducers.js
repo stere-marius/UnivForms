@@ -61,7 +61,11 @@ export const formSendResponseReducer = (state = {}, action) => {
     case FORM_SEND_RESPONSE_SUCCESS:
       return { loading: false, success: true };
     case FORM_SEND_RESPONSE_FAIL:
-      return { loading: false, error: action.payload };
+      return {
+        loading: false,
+        error: action.payload.errors,
+        canAnswer: action.payload.canAnswer,
+      };
     default:
       return state;
   }

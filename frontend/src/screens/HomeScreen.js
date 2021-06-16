@@ -12,6 +12,7 @@ import FormViewContainer from "../components/form/FormViewContainer";
 import ModalChangeEmail from "../components/ModalChangeEmail";
 import ModalResetPassword from "../components/ModalResetPassword";
 import GroupViewContainer from "../components/group/GroupViewContainer";
+import axios from "axios";
 
 const HomeScreen = ({ history, location }) => {
   const userLogin = useSelector(state => state.userLogin);

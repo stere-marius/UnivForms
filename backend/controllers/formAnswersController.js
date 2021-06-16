@@ -411,26 +411,29 @@ const sendAnswer = asyncHandler(async (request, response) => {
   }
 
   if (form.dataExpirare && form.dataExpirare <= new Date()) {
-    return response.status(401).json({
+    return response.status(400).json({
       errors: ["Din păcate acest formular nu mai acceptă răspunsuri!"],
+      canAnswer: false,
     });
   }
 
-  if (form.dataValiditate && form.dataValiditate < new Date()) {
-    return response
-      .status(401)
-      .json({ errors: ["Acest formular nu este valid în momentul curent!"] });
+  if (form.dataValiditate && form.dataValiditate > new Date()) {
+    return response.status(403).json({
+      errors: ["Acest formular nu este valid în momentul curent!"],
+      canAnswer: false,
+    });
   }
 
   if (!form.raspunsuriMultipleUtilizator) {
-    const alreadyAnswered = await FormResponses.find({
+    const alreadyAnswered = await FormResponses.findOne({
       utilizator: request.user._id,
       formular: form._id,
     });
 
     if (alreadyAnswered) {
-      return response.status(401).json({
+      return response.status(400).json({
         errors: ["Ati transmit deja un răspuns pentru acest formular!"],
+        canAnswer: false,
       });
     }
   }
@@ -539,7 +542,6 @@ const sendAnswer = asyncHandler(async (request, response) => {
   Object.keys(files).forEach(file => fs.unlink(files[file].path, () => {}));
 
   if (errors.length > 0) {
-    console.log(`Errors backend ${JSON.stringify(errors, null, 4)}`);
     return response.status(400).json({ errors: errors });
   }
 

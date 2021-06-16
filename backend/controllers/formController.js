@@ -21,7 +21,6 @@ import {
   FILE_UPLOAD,
   PARAGRAPH_QUESTION,
 } from "../utils/questionTypesConstants.js";
-import sgMail from "@sendgrid/mail";
 
 // @desc    Verifică ID-ul formularului și-l pune în obiectul request
 const findFormID = asyncHandler(async (request, response, next) => {
@@ -133,25 +132,25 @@ const updateForm = asyncHandler(async (request, response) => {
   }
 
   if (time && isNaN(time)) {
-    response.status(401);
+    response.status(400);
     throw new Error(
       "Timpul transmiterii formularului trebuie să fie un număr!"
     );
   }
 
-  if (validDate && !isValidDate(validDate)) {
-    response.status(401);
+  if (validDate && isNaN(new Date(validDate))) {
+    response.status(400);
     throw new Error("Data validitate invalida!");
   }
 
-  if (expireDate && !isValidDate(expireDate)) {
-    response.status(401);
+  if (expireDate && isNaN(new Date(expireDate))) {
+    response.status(400);
     throw new Error("Data expirare invalida!");
   }
 
   form.timpTransmitere = time ? +time : undefined;
   form.dataValiditate = validDate ? new Date(validDate) : undefined;
-  form.expireDate = expireDate ? new Date(expireDate) : undefined;
+  form.dataExpirare = expireDate ? new Date(expireDate) : undefined;
   form.raspunsuriMultipleUtilizator = multipleAnswers
     ? multipleAnswers
     : undefined;

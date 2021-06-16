@@ -92,11 +92,16 @@ export const sendFormResponse =
       dispatch({ type: FORM_SEND_RESPONSE_SUCCESS, payload: data });
     } catch (error) {
       const errors = error.response.data.errors;
+      const canAnswer = error.response.data.canAnswer;
+
+      console.log(
+        `Error data = ${JSON.stringify(error.response.data, null, 2)}`
+      );
 
       if (errors) {
         dispatch({
           type: FORM_SEND_RESPONSE_FAIL,
-          payload: errors,
+          payload: { errors, canAnswer },
         });
         return;
       }
