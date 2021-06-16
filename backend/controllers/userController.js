@@ -131,7 +131,7 @@ const generatePasswordResetLink = asyncHandler(async (request, response) => {
   const tokenResetareParola = crypto.randomBytes(20).toString("hex");
   user.tokenResetareParola = tokenResetareParola;
   user.expirareResetareParola = Date.now() + 600000;
-  const siteURL = request.protocol + "://" + request.hostname;
+  const siteURL = request.protocol + "://" + request.get("host");
   const msg = {
     to: user.email,
     from: process.env.SENDGRID_EMAIL,
@@ -316,7 +316,7 @@ const updateUserProfile = asyncHandler(async (request, response) => {
     const tokenSchimbareEmail = crypto.randomBytes(20).toString("hex");
     user.tokenSchimbareEmail = tokenSchimbareEmail;
     user.expirareSchimbareEmail = Date.now() + 600000;
-    const siteURL = request.protocol + "://" + request.hostname;
+    const siteURL = request.protocol + "://" + request.get("host");
     const msg = {
       to: user.email,
       from: process.env.SENDGRID_EMAIL,

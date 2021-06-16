@@ -66,19 +66,16 @@ const FormEditScreen = ({ match, history }) => {
     selectedDeleteQuestion.current = questionID;
   };
 
-  const handleConfirmDeleteQuestion = () => {
+  const handleConfirmDeleteQuestion = async () => {
     if (!selectedDeleteQuestion.current) {
       setActiveModalDeleteQuestion(false);
       return;
     }
 
     const questionID = selectedDeleteQuestion.current;
-    const newQuestions = formQuestions.filter(
-      formQuestion => formQuestion._id !== questionID
-    );
-    setFormQuestions(newQuestions);
 
-    dispatch(deleteQuestion(match.params.id, questionID));
+    await dispatch(deleteQuestion(match.params.id, questionID));
+    dispatch(listFormDetails(match.params.id));
     setActiveModalDeleteQuestion(false);
     selectedDeleteQuestion.current = null;
   };
@@ -99,52 +96,43 @@ const FormEditScreen = ({ match, history }) => {
   }, [error, history]);
 
   useEffect(() => {
-    if (
-      form &&
-      form.utilizator &&
-      form.utilizator.toString() !== userInfo._id
-    ) {
+    if (!form) return;
+
+    const { intrebari: formQuestionsDB, titlu: title, utilizator: user } = form;
+
+    if (user && user.toString() !== userInfo._id) {
       history.push("/");
       return;
     }
 
-    if (form && form.titlu && form.intrebari) {
-      setFormTitle(form.titlu);
+    if (title) {
+      setFormTitle(title);
     }
 
-    if (form && form.intrebari) {
-      const formQuestionsDB = form.intrebari;
+    if (!formQuestionsDB) return;
+
+    if (formQuestionsDB.length !== formQuestions.length) {
       setFormQuestions(formQuestionsDB);
-
-      if (!currentQuestion) {
-        setCurrentQuestion(
-          currentQuestion || formQuestionsDB[formQuestionsDB.length - 1]
-        );
-        return;
-      }
-
-      if (form.intrebari.length !== formQuestions.length) {
-        setCurrentQuestion(
-          currentQuestion || formQuestionsDB[formQuestionsDB.length - 1]
-        );
-      }
-
-      const currentQuestionFromDB = formQuestionsDB.find(
-        question => question._id === currentQuestion._id
-      );
-
-      if (currentQuestionFromDB) {
-        setCurrentQuestion(currentQuestionFromDB);
-      }
     }
-  }, [form, currentQuestion, formQuestions.length]);
+
+    if (!currentQuestion) {
+      setCurrentQuestion(formQuestionsDB[formQuestionsDB.length - 1]);
+      return;
+    }
+
+    const isCurrentQuestion = formQuestionsDB.some(
+      question => question._id === currentQuestion._id
+    );
+
+    if (currentQuestion && !isCurrentQuestion) {
+      setCurrentQuestion(formQuestionsDB[formQuestionsDB.length - 1]);
+    }
+  }, [form, currentQuestion, formQuestions.length, history, userInfo._id]);
 
   const renderCurrentQuestionTab = () => {
     if (selectedTab !== "Intrebare curenta") return <> </>;
 
-    if (formQuestions.length === 0) {
-      return <> </>;
-    }
+    if (formQuestions.length === 0) return <> </>;
 
     if (currentQuestion.tip === CHECKBOX_QUESTION) {
       return (

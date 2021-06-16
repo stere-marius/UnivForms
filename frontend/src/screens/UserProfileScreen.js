@@ -151,15 +151,6 @@ const UserProfileScreen = () => {
         >
           <div className="d-flex justify-content-center">
             <div style={{ minWidth: "50%" }}>
-              <Form.Group controlId="formControlNume">
-                <Form.Label>Nume</Form.Label>
-                <Form.Control
-                  type="email"
-                  placeholder="Introduceti adresa de email"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                ></Form.Control>
-              </Form.Group>
               <div class="mt-3">
                 <label for="formControlNume" class="form-label">
                   Nume

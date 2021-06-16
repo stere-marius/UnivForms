@@ -741,7 +741,7 @@ const sendAnswerLinkEmail = asyncHandler(async (request, response) => {
   const { titlu: formTitle, _id } = request.form;
 
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-  const siteURL = request.protocol + "://" + request.hostname;
+  const siteURL = request.protocol + "://" + request.get("host");
   const msg = {
     to: email.trim(),
     from: process.env.SENDGRID_EMAIL,
