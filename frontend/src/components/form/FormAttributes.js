@@ -156,6 +156,7 @@ const FormAttributes = ({ form, history }) => {
             type="checkbox"
             className="form-check-input form-input-green"
             id="checkMultipleAnswers"
+            style={{ marginRight: "7px" }}
             checked={acceptMultipleAnswers}
             onChange={() => setAcceptMultipleAnswers(!acceptMultipleAnswers)}
           />
@@ -171,6 +172,7 @@ const FormAttributes = ({ form, history }) => {
             type="checkbox"
             className="form-check-input form-input-green"
             id="checkTimer"
+            style={{ marginRight: "7px" }}
             checked={isTimerPanel}
             onChange={() => setTimerPanelVisible(!isTimerPanel)}
           />
@@ -203,6 +205,7 @@ const FormAttributes = ({ form, history }) => {
             type="checkbox"
             className="form-check-input form-input-green"
             id="checkDateValid"
+            style={{ marginRight: "7px" }}
             checked={isStartPanel}
             onChange={() => setStartPanelVisible(!isStartPanel)}
           />
@@ -234,6 +237,7 @@ const FormAttributes = ({ form, history }) => {
             type="checkbox"
             className="form-check-input form-input-green"
             id="checkDateExpire"
+            style={{ marginRight: "7px" }}
             checked={isExpirePanel}
             onChange={() => setExpirePanelVisible(!isExpirePanel)}
           />
