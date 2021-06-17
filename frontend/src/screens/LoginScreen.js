@@ -8,6 +8,7 @@ import FormContainer from "../components/form/FormContainer";
 import { login } from "../actions/userActions";
 import Header from "../components/Header";
 import PasswordInput from "../components/PasswordInput";
+import Meta from "../components/Meta";
 
 const LoginScreen = ({ location, history }) => {
   const [email, setEmail] = useState("");
@@ -40,6 +41,7 @@ const LoginScreen = ({ location, history }) => {
   return (
     <>
       <Header />
+      <Meta title="Logare" />
       <div className="my-5">
         <FormContainer>
           <h1 className="text-color-white font-weight-bold mb-3">Logare</h1>

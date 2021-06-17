@@ -17,6 +17,7 @@ import {
 } from "../constants/questionTypesConstants";
 import QuestionFileUpload from "../components/form/QuestionFileUpload";
 import QuestionParagraph from "../components/form/QuestionParagraph";
+import Meta from "../components/Meta";
 
 const FormViewScreen = ({ match, history }) => {
   const tabs = [
@@ -502,12 +503,15 @@ const FormViewScreen = ({ match, history }) => {
           </div>
         </div>
       ) : (
-        <div
-          className="mt-4 container bg-white pb-1"
-          style={{ borderRadius: "16px" }}
-        >
-          {renderTabNav()}
-        </div>
+        <>
+          <Meta title={`${form.titlu}`} />
+          <div
+            className="mt-4 container bg-white pb-1"
+            style={{ borderRadius: "16px" }}
+          >
+            {renderTabNav()}
+          </div>
+        </>
       )}
     </>
   );

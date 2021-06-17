@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Image, Container, Row, Col } from "react-bootstrap";
+import { Image, Container, Row, Col } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import Header from "../components/Header";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,7 +12,7 @@ import FormViewContainer from "../components/form/FormViewContainer";
 import ModalChangeEmail from "../components/ModalChangeEmail";
 import ModalResetPassword from "../components/ModalResetPassword";
 import GroupViewContainer from "../components/group/GroupViewContainer";
-import axios from "axios";
+import Meta from "../components/Meta";
 
 const HomeScreen = ({ history, location }) => {
   const userLogin = useSelector(state => state.userLogin);
@@ -167,6 +167,7 @@ const HomeScreen = ({ history, location }) => {
           </LinkContainer>
         </Container>
       )}
+      <Meta title="Univ Forms" />
       <ModalChangeEmail location={location} />
       <ModalResetPassword location={location} />
     </>

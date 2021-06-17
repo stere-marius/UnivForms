@@ -7,6 +7,7 @@ import Message from "../components/Message";
 import { getFormAnswers, deleteFormAnswer } from "../actions/formActions";
 import UserAnswerTab from "../components/form/UserAnswerTab";
 import AnswerStatisticsTab from "../components/form/AnswerStatisticsTab";
+import Meta from "../components/Meta";
 
 const FormAnswersScreen = ({ match, history }) => {
   const dispatch = useDispatch();
@@ -205,6 +206,7 @@ const FormAnswersScreen = ({ match, history }) => {
   return (
     <>
       <Header />
+      <Meta title={`Raspunsuri formular`} />
       <div
         className="mt-4 container bg-white pb-1"
         style={{ borderRadius: "16px" }}

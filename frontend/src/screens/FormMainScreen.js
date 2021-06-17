@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 import { formatToHHMMSS } from "../utilities";
+import Meta from "../components/Meta";
 
 const FormMainScreen = ({ match, history }) => {
   const dispatch = useDispatch();
@@ -40,105 +41,109 @@ const FormMainScreen = ({ match, history }) => {
       ) : error ? (
         <Message variant="danger">{error}</Message>
       ) : (
-        <div
-          className="mt-4 container bg-white pb-1 pt-1"
-          style={{ borderRadius: "16px" }}
-        >
+        <>
+          <Meta title={`${form.titlu}`} />
           <div
-            className="d-flex flex-column p-4 m-4"
-            style={{
-              borderRadius: "22px",
-              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)",
-              backgroundColor: "#EFEFEF",
-            }}
+            className="mt-4 container bg-white pb-1 pt-1"
+            style={{ borderRadius: "16px" }}
           >
-            <div className="p-4">
-              <h3 className="fw-bold">{form.titlu}</h3>
-              {form.dataExpirare &&
-              new Date(form.dataExpirare) <= Date.now() ? (
-                <>
-                  <h3 className="mt-5">
-                    Din pacăte acest formular a expirat !
-                  </h3>
-                  <button
-                    className="btn btn-default btn-color-green px-4 text-dark text-bold fs-5 mt-4 fw-bold"
-                    onClick={handleFormExpireButton}
-                  >
-                    OK
-                  </button>
-                </>
-              ) : form.dataValiditate &&
-                Date.now() < new Date(form.dataValiditate) ? (
-                <>
-                  <h3 className="mt-5">
-                    Din pacăte acest formular nu este încă valid !
-                  </h3>
-                  <button
-                    className="btn btn-default btn-color-green px-4 text-dark text-bold fs-5 mt-4 fw-bold"
-                    onClick={handleFormExpireButton}
-                  >
-                    OK
-                  </button>
-                </>
-              ) : (
-                <>
-                  <div
-                    className="d-flex flex-column mt-5"
-                    style={{ width: "45%" }}
-                  >
-                    <div className="d-flex align-items-baseline my-3">
-                      <i className="fas fa-question fs-4" />
-                      <p className="fw-bold fs-4 me-auto ms-3">Intrebari</p>
-                      <p className="fw-bold fs-4 mx-5">
-                        {form.intrebari.length}
-                      </p>
-                    </div>
+            <div
+              className="d-flex flex-column p-4 m-4"
+              style={{
+                borderRadius: "22px",
+                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)",
+                backgroundColor: "#EFEFEF",
+              }}
+            >
+              <div className="p-4">
+                <h3 className="fw-bold">{form.titlu}</h3>
+                {form.dataExpirare &&
+                new Date(form.dataExpirare) <= Date.now() ? (
+                  <>
+                    <h3 className="mt-5">
+                      Din pacăte acest formular a expirat !
+                    </h3>
+                    <button
+                      className="btn btn-default btn-color-green px-4 text-dark text-bold fs-5 mt-4 fw-bold"
+                      onClick={handleFormExpireButton}
+                    >
+                      OK
+                    </button>
+                  </>
+                ) : form.dataValiditate &&
+                  Date.now() < new Date(form.dataValiditate) ? (
+                  <>
+                    <h3 className="mt-5">
+                      Din pacăte acest formular nu este încă valid !
+                    </h3>
+                    <button
+                      className="btn btn-default btn-color-green px-4 text-dark text-bold fs-5 mt-4 fw-bold"
+                      onClick={handleFormExpireButton}
+                    >
+                      OK
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <div
+                      className="d-flex flex-column mt-5"
+                      style={{ width: "45%" }}
+                    >
+                      <div className="d-flex align-items-baseline my-3">
+                        <i className="fas fa-question fs-4" />
+                        <p className="fw-bold fs-4 me-auto ms-3">Intrebari</p>
+                        <p className="fw-bold fs-4 mx-5">
+                          {form.intrebari.length}
+                        </p>
+                      </div>
 
-                    <div className="d-flex align-items-baseline my-3">
-                      <i className="fas fa-question-circle fs-4" />
-                      <p className="fw-bold fs-4 me-auto ms-3">
-                        Intrebari obligatorii
-                      </p>
-                      <p className="fw-bold fs-4 mx-5">
-                        {
-                          form.intrebari.map(intrebare => intrebare.obligatoriu)
-                            .length
-                        }
-                      </p>
-                    </div>
-
-                    {form.timpTransmitere && (
                       <div className="d-flex align-items-baseline my-3">
                         <i className="fas fa-question-circle fs-4" />
                         <p className="fw-bold fs-4 me-auto ms-3">
-                          Timp transmitere
+                          Intrebari obligatorii
                         </p>
                         <p className="fw-bold fs-4 mx-5">
-                          {formatToHHMMSS(form.timpTransmitere)}
+                          {
+                            form.intrebari.map(
+                              intrebare => intrebare.obligatoriu
+                            ).length
+                          }
                         </p>
                       </div>
-                    )}
-                  </div>
 
-                  {form.timpTransmitere && (
-                    <>
-                      <div className="alert alert-danger fw-bold text-dark">
-                        Acest formular contine un timp limitat de transmiterea a
-                        raspunsurilor!
-                      </div>
-                    </>
-                  )}
-                  <button
-                    className="btn btn-default btn-color-green px-4 text-dark text-bold fs-5 mt-4 fw-bold"
-                    onClick={handleAccept}
-                  >
-                    Acceptă
-                  </button>
-                </>
-              )}
+                      {form.timpTransmitere && (
+                        <div className="d-flex align-items-baseline my-3">
+                          <i className="fas fa-question-circle fs-4" />
+                          <p className="fw-bold fs-4 me-auto ms-3">
+                            Timp transmitere
+                          </p>
+                          <p className="fw-bold fs-4 mx-5">
+                            {formatToHHMMSS(form.timpTransmitere)}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {form.timpTransmitere && (
+                      <>
+                        <div className="alert alert-danger fw-bold text-dark">
+                          Acest formular contine un timp limitat de transmiterea
+                          a raspunsurilor!
+                        </div>
+                      </>
+                    )}
+                    <button
+                      className="btn btn-default btn-color-green px-4 text-dark text-bold fs-5 mt-4 fw-bold"
+                      onClick={handleAccept}
+                    >
+                      Acceptă
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        </>
       )}
     </>
   );

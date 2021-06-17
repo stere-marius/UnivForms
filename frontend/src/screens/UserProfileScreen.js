@@ -7,6 +7,7 @@ import Loader from "../components/Loader";
 import { USER_LOGIN_SUCCESS } from "../constants/userConstants";
 import axios from "axios";
 import { Form } from "react-bootstrap";
+import Meta from "../components/Meta";
 
 const UserProfileScreen = () => {
   const dispatch = useDispatch();
@@ -138,88 +139,91 @@ const UserProfileScreen = () => {
   };
 
   return (
-    <div className="container d-flex flex-column">
-      <Header />
-      <div className="">
-        <div
-          className="p-5 "
-          style={{
-            borderRadius: "22px",
-            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)",
-            backgroundColor: "#EFEFEF",
-          }}
-        >
-          <div className="d-flex justify-content-center">
-            <div style={{ minWidth: "50%" }}>
-              <div class="mt-3">
-                <label for="formControlNume" class="form-label">
-                  Nume
-                </label>
-                <input
-                  type="text"
-                  class="form-control form-input-green"
-                  id="formControlNume"
-                  value={lastName}
-                  onChange={e => setLastName(e.target.value)}
-                />
-              </div>
-              <div class="mt-3">
-                <label for="formControlPrenume" class="form-label">
-                  Prenume
-                </label>
-                <input
-                  type="text"
-                  class="form-control form-input-green"
-                  id="formControlPrenume"
-                  value={firstName}
-                  onChange={e => setFirstName(e.target.value)}
-                />
-              </div>
-              <div class="mt-3">
-                <label for="formControlEmail" class="form-label">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  class="form-control form-input-green"
-                  id="formControlEmail"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                />
-              </div>
+    <>
+      <Meta title="Profilul meu" />
+      <div className="container d-flex flex-column">
+        <Header />
+        <div className="">
+          <div
+            className="p-5 "
+            style={{
+              borderRadius: "22px",
+              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)",
+              backgroundColor: "#EFEFEF",
+            }}
+          >
+            <div className="d-flex justify-content-center">
+              <div style={{ minWidth: "50%" }}>
+                <div class="mt-3">
+                  <label for="formControlNume" class="form-label">
+                    Nume
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control form-input-green"
+                    id="formControlNume"
+                    value={lastName}
+                    onChange={e => setLastName(e.target.value)}
+                  />
+                </div>
+                <div class="mt-3">
+                  <label for="formControlPrenume" class="form-label">
+                    Prenume
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control form-input-green"
+                    id="formControlPrenume"
+                    value={firstName}
+                    onChange={e => setFirstName(e.target.value)}
+                  />
+                </div>
+                <div class="mt-3">
+                  <label for="formControlEmail" class="form-label">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    class="form-control form-input-green"
+                    id="formControlEmail"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                  />
+                </div>
 
-              {errors.size > 0 &&
-                [...errors].map((error, index) => (
-                  <Message key={index} variant="danger">
-                    {error}
-                  </Message>
-                ))}
-              {messages.size > 0 &&
-                [...messages].map((message, index) => (
-                  <Message key={index} variant="info">
-                    {message}
-                  </Message>
-                ))}
+                {errors.size > 0 &&
+                  [...errors].map((error, index) => (
+                    <Message key={index} variant="danger">
+                      {error}
+                    </Message>
+                  ))}
+                {messages.size > 0 &&
+                  [...messages].map((message, index) => (
+                    <Message key={index} variant="info">
+                      {message}
+                    </Message>
+                  ))}
 
-              <div className="d-flex flex-column flex-md-row justify-content-md-between">
-                <button
-                  className="btn btn-color-green px-2 mt-3"
-                  onClick={handleSave}
-                >
-                  Salveaza
-                </button>
-                <button
-                  className="btn btn-color-green px-2 mt-3"
-                  onClick={handleResetPassword}
-                >
-                  Reseteaza parola
-                </button>
+                <div className="d-flex flex-column flex-md-row justify-content-md-between">
+                  <button
+                    className="btn btn-color-green px-2 mt-3"
+                    onClick={handleSave}
+                  >
+                    Salveaza
+                  </button>
+                  <button
+                    className="btn btn-color-green px-2 mt-3"
+                    onClick={handleResetPassword}
+                  >
+                    Reseteaza parola
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

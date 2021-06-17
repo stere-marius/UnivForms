@@ -17,6 +17,7 @@ import {
   FILE_UPLOAD,
   PARAGRAPH_QUESTION,
 } from "../constants/questionTypesConstants";
+import Meta from "../components/Meta";
 
 const FormEditScreen = ({ match, history }) => {
   const dispatch = useDispatch();
@@ -120,14 +121,33 @@ const FormEditScreen = ({ match, history }) => {
       return;
     }
 
-    const isCurrentQuestion = formQuestionsDB.some(
+    const questionDB = formQuestionsDB.find(
       question => question._id === currentQuestion._id
     );
 
-    if (currentQuestion && !isCurrentQuestion) {
+    if (currentQuestion && !questionDB) {
       setCurrentQuestion(formQuestionsDB[formQuestionsDB.length - 1]);
+      return;
     }
-  }, [form, currentQuestion, formQuestions.length, history, userInfo._id]);
+
+    if (currentQuestion && !error) {
+      console.log(
+        `Am setat intrebarea curenta ca fiind ${JSON.stringify(
+          questionDB,
+          null,
+          2
+        )}`
+      );
+      setCurrentQuestion(questionDB);
+    }
+  }, [
+    form,
+    currentQuestion,
+    formQuestions.length,
+    history,
+    userInfo._id,
+    error,
+  ]);
 
   const renderCurrentQuestionTab = () => {
     if (selectedTab !== "Intrebare curenta") return <> </>;
@@ -324,6 +344,7 @@ const FormEditScreen = ({ match, history }) => {
   return (
     <>
       <Header />
+      <Meta title={`Editare formular`} />
       <div
         className="mt-4 container bg-white pb-1 pt-1"
         style={{ borderRadius: "16px" }}

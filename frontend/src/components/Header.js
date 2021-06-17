@@ -37,12 +37,12 @@ const Header = ({ width }) => {
           <>
             <LinkContainer to="/register">
               <Button className="btn-color-white text-dark fw-bold rounded-pill px-3 py-1 mx-5">
-                Register
+                Inregistrare
               </Button>
             </LinkContainer>
             <LinkContainer to="/login">
               <Button className="btn-color-white text-dark fw-bold rounded-pill px-3 py-1">
-                Sign In
+                Logare
               </Button>
             </LinkContainer>
           </>
@@ -50,7 +50,7 @@ const Header = ({ width }) => {
           <>
             <LinkContainer to="/my-profile">
               <Button className="btn-color-white text-dark fw-bold rounded-pill px-3 py-1 mx-5">
-                My profile
+                Profil
               </Button>
             </LinkContainer>
             <Button

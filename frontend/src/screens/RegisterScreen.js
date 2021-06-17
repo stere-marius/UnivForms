@@ -9,6 +9,7 @@ import { register } from "../actions/userActions";
 import { USER_REGISTER_RESET } from "../constants/userConstants";
 import PasswordInput from "../components/PasswordInput";
 import Header from "../components/Header";
+import Meta from "../components/Meta";
 
 const RegisterScreen = ({ location, history }) => {
   const [email, setEmail] = useState("");
@@ -53,6 +54,7 @@ const RegisterScreen = ({ location, history }) => {
 
   return (
     <>
+      <Meta title="Inregistrare" />
       <Header />
       <FormContainer>
         <h1 className="text-white">Inregistrare</h1>
