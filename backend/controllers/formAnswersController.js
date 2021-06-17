@@ -590,7 +590,7 @@ const handleFileUploadQuestion = (
     const uniqueID = mongoose.Types.ObjectId();
     const newPath = path.join(
       __dirname,
-      `/uploads/${formID}/${userID}/${questionDB.id}/${uniqueID}`
+      `./uploads/${formID}/${userID}/${questionDB.id}/${uniqueID}`
     );
 
     console.log(`File path = ${newPath}`);
@@ -648,7 +648,7 @@ const handleTextResponse = (
 
     if (
       validationDescription === "SIR DE CARACTERE" &&
-      !answerText.match(/^[A-Za-z]+$/)
+      !answerText.match(/^[a-zA-Z\u00C0-\u017F\s]+$/)
     ) {
       addError(questionDB, invalidAnswerMessage);
       return;
@@ -742,6 +742,12 @@ const sendAnswerLinkEmail = asyncHandler(async (request, response) => {
 
   const { titlu: formTitle, _id } = request.form;
 
+  console.log(`Request url = ${request.url}`);
+  console.log(`Request path = ${request.path}`);
+  console.log(`req.headers.host = ${request.headers.host}`);
+  console.log(`request.originalURL = ${request.originalUrl}`);
+  console.log(`request.baseUrl = ${request.baseUrl}`);
+
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
   const siteURL = request.protocol + "://" + request.get("host");
   const msg = {
@@ -780,12 +786,6 @@ const sendAnswerLinkEmail = asyncHandler(async (request, response) => {
 });
 
 const getFormAnswersStatistics = asyncHandler(async (request, response) => {
-  // Top 5 intrebari cu cele mai slabe raspunsuri: iau toate raspunsurile de la toate intrebarile
-  // le adaug intr-un obiect in care am numele intrebarii, id-ul si scorul total obtinut din toate raspunsurile
-  // Top 5 intrebari cu cele mai bune raspunsuri: iau toate raspunsurile de la toate intrebarile
-  // le adaug intr-un obiect in care am numele intrebarii, id-ul si scorul total obtinut din toate raspunsurile
-  // Top 5 cele mai bune scoruri:
-
   const form = request.form;
 
   const answers = await FormResponses.find({

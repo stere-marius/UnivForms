@@ -79,7 +79,7 @@ router
   .route("/sendAnswer")
   .post(
     protect,
-    formidableMiddleware({ multiples: true, uploadDir: "/uploads" }),
+    formidableMiddleware({ multiples: true, uploadDir: "./uploads" }),
     sendAnswer
   );
 

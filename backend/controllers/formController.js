@@ -457,7 +457,7 @@ const downloadFile = asyncHandler(async (request, response) => {
   }
 
   const __dirname = path.resolve();
-  const filePath = path.join(__dirname, `/uploads/${question.fisier}`);
+  const filePath = path.join(__dirname, `./uploads/${question.fisier}`);
 
   console.log(`File path is ${filePath}`);
   if (!fs.existsSync(filePath)) {

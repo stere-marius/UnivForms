@@ -46,7 +46,7 @@ const QuestionMarkBox = ({
 
       if (
         validationDescription === "SIR DE CARACTERE" &&
-        !/^[A-Za-z]+$/.test(raspunsUtilizator.trim())
+        !/^[a-zA-Z\u00C0-\u017F\s]+$/.test(raspunsUtilizator.trim())
       ) {
         setErrors([invalidAnswerMessage]);
         return;

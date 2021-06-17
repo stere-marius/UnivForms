@@ -16,6 +16,11 @@ const AnswerFileUpload = ({ formID, answerID, question }) => {
 
   const handleFileDownload = async () => {
     try {
+      if (!userInfo) {
+        setError("Trebuie să fii logat pentru a descărca acest fișier!");
+        return;
+      }
+
       if (!userInfo.email) {
         setError("Trebuie să fii logat pentru a descărca acest fișier!");
         return;
