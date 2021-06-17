@@ -6,6 +6,7 @@ import Message from "../components/Message";
 import Loader from "../components/Loader";
 import { formatToHHMMSS } from "../utilities";
 import Meta from "../components/Meta";
+import { FORM_DETAILS_RESET } from "../constants/formConstants";
 
 const FormMainScreen = ({ match, history }) => {
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ const FormMainScreen = ({ match, history }) => {
       return;
     }
 
+    dispatch({ type: FORM_DETAILS_RESET });
     dispatch(listFormDetails(match.params.id, true));
   }, [match, dispatch, history, userInfo]);
 

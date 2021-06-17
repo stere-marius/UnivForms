@@ -1,10 +1,18 @@
 import React, { useEffect } from "react";
 import Header from "../components/Header";
+import { useDispatch } from "react-redux";
+import { FORM_DETAILS_RESET } from "../constants/formConstants";
 
 const FormSummaryScreen = ({
   location: { state, isTimeExpired, errorMessage },
   history,
 }) => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch({ type: FORM_DETAILS_RESET });
+  });
+
   const handleButtonClick = () => {
     history.push(`/`);
   };
