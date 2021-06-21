@@ -154,7 +154,7 @@ const HomeScreen = ({ history, location }) => {
               datelor
             </span>
           </h1>
-          <LinkContainer to="/create-form">
+          <LinkContainer to="/login">
             <div className="text-center my-8">
               <button className="btn-reset btn-green">
                 Formular nou
