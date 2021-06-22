@@ -92,9 +92,10 @@ code {
   pointer-events: none;
 }
 
-.btn-color-white:active .btn-color-white:hover {
+.btn-color-white:active,
+.btn-color-white:hover {
   background-color: #fff !important;
-  border-color: #fff;
+  border-color: #fff !important;
   opacity: 0.8;
   box-shadow: none !important;
   transition: all 0.2s ease-out;

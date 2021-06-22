@@ -148,12 +148,13 @@ const updateForm = asyncHandler(async (request, response) => {
     throw new Error("Data expirare invalida!");
   }
 
+  console.log(`multipleAnswers = ${multipleAnswers}`);
+
   form.timpTransmitere = time ? +time : undefined;
   form.dataValiditate = validDate ? new Date(validDate) : undefined;
   form.dataExpirare = expireDate ? new Date(expireDate) : undefined;
-  form.raspunsuriMultipleUtilizator = multipleAnswers
-    ? multipleAnswers
-    : undefined;
+  form.raspunsuriMultipleUtilizator =
+    multipleAnswers !== undefined ? multipleAnswers : undefined;
 
   await form.save();
 

@@ -272,7 +272,7 @@ const FormAttributes = ({ form, history }) => {
       {loading && <Loader />}
       {success && (
         <div className="alert alert-success mt-3">
-          Formularul a fost actulizat cu success!
+          Formularul a fost actualizat cu succes!
         </div>
       )}
 
