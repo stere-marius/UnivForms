@@ -333,11 +333,6 @@ const EditShortTextQuestion = ({
                     <option selected={selectValue === "SIR_DE_CARACTERE"}>
                       SIR DE CARACTERE
                     </option>
-                    <option
-                      selected={selectValue === "SIR_DE_LUNGIME_MAI_MARE"}
-                    >
-                      SIR DE LUNGIME MAI MARE DECAT
-                    </option>
                     <option selected={selectValue === "NUMAR_MAI_MARE"}>
                       NUMAR MAI MARE DECAT
                     </option>

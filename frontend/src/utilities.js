@@ -23,6 +23,8 @@ function validateStringLength(text, length, validationType) {
 }
 
 function validateNumberRange(number, validationBD, validationType) {
+
+  console.log(`validationType = ${validationType}`)
   if (validationType === "NUMAR MAI MARE DECAT") {
     return +number > +validationBD;
   }
@@ -37,7 +39,7 @@ function validateNumberRange(number, validationBD, validationType) {
 
   if (validationType === "NUMAR IN INTERVAL") {
     const firstRange = validationBD.split("-")[0];
-    const secondRange = validationBD.split("-")[0];
+    const secondRange = validationBD.split("-")[1];
 
     return +number >= +firstRange && +number <= +secondRange;
   }

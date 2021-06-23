@@ -22,15 +22,13 @@ const Header = ({ width }) => {
       className="d-flex flex-column flex-sm-row justify-content-between align-items-center "
       style={{ width }}
     >
-      <LinkContainer to="/">
-        <div className="cursor-pointer">
+      <a href="/" className="cursor-pointer">
           <Image
             src="/images/logo.png"
             style={{ width: "64px", display: "block" }}
             fluid
           />
-        </div>
-      </LinkContainer>
+      </a>
 
       <div className="nav-buttons d-flex flex-column flex-sm-row align-items-center p-4 p-md-0">
         {!userInfo ? (

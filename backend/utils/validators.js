@@ -24,7 +24,7 @@ const validateNumberRange = (number, validationBD, validationType) => {
 
   if (validationType === "NUMAR IN INTERVAL") {
     const firstRange = validationBD.split("-")[0];
-    const secondRange = validationBD.split("-")[0];
+    const secondRange = validationBD.split("-")[1];
 
     return +number >= +firstRange && +number <= +secondRange;
   }
