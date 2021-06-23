@@ -4,13 +4,11 @@ import Utilizator from "../models/utilizatorModel.js";
 
 const protect = asyncHandler(async (request, response, next) => {
   let token;
+  const authorizationHeader = request.headers && request.headers.authorization;
 
-  if (
-    request.headers.authorization &&
-    request.headers.authorization.startsWith("Bearer")
-  ) {
+  if (authorizationHeader && authorizationHeader.startsWith("Bearer")) {
     try {
-      token = request.headers.authorization.split(" ")[1];
+      token = authorizationHeader.split(" ")[1];
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
@@ -25,17 +23,14 @@ const protect = asyncHandler(async (request, response, next) => {
 
       next();
     } catch (error) {
-      console.log(`Not authorized, token failed`);
-      console.error(error);
       response.status(401);
-      throw new Error("Not authorized, token failed");
+      throw new Error("Utilizatorul nu a fost autorizat, verificarea token a esuat!");
     }
   }
 
   if (!token) {
-    console.log(`Not authorized, no token`);
     response.status(401);
-    throw new Error("Not authorized, no token");
+    throw new Error("Utilizatorul nu a fost autorizat, verificarea token a esuat!");
   }
 });
 

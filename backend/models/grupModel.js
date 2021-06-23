@@ -2,40 +2,25 @@ import mongoose from "mongoose";
 
 const grupSchema = mongoose.Schema(
   {
-    nume: {
-      type: String,
-      required: true,
-    },
-    creator: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Utilizator",
-    },
+    nume: { type: String, required: true },
+    creator: { type: mongoose.Schema.Types.ObjectId, ref: "Utilizator" },
     utilizatori: [
       {
         utilizatorID: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Utilizator",
         },
-        administrator: {
-          type: Boolean,
-          default: false,
-        },
+        administrator: { type: Boolean, default: false },
       },
     ],
     formulare: [
       {
-        formularID: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Formular",
-        },
+        formularID: { type: mongoose.Schema.Types.ObjectId, ref: "Formular" },
       },
     ],
   },
   {
-    timestamps: {
-      createdAt: "createdAt",
-      updatedAt: "modifiedAt",
-    },
+    timestamps: { createdAt: "createdAt", updatedAt: "modifiedAt" },
   }
 );
 

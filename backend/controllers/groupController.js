@@ -2,15 +2,8 @@ import Form from "../models/formularModel.js";
 import Group from "../models/grupModel.js";
 import User from "../models/utilizatorModel.js";
 import FormResponses from "../models/raspunsuriModel.js";
-import FormAnswers from "../models/raspunsuriModel.js";
 import asyncHandler from "express-async-handler";
-import {
-  isNumeric,
-  validateNumberRange,
-  validateStringLength,
-} from "../utils/validators.js";
 import mongoose from "mongoose";
-import { request } from "express";
 
 // @desc    Valideaza existența grupului și îl pune în request
 const findGroupID = asyncHandler(async (request, response, next) => {

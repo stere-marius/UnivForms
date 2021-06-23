@@ -19,7 +19,6 @@ const authUser = asyncHandler(async (request, response) => {
       nume: user.nume,
       prenume: user.prenume,
       email: user.email,
-      esteAdministrator: user.esteAdministrator,
       token: generateToken(user._id),
     });
   }

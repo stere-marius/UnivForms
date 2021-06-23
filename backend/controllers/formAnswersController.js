@@ -648,7 +648,7 @@ const handleTextResponse = (
 
     if (
       validationDescription === "SIR DE CARACTERE" &&
-      !answerText.match(/^[a-zA-Z\u00C0-\u017F\s]+$/)
+      !answerText.normalize("NFD").replace(/[\u0300-\u036f]/g, "").match(/^[a-zA-ZăâîșțĂÂÎȘȚ\s]+$/)
     ) {
       addError(questionDB, invalidAnswerMessage);
       return;

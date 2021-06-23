@@ -4,47 +4,23 @@ import crypto from "crypto";
 
 const utilizatorSchema = mongoose.Schema(
   {
-    nume: {
-      type: String,
-      required: true,
-    },
-    prenume: {
-      type: String,
-      required: true,
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    parola: {
-      type: String,
-      required: true,
-    },
-    tokenResetareParola: {
-      type: String,
-      required: false,
-    },
+    nume: { type: String, required: true },
 
-    expirareResetareParola: {
-      type: Date,
-      required: false,
-    },
+    prenume: { type: String, required: true },
 
-    tokenConfirmareCont: {
-      type: String,
-      required: false,
-    },
+    email: { type: String, required: true, unique: true },
 
-    tokenSchimbareEmail: {
-      type: String,
-      required: false,
-    },
+    parola: { type: String, required: true },
 
-    expirareSchimbareEmail: {
-      type: Date,
-      required: false,
-    },
+    tokenResetareParola: { type: String, required: false },
+
+    expirareResetareParola: { type: Date, required: false },
+
+    tokenConfirmareCont: { type: String, required: false },
+
+    tokenSchimbareEmail: { type: String, required: false },
+
+    expirareSchimbareEmail: { type: Date, required: false },
   },
   {
     timestamps: true,

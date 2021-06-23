@@ -1,19 +1,11 @@
 import Form from "../models/formularModel.js";
 import Group from "../models/grupModel.js";
-import User from "../models/utilizatorModel.js";
 import FormResponses from "../models/raspunsuriModel.js";
-import FormAnswers from "../models/raspunsuriModel.js";
 import asyncHandler from "express-async-handler";
-import {
-  isNumeric,
-  validateNumberRange,
-  validateStringLength,
-  idValidDate,
-} from "../utils/validators.js";
 import path from "path";
 import fs from "fs";
 import mongoose from "mongoose";
-import { arraysHaveSaveValues, shuffleArray } from "../utils/utilities.js";
+import { shuffleArray } from "../utils/utilities.js";
 import {
   RADIO_BUTTON_QUESTION,
   CHECKBOX_QUESTION,
@@ -90,7 +82,6 @@ const getFormView = asyncHandler(async (request, response) => {
       }));
 
       if (attributes && attributes.afisareRaspunsuriOrdineAleatorie) {
-        console.log(`Am dat shuffle la array`);
         shuffleArray(question.raspunsuri);
       }
     }
@@ -148,8 +139,6 @@ const updateForm = asyncHandler(async (request, response) => {
     throw new Error("Data expirare invalida!");
   }
 
-  console.log(`multipleAnswers = ${multipleAnswers}`);
-
   form.timpTransmitere = time ? +time : undefined;
   form.dataValiditate = validDate ? new Date(validDate) : undefined;
   form.dataExpirare = expireDate ? new Date(expireDate) : undefined;
@@ -184,35 +173,11 @@ const userCanAnswer = asyncHandler(async (request, response, next) => {
 // @route   PUT /api/forms/
 // @access  Private/Admin Group
 const createForm = asyncHandler(async (request, response) => {
-  const formGroup = request.body.grup;
   const titlu = request.body.titlu;
 
   if (!titlu) {
     response.status(401);
     throw new Error("Formularul trebuie să aibă un titlu");
-  }
-
-  let group;
-
-  if (formGroup) {
-    group = await Group.findById(formGroup);
-
-    if (!group) {
-      response.status(404);
-      throw new Error("Grupul atribuit formularului nu exista");
-    }
-
-    const esteAdministrator = group.utilizatori.find(
-      r =>
-        r._id.toString() === request.user._id.toString() && r.esteAdministrator
-    );
-
-    if (!esteAdministrator) {
-      response.status(401);
-      throw new Error(
-        "Trebuie sa fii administrator pentru a atribut un formular grupului"
-      );
-    }
   }
 
   const createdForm = await Form.create({
@@ -223,11 +188,6 @@ const createForm = asyncHandler(async (request, response) => {
     },
     titlu: titlu,
   });
-
-  if (group) {
-    group.formulare.push(createdForm._id);
-    await group.save();
-  }
 
   if (createdForm) {
     return response.status(201).json({
@@ -248,8 +208,6 @@ const createQuestion = asyncHandler(async (request, response) => {
   const form = request.form;
 
   const { titlu: title, tip: type } = request.body;
-
-  console.log(`Am primit în body ${title} ${type}`);
 
   if (!title) {
     return response
