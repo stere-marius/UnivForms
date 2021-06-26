@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getGroupAdmins, getGroupForms } from "../../actions/groupActions";
-import GroupAdminTab from "../../components/group/GroupAdminTab";
-import GroupFormsTab from "../../components/group/GroupFormsTab";
-import GroupUsersTab from "../../components/group/GroupUsersTab";
-import Header from "../../components/Header";
-import Loader from "../../components/Loader";
-import Message from "../../components/Message";
+import { getGroupAdmins, getGroupForms } from "../actions/groupActions";
+import GroupAdminTab from "../components/group/GroupAdminTab";
+import GroupFormsTab from "../components/group/GroupFormsTab";
+import GroupUsersTab from "../components/group/GroupUsersTab";
+import Header from "../components/Header";
+import Loader from "../components/Loader";
+import Message from "../components/Message";
 
 const GroupMainScreen = ({ match, history }) => {
   const dispatch = useDispatch();

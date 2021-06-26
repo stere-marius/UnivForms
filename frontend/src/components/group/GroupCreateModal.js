@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { withRouter } from "react-router-dom";
 import { createGroup } from "../../actions/groupActions";
 import Loader from "../Loader";
-import { withRouter } from "react-router-dom";
 
 const GroupCreateModal = ({ showModal, onClose, history }) => {
   const dispatch = useDispatch();

@@ -1,25 +1,24 @@
 import express from "express";
-import { protect, admin } from "../middleware/authMiddleware.js";
 import {
   authUser,
-  registerUser,
-  getUserByID,
   deleteUser,
-  getUsers,
-  updateUserProfile,
-  getUserProfile,
-  getUserGroups,
+  generatePasswordResetLink,
+  getUserByID,
   getUserForms,
+  getUserGroups,
+  getUserProfile,
+  registerUser,
   searchUser,
   updateUserEmail,
-  generatePasswordResetLink,
   updateUserPassword,
+  updateUserProfile,
 } from "../controllers/userController.js";
+import { admin, protect } from "../middleware/authMiddleware.js";
 import { requestValidatorResult } from "../validators/requestValidatorResult.js";
 import {
   registerUserValidator,
-  updateUserProfileValidator,
   updateUserEmailValidator,
+  updateUserProfileValidator,
 } from "../validators/userValidator.js";
 
 const router = express.Router();

@@ -23,7 +23,6 @@ function validateStringLength(text, length, validationType) {
 }
 
 function validateNumberRange(number, validationBD, validationType) {
-
   if (validationType === "NUMAR MAI MARE DECAT") {
     return +number > +validationBD;
   }

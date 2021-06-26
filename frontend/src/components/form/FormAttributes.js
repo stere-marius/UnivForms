@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useSelector, useDispatch } from "react-redux";
-import { updateForm, listFormDetails } from "../../actions/formActions";
+import { useDispatch, useSelector } from "react-redux";
+import { withRouter } from "react-router-dom";
+import { listFormDetails, updateForm } from "../../actions/formActions";
 import ConfirmationModal from "../ConfirmationModal";
 import Loader from "../Loader";
-import axios from "axios";
-import { withRouter } from "react-router-dom";
 
 const FormAttributes = ({ form, history }) => {
   const dispatch = useDispatch();

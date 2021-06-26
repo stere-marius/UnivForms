@@ -1,11 +1,11 @@
-import User from "../models/utilizatorModel.js";
-import Group from "../models/grupModel.js";
-import Form from "../models/formularModel.js";
-import asyncHandler from "express-async-handler";
-import generateToken from "../utils/generateToken.js";
-import FormResponses from "../models/raspunsuriModel.js";
 import sgMail from "@sendgrid/mail";
 import crypto from "crypto";
+import asyncHandler from "express-async-handler";
+import Form from "../models/formularModel.js";
+import Group from "../models/grupModel.js";
+import FormResponses from "../models/raspunsuriModel.js";
+import User from "../models/utilizatorModel.js";
+import generateToken from "../utils/generateToken.js";
 
 // @desc    Logheaza utilizator & obtine token
 // @route   POST /api/users/login

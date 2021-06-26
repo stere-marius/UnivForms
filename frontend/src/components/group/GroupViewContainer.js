@@ -1,6 +1,5 @@
 import React, { useRef } from "react";
-import { withRouter } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import { getDifferenceInDays } from "../../utilities";
 
 const GroupViewContainer = ({ group }) => {

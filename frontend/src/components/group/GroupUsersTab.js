@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { withRouter } from "react-router-dom";
 import { getGroupUsers } from "../../actions/groupActions";
+import ConfirmationModal from "../ConfirmationModal";
 import Loader from "../Loader";
 import Message from "../Message";
-import axios from "axios";
 import ModalGroupAddMember from "./ModalGroupAddMember";
-import ConfirmationModal from "../ConfirmationModal";
-import { withRouter } from "react-router-dom";
 
 const GroupUsersTab = ({ groupID, history }) => {
   const dispatch = useDispatch();

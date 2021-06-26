@@ -1,14 +1,10 @@
-import { createStore, combineReducers, applyMiddleware } from "redux";
-import thunk from "redux-thunk";
+import { applyMiddleware, combineReducers, createStore } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
+import thunk from "redux-thunk";
 import {
-  userLoginReducer,
-  userRegisterReducer,
-  userGroupsReducer,
-  userFormsReducer,
-  userProfileReducer,
-} from "./reducers/userReducers";
-import {
+  formAnswerDeleteReducer,
+  formAnswerReducer,
+  formAnswersReducer,
   formCreateQuestionReducer,
   formCreateReducer,
   formDeleteQuestionReducer,
@@ -16,9 +12,6 @@ import {
   formSendResponseReducer,
   formUpdateQuestionReducer,
   formUpdateReducer,
-  formAnswerReducer,
-  formAnswersReducer,
-  formAnswerDeleteReducer,
 } from "./reducers/formReducers";
 import {
   groupAdminsReducer,
@@ -27,6 +20,13 @@ import {
   groupTitleReducer,
   groupUsersReducer,
 } from "./reducers/groupReducers";
+import {
+  userFormsReducer,
+  userGroupsReducer,
+  userLoginReducer,
+  userProfileReducer,
+  userRegisterReducer,
+} from "./reducers/userReducers";
 
 const reducer = combineReducers({
   userProfile: userProfileReducer,

@@ -1,21 +1,22 @@
-import Form from "../models/formularModel.js";
-import Group from "../models/grupModel.js";
-import User from "../models/utilizatorModel.js";
-import FormResponses from "../models/raspunsuriModel.js";
-import FormAnswers from "../models/raspunsuriModel.js";
+import sgMail from "@sendgrid/mail";
 import asyncHandler from "express-async-handler";
-import path from "path";
 import fs from "fs";
 import mongoose from "mongoose";
-import { arraysHaveSaveValues, shuffleArray } from "../utils/utilities.js";
+import path from "path";
+import Form from "../models/formularModel.js";
 import {
-  RADIO_BUTTON_QUESTION,
+  default as FormAnswers,
+  default as FormResponses,
+} from "../models/raspunsuriModel.js";
+import User from "../models/utilizatorModel.js";
+import {
   CHECKBOX_QUESTION,
-  SHORT_TEXT_QUESTION,
   FILE_UPLOAD,
   PARAGRAPH_QUESTION,
+  RADIO_BUTTON_QUESTION,
+  SHORT_TEXT_QUESTION,
 } from "../utils/questionTypesConstants.js";
-import sgMail from "@sendgrid/mail";
+import { arraysHaveSaveValues } from "../utils/utilities.js";
 
 // @desc    Sterge intrebarea formularului
 // @route   DELETE /api/forms/:id/userAnswers
@@ -648,7 +649,10 @@ const handleTextResponse = (
 
     if (
       validationDescription === "SIR DE CARACTERE" &&
-      !answerText.normalize("NFD").replace(/[\u0300-\u036f]/g, "").match(/^[a-zA-ZăâîșțĂÂÎȘȚ\s]+$/)
+      !answerText
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .match(/^[a-zA-ZăâîșțĂÂÎȘȚ\s]+$/)
     ) {
       addError(questionDB, invalidAnswerMessage);
       return;

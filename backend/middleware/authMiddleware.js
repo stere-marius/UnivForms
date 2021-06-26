@@ -1,5 +1,5 @@
-import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
+import jwt from "jsonwebtoken";
 import Utilizator from "../models/utilizatorModel.js";
 
 const protect = asyncHandler(async (request, response, next) => {
@@ -24,13 +24,17 @@ const protect = asyncHandler(async (request, response, next) => {
       next();
     } catch (error) {
       response.status(401);
-      throw new Error("Utilizatorul nu a fost autorizat, verificarea token a esuat!");
+      throw new Error(
+        "Utilizatorul nu a fost autorizat, verificarea token a esuat!"
+      );
     }
   }
 
   if (!token) {
     response.status(401);
-    throw new Error("Utilizatorul nu a fost autorizat, verificarea token a esuat!");
+    throw new Error(
+      "Utilizatorul nu a fost autorizat, verificarea token a esuat!"
+    );
   }
 });
 

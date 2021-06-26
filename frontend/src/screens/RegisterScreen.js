@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Form, Row, Col } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Col, Form, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import Message from "../components/Message";
-import Loader from "../components/Loader";
-import FormContainer from "../components/form/FormContainer";
+import { Link } from "react-router-dom";
 import { register } from "../actions/userActions";
-import { USER_REGISTER_RESET } from "../constants/userConstants";
-import PasswordInput from "../components/PasswordInput";
+import FormContainer from "../components/form/FormContainer";
 import Header from "../components/Header";
+import Loader from "../components/Loader";
+import Message from "../components/Message";
 import Meta from "../components/Meta";
+import PasswordInput from "../components/PasswordInput";
+import { USER_REGISTER_RESET } from "../constants/userConstants";
 
 const RegisterScreen = ({ location, history }) => {
   const [email, setEmail] = useState("");

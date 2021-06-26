@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Modal } from "react-bootstrap";
-import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
-import Message from "./Message";
-import Loader from "./Loader";
+import React, { useEffect, useState } from "react";
+import { Modal } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
 import { USER_LOGIN_SUCCESS } from "../constants/userConstants";
+import Loader from "./Loader";
+import Message from "./Message";
 
 const ModalChangeEmail = ({ location }) => {
   const dispatch = useDispatch();

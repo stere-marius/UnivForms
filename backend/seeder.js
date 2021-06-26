@@ -1,15 +1,12 @@
-import mongoose from "mongoose";
 import dotenv from "dotenv";
-import colors from "colors";
-import utilizatori from "./data/utilizatori.js";
+import connectDB from "./config/db.js";
 import formulare from "./data/formulare.js";
 import grupuri from "./data/grupuri.js";
-import raspunsuri from "./data/raspunsuri.js";
-import Utilizator from "./models/utilizatorModel.js";
+import utilizatori from "./data/utilizatori.js";
 import Formular from "./models/formularModel.js";
 import Grup from "./models/grupModel.js";
 import RaspunsuriFormular from "./models/raspunsuriModel.js";
-import connectDB from "./config/db.js";
+import Utilizator from "./models/utilizatorModel.js";
 
 dotenv.config();
 connectDB();

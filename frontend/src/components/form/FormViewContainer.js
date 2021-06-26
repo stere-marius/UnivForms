@@ -1,8 +1,7 @@
 import React, { useRef } from "react";
-import { withRouter } from "react-router-dom";
-import { Link } from "react-router-dom";
-import { getDifferenceInDays } from "../../utilities";
 import { useSelector } from "react-redux";
+import { Link, withRouter } from "react-router-dom";
+import { getDifferenceInDays } from "../../utilities";
 
 const FormViewContainer = ({ form, history }) => {
   const userLogin = useSelector(state => state.userLogin);

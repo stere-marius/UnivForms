@@ -1,17 +1,17 @@
 import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getFormAnswer } from "../../actions/formActions";
-import AnswerFileUpload from "./AnswerFileUpload";
-import AnswerMarkBox from "./AnswerMarkBox";
-import AnswerTextQuestion from "./AnswerTextQuestion";
-import Loader from "../Loader";
-import Message from "../Message";
-import AnswerScore from "./AnswerScore";
-import AnswerParagraph from "./AnswerParagraph";
 import {
   FILE_UPLOAD,
   PARAGRAPH_QUESTION,
 } from "../../constants/questionTypesConstants";
+import Loader from "../Loader";
+import Message from "../Message";
+import AnswerFileUpload from "./AnswerFileUpload";
+import AnswerMarkBox from "./AnswerMarkBox";
+import AnswerParagraph from "./AnswerParagraph";
+import AnswerScore from "./AnswerScore";
+import AnswerTextQuestion from "./AnswerTextQuestion";
 
 const UserAnswerTab = ({ answerID, formID, isFormOwner }) => {
   const dispatch = useDispatch();

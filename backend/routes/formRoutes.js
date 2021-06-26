@@ -1,31 +1,30 @@
 import express from "express";
-import { protect, admin } from "../middleware/authMiddleware.js";
 import formidableMiddleware from "express-formidable";
-
 import {
-  getFormByID,
-  getFormView,
+  deleteAnswer,
+  getFormAnswers,
+  getFormAnswersStatistics,
+  getSpecificAnswer,
+  getUserAnswers,
+  sendAnswer,
+  sendAnswerLinkEmail,
+  setScoreAnswer,
+} from "../controllers/formAnswersController.js";
+import {
+  checkFormAdmin,
   createForm,
-  deleteForm,
   createQuestion,
-  updateQuestion,
+  deleteForm,
   deleteQuestion,
-  updateForm,
   downloadFile,
   findFormID,
-  checkFormAdmin,
+  getFormByID,
+  getFormView,
+  updateForm,
+  updateQuestion,
   userCanAnswer,
 } from "../controllers/formController.js";
-import {
-  sendAnswer,
-  getUserAnswers,
-  getFormAnswers,
-  getSpecificAnswer,
-  deleteAnswer,
-  setScoreAnswer,
-  sendAnswerLinkEmail,
-  getFormAnswersStatistics,
-} from "../controllers/formAnswersController.js";
+import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 

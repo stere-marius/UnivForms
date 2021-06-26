@@ -1,13 +1,12 @@
-import express from "express";
 import dotenv from "dotenv";
-import colors from "colors";
-import connectDB from "./config/db.js";
-import userRoutes from "./routes/userRoutes.js";
-import formRoutes from "./routes/formRoutes.js";
-import groupRoutes from "./routes/groupRoutes.js";
-import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
+import express from "express";
 import morgan from "morgan";
 import path from "path";
+import connectDB from "./config/db.js";
+import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
+import formRoutes from "./routes/formRoutes.js";
+import groupRoutes from "./routes/groupRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 dotenv.config();
 

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { updateQuestion, listFormDetails } from "../../actions/formActions";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { listFormDetails, updateQuestion } from "../../actions/formActions";
 import Loader from "../Loader";
 import QuestionAttributes from "./QuestionAttributes";
 import QuestionEditButtons from "./QuestionEditButtons";

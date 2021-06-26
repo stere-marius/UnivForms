@@ -1,22 +1,22 @@
-import "./wdyr";
 import React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import LoginScreen from "./screens/LoginScreen";
-import RegisterScreen from "./screens/RegisterScreen";
-import HomeScreen from "./screens/HomeScreen";
-import FormViewScreen from "./screens/FormViewScreen";
-import FormMainScreen from "./screens/FormMainScreen";
-import FormEditScreen from "./screens/FormEditScreen";
-import FormSummaryScreen from "./screens/FormSummaryScreen";
-import FormAnswersScreen from "./screens/FormAnswersScreen";
-import UserProfileScreen from "./screens/UserProfileScreen";
-import PrivateRoute from "./components/PrivateRoute";
-import GroupMainScreen from "./screens/group/GroupMainScreen";
-import ResetPasswordScreen from "./screens/ResetPasswordScreen";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import UserAnswerTab from "./components/form/UserAnswerTab";
 import Header from "./components/Header";
-import NotFound from "./components/NotFound";
 import Meta from "./components/Meta";
+import NotFound from "./components/NotFound";
+import PrivateRoute from "./components/PrivateRoute";
+import FormAnswersScreen from "./screens/FormAnswersScreen";
+import FormEditScreen from "./screens/FormEditScreen";
+import FormMainScreen from "./screens/FormMainScreen";
+import FormSummaryScreen from "./screens/FormSummaryScreen";
+import FormViewScreen from "./screens/FormViewScreen";
+import GroupMainScreen from "./screens/GroupMainScreen";
+import HomeScreen from "./screens/HomeScreen";
+import LoginScreen from "./screens/LoginScreen";
+import RegisterScreen from "./screens/RegisterScreen";
+import ResetPasswordScreen from "./screens/ResetPasswordScreen";
+import UserProfileScreen from "./screens/UserProfileScreen";
+import "./wdyr";
 
 function App() {
   document.body.style = "background: #191722";

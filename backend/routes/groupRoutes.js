@@ -1,22 +1,22 @@
 import express from "express";
-import { protect } from "../middleware/authMiddleware.js";
 import {
-  findGroupID,
+  addGroupForm,
+  addUser,
+  checkGroupUser,
   createGroup,
   deleteGroup,
-  groupAdmin,
-  getGroupUsers,
-  removeUser,
-  addUser,
-  setGroupAdmin,
-  addGroupForm,
-  removeGroupForm,
-  getGroupForms,
+  findGroupID,
   getGroupAdmins,
-  checkGroupUser,
-  updateGroupTitle,
+  getGroupForms,
+  getGroupUsers,
+  groupAdmin,
   leaveGroup,
+  removeGroupForm,
+  removeUser,
+  setGroupAdmin,
+  updateGroupTitle,
 } from "../controllers/groupController.js";
+import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 

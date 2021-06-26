@@ -1,8 +1,8 @@
-import React, { useState } from "react";
 import axios from "axios";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import Loader from "../Loader";
 import Message from "../Message";
-import { useSelector } from "react-redux";
 
 const AnswerFileUpload = ({ formID, answerID, question }) => {
   // /:id/answers/:answerID/:questionID/downloadFile
