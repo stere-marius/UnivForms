@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import Loader from "../Loader";
-import axios from "axios";
 
 const ModalGroupAddMember = ({
   groupID,

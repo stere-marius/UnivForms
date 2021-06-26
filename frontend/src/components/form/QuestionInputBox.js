@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Button } from "react-bootstrap";
-import QuestionTitle from "./QuestionTitle";
+import React, { useEffect, useState } from "react";
 import { validateNumberRange } from "../../utilities";
+import QuestionTitle from "./QuestionTitle";
 
 const QuestionMarkBox = ({
   question,
@@ -46,7 +45,11 @@ const QuestionMarkBox = ({
 
       if (
         validationDescription === "SIR DE CARACTERE" &&
-        !raspunsUtilizator.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").match(/^[a-zA-ZăâîșțĂÂÎȘȚ\s]+$/)
+        !raspunsUtilizator
+          .trim()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .match(/^[a-zA-ZăâîșțĂÂÎȘȚ\s]+$/)
       ) {
         setErrors([invalidAnswerMessage]);
         return;

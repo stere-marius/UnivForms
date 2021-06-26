@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Header from "../components/Header";
+import Loader from "../components/Loader";
 import Message from "../components/Message";
 import Meta from "../components/Meta";
 import { USER_LOGIN_SUCCESS } from "../constants/userConstants";
@@ -150,6 +151,7 @@ const UserProfileScreen = () => {
             }}
           >
             <div className="d-flex justify-content-center">
+              {loading && <Loader />}
               <div style={{ minWidth: "50%" }}>
                 <div class="mt-3">
                   <label for="formControlNume" class="form-label">

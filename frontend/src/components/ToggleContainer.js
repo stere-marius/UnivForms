@@ -21,7 +21,7 @@ const ToggleContainer = ({
         <p
           className="cursor-pointer"
           onClick={handleToggleContainer}
-          aria-expanded={`${isActive}`}
+          aria-expanded={isActive}
           aria-controls={containerID}
         >
           <i

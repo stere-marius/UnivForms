@@ -1,23 +1,22 @@
-import React, { useState, useEffect, useRef } from "react";
-import Header from "../components/Header";
-import { useSelector, useDispatch } from "react-redux";
-import { listFormDetails, sendFormResponse } from "../actions/formActions";
-import Loader from "../components/Loader";
-import QuestionMarkBox from "../components/form/QuestionMarkBox";
-import QuestionInputBox from "../components/form/QuestionInputBox";
-import CountdownTimer from "../components/CountdownTimer";
-import Message from "../components/Message";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Table } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { listFormDetails, sendFormResponse } from "../actions/formActions";
+import CountdownTimer from "../components/CountdownTimer";
+import QuestionFileUpload from "../components/form/QuestionFileUpload";
+import QuestionInputBox from "../components/form/QuestionInputBox";
+import QuestionMarkBox from "../components/form/QuestionMarkBox";
+import QuestionParagraph from "../components/form/QuestionParagraph";
+import Header from "../components/Header";
+import Loader from "../components/Loader";
+import Meta from "../components/Meta";
 import {
   CHECKBOX_QUESTION,
   FILE_UPLOAD,
+  PARAGRAPH_QUESTION,
   RADIO_BUTTON_QUESTION,
   SHORT_TEXT_QUESTION,
-  PARAGRAPH_QUESTION,
 } from "../constants/questionTypesConstants";
-import QuestionFileUpload from "../components/form/QuestionFileUpload";
-import QuestionParagraph from "../components/form/QuestionParagraph";
-import Meta from "../components/Meta";
 
 const FormViewScreen = ({ match, history }) => {
   const tabs = [

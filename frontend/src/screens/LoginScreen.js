@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Form, Button, Row, Col } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Col, Form, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import Message from "../components/Message";
-import Loader from "../components/Loader";
-import FormContainer from "../components/form/FormContainer";
+import { Link } from "react-router-dom";
 import { login } from "../actions/userActions";
+import FormContainer from "../components/form/FormContainer";
 import Header from "../components/Header";
-import PasswordInput from "../components/PasswordInput";
+import Loader from "../components/Loader";
+import Message from "../components/Message";
 import Meta from "../components/Meta";
+import PasswordInput from "../components/PasswordInput";
 
 const LoginScreen = ({ location, history }) => {
   const [email, setEmail] = useState("");

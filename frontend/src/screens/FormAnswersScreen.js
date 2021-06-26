@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteFormAnswer, getFormAnswers } from "../actions/formActions";
+import AnswerStatisticsTab from "../components/form/AnswerStatisticsTab";
 import FormAnswersTab from "../components/form/FormAnswersTab";
+import UserAnswerTab from "../components/form/UserAnswerTab";
 import Header from "../components/Header";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import { getFormAnswers, deleteFormAnswer } from "../actions/formActions";
-import UserAnswerTab from "../components/form/UserAnswerTab";
-import AnswerStatisticsTab from "../components/form/AnswerStatisticsTab";
 import Meta from "../components/Meta";
 
 const FormAnswersScreen = ({ match, history }) => {
@@ -20,7 +20,7 @@ const FormAnswersScreen = ({ match, history }) => {
 
   const [currentPage, setCurrentPage] = useState(0);
 
-  const [perPageAnswers, setPerPageAnswers] = useState(1);
+  const [perPageAnswers] = useState(1);
 
   const [searchAnswerQuery, setSearchAnswerQuery] = useState("");
 
@@ -67,11 +67,6 @@ const FormAnswersScreen = ({ match, history }) => {
     await dispatch(deleteFormAnswer(match.params.id, answerID));
     dispatch(getFormAnswers(match.params.id));
   };
-
-  const handlePageChange = () => {};
-
-  // TODO: Fac o componenta în care trimit ca argument specificAnswer dacă aceasta a fost randată din FormAnswersScreen
-  // dacă argumentul specificAnswer e null fac un useEffect și fac dispatch la specific answer
 
   useEffect(() => {
     if (!userInfo) {

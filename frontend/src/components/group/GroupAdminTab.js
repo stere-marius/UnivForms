@@ -1,17 +1,15 @@
-import React, { useState, useEffect } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { withRouter } from "react-router";
+import { updateGroupTitle } from "../../actions/groupActions";
+import ConfirmationModal from "../ConfirmationModal";
+import Message from "../Message";
 import ModalAddForm from "./ModalAddForm";
 import ModalDeleteForm from "./ModalDeleteForm";
-import { useDispatch, useSelector } from "react-redux";
-import { updateGroupTitle } from "../../actions/groupActions";
-import Message from "../Message";
-import { withRouter } from "react-router";
-import ConfirmationModal from "../ConfirmationModal";
-import axios from "axios";
 
 const GroupAdminTab = ({ groupID, forms, groupTitle, history }) => {
   const dispatch = useDispatch();
-
-  const [loading, setLoading] = useState(false);
 
   const [errors, setErrors] = useState(new Set());
 

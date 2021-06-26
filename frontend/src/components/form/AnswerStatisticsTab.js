@@ -1,17 +1,7 @@
-import React, { useState, useEffect } from "react";
-import {
-  BarChart,
-  Bar,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { Bar, BarChart, Tooltip, XAxis } from "recharts";
 import Loader from "../Loader";
 import Message from "../Message";
 
@@ -27,6 +17,7 @@ const AnswerStatisticsTab = ({ formID }) => {
 
   useEffect(() => {
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadData = async () => {

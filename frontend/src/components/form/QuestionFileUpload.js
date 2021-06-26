@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Button } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
 import { formatBytes } from "../../utilities";
-import QuestionTitle from "./QuestionTitle";
 import Loader from "../Loader";
+import QuestionTitle from "./QuestionTitle";
 
 const QuestionFileUpload = ({
   question,

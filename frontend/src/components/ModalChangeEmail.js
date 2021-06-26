@@ -99,7 +99,7 @@ const ModalChangeEmail = ({ location }) => {
     };
 
     handleResetEmail(resetEmailToken, email);
-  }, []);
+  }, [dispatch, errors, loading, location.search, userInfo.token]);
 
   return (
     <>

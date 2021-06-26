@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Modal } from "react-bootstrap";
-import { useSelector } from "react-redux";
 import axios from "axios";
-import Message from "./Message";
+import React, { useEffect, useState } from "react";
+import { Modal } from "react-bootstrap";
 import Loader from "./Loader";
+import Message from "./Message";
 import PasswordInput from "./PasswordInput";
 
 const ModalResetPassword = ({ location }) => {
@@ -56,7 +55,7 @@ const ModalResetPassword = ({ location }) => {
     setShow(true);
     setResetToken(resetPasswordToken);
     setEmail(email);
-  }, []);
+  }, [loading, location.search]);
 
   const handleSave = async () => {
     if (!resetToken) {

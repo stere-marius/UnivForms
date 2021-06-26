@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Modal } from "react-bootstrap";
-import { useSelector, useDispatch } from "react-redux";
-import Loader from "../Loader";
 import axios from "axios";
-import { getForms } from "../../actions/userActions";
+import React, { useEffect, useState } from "react";
+import { Modal } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
 import { getGroupForms } from "../../actions/groupActions";
+import { getForms } from "../../actions/userActions";
+import Loader from "../Loader";
 import Message from "../Message";
 
 const ModalAddForm = ({ groupID, currentForms, showModal, onClose }) => {

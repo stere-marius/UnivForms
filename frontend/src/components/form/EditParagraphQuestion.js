@@ -19,14 +19,12 @@ const EditParagraphQuestion = ({
 
   const [errors, setErrors] = useState(new Set());
 
-  const [isPanelAttributes, setPanelAttributesVisible] = useState(true);
-
   const updatedQuestion = useSelector(state => state.formUpdatedQuestion);
   const { loading, success: successUpdated, question, error } = updatedQuestion;
 
   useEffect(() => {
     setErrors(new Set());
-  }, [isPanelAttributes]);
+  }, []);
 
   useEffect(() => {
     if (successUpdated && question) {
@@ -83,17 +81,15 @@ const EditParagraphQuestion = ({
         </div>
       </div>
 
-      {isPanelAttributes && (
-        <>
-          <div className="mt-5">
-            <QuestionAttributes
-              questionDB={formQuestionDB}
-              onMandatoryAttributeChange={onMandatoryAttributeChange}
-              onScoreChange={onScoreChange}
-            />
-          </div>
-        </>
-      )}
+      <>
+        <div className="mt-5">
+          <QuestionAttributes
+            questionDB={formQuestionDB}
+            onMandatoryAttributeChange={onMandatoryAttributeChange}
+            onScoreChange={onScoreChange}
+          />
+        </div>
+      </>
       <div>
         {errors.size > 0 &&
           [...errors].map((error, index) => (

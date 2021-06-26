@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { Button } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
 import QuestionTitle from "./QuestionTitle";
 
 const QuestionMarkBox = ({

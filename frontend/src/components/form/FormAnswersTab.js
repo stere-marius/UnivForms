@@ -1,8 +1,8 @@
+import axios from "axios";
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import Loader from "../Loader";
 import Message from "../Message";
-import axios from "axios";
 
 const FormAnswersTab = ({ formID, onAnswerChange, onAnswerDelete }) => {
   const formAnswers = useSelector(state => state.formAnswers);
