@@ -5,11 +5,11 @@ import Loader from "../Loader";
 import Message from "../Message";
 import axios from "axios";
 import ModalGroupAddMember from "./ModalGroupAddMember";
+import ConfirmationModal from "../ConfirmationModal";
+import { withRouter } from "react-router-dom";
 
-const GroupUsersTab = ({ groupID }) => {
+const GroupUsersTab = ({ groupID, history }) => {
   const dispatch = useDispatch();
-
-  const [loading, setLoading] = useState(false);
 
   const [isGroupAdmin, setGroupAdmin] = useState(false);
 
@@ -18,6 +18,8 @@ const GroupUsersTab = ({ groupID }) => {
   const [users, setUsers] = useState([]);
 
   const [isActiveModalUser, setActiveModalUser] = useState(false);
+
+  const [isActiveModalLeave, setActiveModalLeave] = useState(false);
 
   const groupUsers = useSelector(state => state.groupUsers);
   const { loading: loadingGroups, users: groupUsersDB, error } = groupUsers;
@@ -45,7 +47,6 @@ const GroupUsersTab = ({ groupID }) => {
       u.id === user.id ? { ...u, administrator: !user.administrator } : u
     );
     setUsers(newUsers);
-    setLoading(true);
     setErrors(new Set());
 
     try {
@@ -63,15 +64,12 @@ const GroupUsersTab = ({ groupID }) => {
             : error.message
         )
       );
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleDeleteUser = async userID => {
     const newUsers = users.filter(u => u.id !== userID);
     setUsers(newUsers);
-    setLoading(true);
     setErrors(new Set());
 
     try {
@@ -89,8 +87,27 @@ const GroupUsersTab = ({ groupID }) => {
             : error.message
         )
       );
-    } finally {
-      setLoading(false);
+    }
+  };
+
+  const confirmLeaveGroup = async () => {
+    setErrors(new Set());
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+      await axios.delete(`/api/groups/${groupID}/users`, config);
+      history.push("/");
+    } catch (error) {
+      setErrors(
+        new Set(errors).add(
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message
+        )
+      );
     }
   };
 
@@ -170,7 +187,15 @@ const GroupUsersTab = ({ groupID }) => {
           className="btn btn-color-green px-3 my-2"
           onClick={() => setActiveModalUser(true)}
         >
-          Adauga membru
+          Adaugă membru
+        </button>
+      )}
+      {!isGroupAdmin && (
+        <button
+          className="btn btn-color-green px-3 my-2"
+          onClick={() => setActiveModalLeave(true)}
+        >
+          Părăsiți grupul
         </button>
       )}
       {errors.size > 0 &&
@@ -182,8 +207,17 @@ const GroupUsersTab = ({ groupID }) => {
         onClose={() => setActiveModalUser(false)}
         onAdd={handleAddUser}
       />
+      <ConfirmationModal
+        showModal={isActiveModalLeave}
+        title="Confirmare părăsire grup"
+        body="Sunteți sigur că vreți să părăsiți grupul?"
+        onClose={() => setActiveModalUser(false)}
+        onConfirm={confirmLeaveGroup}
+        textConfirm="Da"
+        textClose="Nu"
+      />
     </>
   );
 };
 
-export default GroupUsersTab;
+export default withRouter(GroupUsersTab);

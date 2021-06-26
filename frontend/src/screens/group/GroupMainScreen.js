@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { Col, Row } from "react-bootstrap";
-import { useSelector, useDispatch } from "react-redux";
-import { getGroupForms, getGroupAdmins } from "../../actions/groupActions";
-import FormViewContainer from "../../components/form/FormViewContainer";
-import GroupUsersTab from "../../components/group/GroupUsersTab";
-import GroupFormsTab from "../../components/group/GroupFormsTab";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getGroupAdmins, getGroupForms } from "../../actions/groupActions";
 import GroupAdminTab from "../../components/group/GroupAdminTab";
+import GroupFormsTab from "../../components/group/GroupFormsTab";
+import GroupUsersTab from "../../components/group/GroupUsersTab";
 import Header from "../../components/Header";
 import Loader from "../../components/Loader";
 import Message from "../../components/Message";
@@ -14,8 +12,6 @@ const GroupMainScreen = ({ match, history }) => {
   const dispatch = useDispatch();
 
   const [tabs, setTabs] = useState(["Formulare", "Membrii"]);
-
-  const [isAdmin, setAdmin] = useState(false);
 
   const [selectedTab, setSelectedTab] = useState("Formulare");
 
@@ -43,7 +39,6 @@ const GroupMainScreen = ({ match, history }) => {
     const isAdmin = admins && admins.some(admin => admin.id === userInfo._id);
     if (!loadingAdmins && !includesTabAdmin && isAdmin) {
       setTabs([...tabs, `Administreaza grup`]);
-      setAdmin(isAdmin);
     }
   }, [loadingAdmins, admins, tabs, userInfo._id]);
 
@@ -88,13 +83,7 @@ const GroupMainScreen = ({ match, history }) => {
     if (loadingForms) return <Loader />;
     if (errorForms) return <Message variant="danger">{errorForms}</Message>;
 
-    return (
-      <GroupFormsTab
-        groupID={match.params.id}
-        forms={forms}
-        isAdmin={isAdmin}
-      />
-    );
+    return <GroupFormsTab forms={forms} />;
   };
 
   const renderMembersTab = () => {

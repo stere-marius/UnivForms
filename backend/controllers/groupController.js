@@ -231,6 +231,44 @@ const removeUser = asyncHandler(async (request, response) => {
     .json({ message: "Utilizatorul a fost șters cu succes!" });
 });
 
+// @desc    Sterge membru grup
+// @route   DELETE /api/groups/:id/users
+// @access  Private/Group admin
+const leaveGroup = asyncHandler(async (request, response) => {
+  const group = request.group;
+
+  const userID = request.user._id.toString();
+
+  if (!mongoose.Types.ObjectId.isValid(userID)) {
+    return response
+      .status(400)
+      .json({ message: "Introduceti un utilizator valid!" });
+  }
+
+  if (userID === group.creator.toString()) {
+    return response
+      .status(400)
+      .json({ message: "Nu puteti părăsi un grup creat de dumneavoastră!" });
+  }
+
+  const removeIndex = group.utilizatori.findIndex(
+    user => user.utilizatorID.toString() === userID
+  );
+
+  if (removeIndex === -1) {
+    return response
+      .status(400)
+      .json({ message: `Nu vă aflați în grupul ${group.nume}!` });
+  }
+
+  group.utilizatori.splice(removeIndex, 1);
+  await group.save();
+
+  return response
+    .status(200)
+    .json({ message: `Ați părăsit grupul ${group.nume}!` });
+});
+
 // @desc    Adauga membru grup
 // @route   PUT /api/groups/:id/users/
 // @access  Private/Group admin
@@ -402,6 +440,7 @@ export {
   createGroup,
   deleteGroup,
   removeUser,
+  leaveGroup,
   getGroupUsers,
   addUser,
   getGroupAdmins,

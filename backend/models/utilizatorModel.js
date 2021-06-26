@@ -36,7 +36,7 @@ utilizatorSchema.pre("save", async function (next) {
     next();
   }
 
-  const salt = await bcrypt.genSalt(10);
+  const salt = await bcrypt.genSalt();
   this.parola = await bcrypt.hash(this.parola, salt);
 });
 

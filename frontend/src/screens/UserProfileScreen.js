@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Header from "../components/Header";
 import Message from "../components/Message";
-import { updateProfile } from "../actions/userActions";
-import Loader from "../components/Loader";
-import { USER_LOGIN_SUCCESS } from "../constants/userConstants";
-import axios from "axios";
-import { Form } from "react-bootstrap";
 import Meta from "../components/Meta";
+import { USER_LOGIN_SUCCESS } from "../constants/userConstants";
 
 const UserProfileScreen = () => {
   const dispatch = useDispatch();

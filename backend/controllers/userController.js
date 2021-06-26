@@ -130,6 +130,7 @@ const generatePasswordResetLink = asyncHandler(async (request, response) => {
   const tokenResetareParola = crypto.randomBytes(20).toString("hex");
   user.tokenResetareParola = tokenResetareParola;
   user.expirareResetareParola = Date.now() + 600000;
+  await user.save();
   const siteURL = request.protocol + "://" + request.get("host");
   const msg = {
     to: user.email,
@@ -161,7 +162,6 @@ const generatePasswordResetLink = asyncHandler(async (request, response) => {
       </div>
       `,
   };
-  await user.save();
   sgMail.send(msg);
   return response.status(200).json({
     message:
@@ -206,7 +206,7 @@ const updateUserPassword = asyncHandler(async (request, response) => {
     user.save();
     response.status(400);
     throw new Error(
-      `Link-ul de confirmare este invalid! Generați un nou link de resetare al parolei!`
+      `Link-ul de confirmare este invalid! Generați un nou link de resetare a parolei!`
     );
   }
 

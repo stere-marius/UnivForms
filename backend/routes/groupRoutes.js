@@ -15,6 +15,7 @@ import {
   getGroupAdmins,
   checkGroupUser,
   updateGroupTitle,
+  leaveGroup,
 } from "../controllers/groupController.js";
 
 const router = express.Router();
@@ -38,7 +39,8 @@ router
 router
   .route("/:id/users")
   .get(protect, findGroupID, checkGroupUser, getGroupUsers)
-  .post(protect, findGroupID, groupAdmin, addUser);
+  .post(protect, findGroupID, groupAdmin, addUser)
+  .delete(protect, findGroupID, leaveGroup);
 
 router
   .route("/:id/users/:userID")

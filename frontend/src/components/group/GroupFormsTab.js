@@ -1,17 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { Row, Col } from "react-bootstrap";
 import FormViewContainer from "../form/FormViewContainer";
-import ModalAddForm from "./ModalAddForm";
-import ModalDeleteForm from "./ModalDeleteForm";
-import { useSelector, useDispatch } from "react-redux";
 
-const GroupFormsTab = ({ groupID, forms, isAdmin }) => {
-  const [isActiveModalAddForm, setActiveModalAddForm] = useState(false);
-
-  const [isActiveModalDeleteForm, setActiveModalDeleteForm] = useState(false);
-
+const GroupFormsTab = ({ forms }) => {
   return (
-    <>
+    <div className="my-3">
       <Row>
         {forms.map(form => (
           <>
@@ -26,7 +19,7 @@ const GroupFormsTab = ({ groupID, forms, isAdmin }) => {
           <h2>Acest grup nu contine niciun formular</h2>
         </div>
       )}
-    </>
+    </div>
   );
 };
 
