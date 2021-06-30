@@ -40,11 +40,13 @@ const GroupCreateModal = ({ showModal, onClose, history }) => {
     }
 
     await dispatch(createGroup(groupName));
-
-    if (!(successCreate && createdGroup)) return;
-
-    history.push(`/group/${createdGroup._id}/edit`);
   };
+
+  useEffect(() => {
+    if (successCreate && createdGroup) {
+      history.push(`/group/${createdGroup._id}/edit`);
+    }
+  }, [successCreate, history, createdGroup]);
 
   const handleChangeGroupName = e => {
     setGroupName(e.target.value);
