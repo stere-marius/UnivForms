@@ -113,6 +113,7 @@ const GroupUsersTab = ({ groupID, history }) => {
 
   const handleAddUser = () => {
     dispatch(getGroupUsers(groupID));
+    setActiveModalUser(false);
   };
 
   return (
@@ -168,11 +169,13 @@ const GroupUsersTab = ({ groupID, history }) => {
                         </button>
                       </td>
                       <td>
-                        <i
-                          className="fas fa-trash cursor-pointer"
-                          style={{ color: "red" }}
-                          onClick={() => handleDeleteUser(user.id)}
-                        />
+                        {!user.creator && (
+                          <i
+                            className={`fas fa-trash cursor-pointer`}
+                            style={{ color: "red" }}
+                            onClick={() => handleDeleteUser(user.id)}
+                          />
+                        )}
                       </td>
                     </>
                   )}
@@ -185,7 +188,7 @@ const GroupUsersTab = ({ groupID, history }) => {
       {isGroupAdmin && (
         <button
           className="btn btn-color-green px-3 my-2"
-          onClick={() => setActiveModalUser(true)}
+          onClick={() => setActiveModalUser(!isActiveModalUser)}
         >
           Adaugă membru
         </button>
@@ -193,7 +196,7 @@ const GroupUsersTab = ({ groupID, history }) => {
       {!isGroupAdmin && (
         <button
           className="btn btn-color-green px-3 my-2"
-          onClick={() => setActiveModalLeave(true)}
+          onClick={() => setActiveModalLeave(!isActiveModalLeave)}
         >
           Părăsiți grupul
         </button>
@@ -211,7 +214,7 @@ const GroupUsersTab = ({ groupID, history }) => {
         showModal={isActiveModalLeave}
         title="Confirmare părăsire grup"
         body="Sunteți sigur că vreți să părăsiți grupul?"
-        onClose={() => setActiveModalUser(false)}
+        onClose={() => setActiveModalLeave(false)}
         onConfirm={confirmLeaveGroup}
         textConfirm="Da"
         textClose="Nu"

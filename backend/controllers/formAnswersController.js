@@ -594,8 +594,6 @@ const handleFileUploadQuestion = (
       `./uploads/${formID}/${userID}/${questionDB.id}/${uniqueID}`
     );
 
-    console.log(`File path = ${newPath}`);
-
     let errorRename = null;
 
     fs.mkdirSync(newPath, { recursive: true });

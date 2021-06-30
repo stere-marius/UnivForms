@@ -61,6 +61,7 @@ const CreateMarkBox = ({ formID, formQuestionDB, handleNewQuestion }) => {
   };
 
   const handleSaveQuestion = async () => {
+    console.log(`handleSaveQuestion`);
     if (!formQuestion.titlu) {
       setErrors(
         new Set(errors).add("Titlul intrebarii nu trebuie să fie vid!")
@@ -189,7 +190,10 @@ const CreateMarkBox = ({ formID, formQuestionDB, handleNewQuestion }) => {
                       }
                       onChange={e => handleCheckboxCorrectAnswer(e, index)}
                     />
-                    <label className="form-check-label" for="flexCheckDefault">
+                    <label
+                      className="form-check-label"
+                      htmlFor="flexCheckDefault"
+                    >
                       Raspuns corect
                     </label>
                   </div>
@@ -237,8 +241,8 @@ const CreateMarkBox = ({ formID, formQuestionDB, handleNewQuestion }) => {
         </div>
       )}
 
-      {errors.length > 0 &&
-        errors.map((error, index) => (
+      {errors.size > 0 &&
+        [...errors].map((error, index) => (
           <div key={index} className="alert alert-danger">
             {error}
           </div>

@@ -84,7 +84,6 @@ const FormEditScreen = ({ match, history }) => {
   useEffect(() => {
     if (!userInfo) {
       history.push("/login");
-      console.log("Am redirectionat catre login");
       return;
     }
 
@@ -94,7 +93,6 @@ const FormEditScreen = ({ match, history }) => {
   useEffect(() => {
     if (error) {
       history.push("/");
-      console.log(`A existat o eroare, am redirectionat catre /`);
     }
   }, [error, history]);
 
@@ -105,7 +103,6 @@ const FormEditScreen = ({ match, history }) => {
 
     if (user && user.toString() !== userInfo._id) {
       history.push("/");
-      console.log(`user && user.toString() !== userInfo._id /`);
       return;
     }
 
@@ -115,9 +112,9 @@ const FormEditScreen = ({ match, history }) => {
 
     if (!formQuestionsDB) return;
 
-    if (formQuestionsDB.length !== formQuestions.length) {
-      setFormQuestions(formQuestionsDB);
-    }
+    // if (formQuestionsDB.length !== formQuestions.length) {
+    setFormQuestions(formQuestionsDB);
+    // }
 
     if (!currentQuestion) {
       setCurrentQuestion(formQuestionsDB[formQuestionsDB.length - 1]);
@@ -134,13 +131,6 @@ const FormEditScreen = ({ match, history }) => {
     }
 
     if (currentQuestion && !error) {
-      console.log(
-        `Am setat intrebarea curenta ca fiind ${JSON.stringify(
-          questionDB,
-          null,
-          2
-        )}`
-      );
       setCurrentQuestion(questionDB);
     }
   }, [
