@@ -192,7 +192,7 @@ const createForm = asyncHandler(async (request, response) => {
   if (createdForm) {
     return response.status(201).json({
       id: createdForm._id,
-      utilizator,
+      utilizator: request.user._id,
       titlu,
     });
   }

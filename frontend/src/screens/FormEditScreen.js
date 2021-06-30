@@ -84,6 +84,7 @@ const FormEditScreen = ({ match, history }) => {
   useEffect(() => {
     if (!userInfo) {
       history.push("/login");
+      console.log("Am redirectionat catre login");
       return;
     }
 
@@ -93,6 +94,7 @@ const FormEditScreen = ({ match, history }) => {
   useEffect(() => {
     if (error) {
       history.push("/");
+      console.log(`A existat o eroare, am redirectionat catre /`);
     }
   }, [error, history]);
 
@@ -103,6 +105,7 @@ const FormEditScreen = ({ match, history }) => {
 
     if (user && user.toString() !== userInfo._id) {
       history.push("/");
+      console.log(`user && user.toString() !== userInfo._id /`);
       return;
     }
 

@@ -37,7 +37,11 @@ formularSchema.pre("deleteOne", { document: true }, function (next) {
   FormResponses.deleteMany({ formular: this._id }).exec();
   const __dirname = path.resolve();
   const filePath = path.join(__dirname, `./uploads/${this._id.toString()}`);
-  fs.rmSync(filePath, { recursive: true });
+
+  if (fs.existsSync(filePath)) {
+    fs.rmSync(filePath, { recursive: true });
+  }
+
   Group.find({ "formulare._id": this._id }).exec((err, groups) => {
     if (err) {
       console.log(err);
