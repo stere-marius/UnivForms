@@ -64,7 +64,6 @@ const registerUser = asyncHandler(async (request, response) => {
     });
   }
 
-  console.log(`Date invalide`);
   response.status(400);
   throw new Error("Date invalide");
 });
@@ -211,6 +210,8 @@ const updateUserPassword = asyncHandler(async (request, response) => {
   }
 
   user.parola = newPassword;
+  user.tokenResetareParola = undefined;
+  user.expirareResetareParola = undefined;
   await user.save();
   return response
     .status(200)

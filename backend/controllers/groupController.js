@@ -111,7 +111,7 @@ const getGroupAdmins = asyncHandler(async (request, response) => {
     .filter(user => user.administrator)
     .map(user => ({
       id: user.utilizatorID,
-      creatorFormular:
+      creatorGrup:
         creator.toString() === user.utilizatorID.toString() || undefined,
     }));
 

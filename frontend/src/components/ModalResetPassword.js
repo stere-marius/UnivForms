@@ -78,6 +78,7 @@ const ModalResetPassword = ({ location }) => {
       );
       setSuccessfullyUpdated(true);
       setLoading(false);
+      setTimeout(() => setShow(false), 1000);
     } catch (error) {
       setErrors(
         new Set(errors).add(

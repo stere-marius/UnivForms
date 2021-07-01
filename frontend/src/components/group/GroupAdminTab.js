@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { withRouter } from "react-router";
-import { updateGroupTitle } from "../../actions/groupActions";
+import { getGroupUsers, updateGroupTitle } from "../../actions/groupActions";
 import ConfirmationModal from "../ConfirmationModal";
 import Message from "../Message";
 import ModalAddForm from "./ModalAddForm";
@@ -21,6 +21,9 @@ const GroupAdminTab = ({ groupID, forms, groupTitle, history }) => {
 
   const [isActiveModalDeleteGroup, setActiveModalDeleteGroup] = useState(false);
 
+  const groupAdmins = useSelector(state => state.groupAdmins);
+  const { loading: loadingAdmins, admins } = groupAdmins;
+
   const groupTitleState = useSelector(state => state.groupTitle);
   const {
     loading: loadingTitle,
@@ -37,6 +40,12 @@ const GroupAdminTab = ({ groupID, forms, groupTitle, history }) => {
       setTitle(updatedTitle);
     }
   }, [success, loadingTitle, errorTitle, updatedTitle]);
+
+  useEffect(() => {
+    if (!admins) {
+      dispatch(getGroupUsers(groupID));
+    }
+  }, [admins, dispatch, groupID]);
 
   const handleSave = () => {
     dispatch(updateGroupTitle(groupID, title));
@@ -94,12 +103,19 @@ const GroupAdminTab = ({ groupID, forms, groupTitle, history }) => {
         >
           Sterge formular
         </button>
-        <button
-          className="btn btn-danger text-dark my-3"
-          onClick={() => setActiveModalDeleteGroup(true)}
-        >
-          Sterge grup
-        </button>
+
+        {!loadingAdmins &&
+          admins.find(
+            groupUser => groupUser.id === userInfo._id && groupUser.creatorGrup
+          ) && (
+            <button
+              className="btn btn-danger text-dark my-3"
+              onClick={() => setActiveModalDeleteGroup(true)}
+            >
+              Sterge grup
+            </button>
+          )}
+
         {success && !loadingTitle && (
           <Message variant="success">
             Titlul formularului a fost actulizat cu success

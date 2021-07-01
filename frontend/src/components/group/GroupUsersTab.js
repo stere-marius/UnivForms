@@ -13,6 +13,8 @@ const GroupUsersTab = ({ groupID, history }) => {
 
   const [isGroupAdmin, setGroupAdmin] = useState(false);
 
+  const [isGroupCreator, setGroupCreator] = useState(false);
+
   const [errors, setErrors] = useState(new Set());
 
   const [users, setUsers] = useState([]);
@@ -38,6 +40,7 @@ const GroupUsersTab = ({ groupID, history }) => {
       );
       setUsers(groupUsersDB);
       setGroupAdmin(currentUserGroup && currentUserGroup.administrator);
+      setGroupCreator(currentUserGroup && currentUserGroup.creator);
     }
   }, [loadingGroups, groupUsersDB, error, userInfo._id]);
 
@@ -193,16 +196,20 @@ const GroupUsersTab = ({ groupID, history }) => {
           Adaugă membru
         </button>
       )}
-      {!isGroupAdmin && (
+      {!isGroupCreator && (
         <button
-          className="btn btn-color-green px-3 my-2"
+          className="btn btn-color-green px-3 my-2 mx-3"
           onClick={() => setActiveModalLeave(!isActiveModalLeave)}
         >
           Părăsiți grupul
         </button>
       )}
       {errors.size > 0 &&
-        [...errors].map(error => <Message variant="danger">{error}</Message>)}
+        [...errors].map((error, index) => (
+          <Message key={index} variant="danger">
+            {error}
+          </Message>
+        ))}
       <ModalGroupAddMember
         groupID={groupID}
         currentUsers={users}
