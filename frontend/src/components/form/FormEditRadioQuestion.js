@@ -56,6 +56,16 @@ const FormEditRadioQuestion = ({
     setFormQuestion({ ...formQuestion, punctaj: value });
   };
 
+  const handleRandomOrder = e => {
+    setFormQuestion({
+      ...formQuestion,
+      atribute: {
+        ...formQuestion.atribute,
+        afisareRaspunsuriOrdineAleatorie: e.target.checked,
+      },
+    });
+  };
+
   const handleAddResponse = e => {
     const answers = formQuestion.raspunsuri;
     answers.push({
@@ -260,6 +270,21 @@ const FormEditRadioQuestion = ({
             onMandatoryAttributeChange={onMandatoryAttributeChange}
             onScoreChange={onScoreChange}
           />
+          <div className="form-check mx-3 fs-4">
+            <input
+              className="form-check-input form-input-green"
+              type="checkbox"
+              checked={
+                formQuestion?.atribute?.afisareRaspunsuriOrdineAleatorie ||
+                false
+              }
+              onChange={handleRandomOrder}
+              id="checkboxRaspunsuriRandom"
+            />
+            <label className="form-check-label" for="checkboxRaspunsuriRandom">
+              Afisare raspunsuri in ordine aleatorie
+            </label>
+          </div>
         </div>
       )}
 
