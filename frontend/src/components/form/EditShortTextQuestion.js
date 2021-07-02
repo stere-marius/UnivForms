@@ -240,7 +240,7 @@ const EditShortTextQuestion = ({
               <div className="col-12">
                 <input
                   type="text"
-                  className="form-control"
+                  className="form-control form-input-green"
                   placeholder="Raspuns"
                   value={answer.raspuns}
                   onChange={e => handleChangeResponse(e, index)}
@@ -357,6 +357,7 @@ const EditShortTextQuestion = ({
                       name="firstInput"
                       id="firstInput"
                       placeholder="Primul interval"
+                      className="form-input-green"
                       value={inputValueFormat.firstInput || ""}
                       onChange={handleChangeValidateInput}
                     />
@@ -366,6 +367,7 @@ const EditShortTextQuestion = ({
                       name="secondInput"
                       id="secondInput"
                       placeholder="Al doilea interval"
+                      className="form-input-green"
                       value={inputValueFormat.secondInput || ""}
                       onChange={handleChangeValidateInput}
                     />
@@ -377,6 +379,7 @@ const EditShortTextQuestion = ({
                       name="firstInput"
                       id="firstInput"
                       placeholder="Primul interval"
+                      className="form-input-green"
                       value={inputValueFormat.firstInput || ""}
                       onChange={handleChangeValidateInput}
                     />
@@ -390,7 +393,7 @@ const EditShortTextQuestion = ({
                 <div className="col-auto">
                   <label forHtml="raspunsInvalid">Raspuns invalid</label>
                   <input
-                    className="mx-3"
+                    className="mx-3 form-input-green "
                     type="text"
                     name="raspunsInvalid"
                     placeholder="Text raspuns invalid"

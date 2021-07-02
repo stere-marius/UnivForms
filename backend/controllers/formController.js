@@ -55,7 +55,8 @@ const getFormByID = asyncHandler(async (request, response) => {
 // @route   GET /api/forms/:id/view
 // @access  Public
 const getFormView = asyncHandler(async (request, response) => {
-  const formGroup = await Group.findOne({ "formulare._id": request.form._id });
+  const form = request.form;
+  const formGroup = await Group.findOne({ "formulare._id": form._id });
 
   if (
     formGroup &&
@@ -69,7 +70,20 @@ const getFormView = asyncHandler(async (request, response) => {
     );
   }
 
-  request.form.intrebari.forEach(question => {
+  if (form.dataValiditate && Date.now() < new Date(form.dataValiditate)) {
+    return response.status(200).json({
+      titlu: form.titlu,
+      messages: ["Din păcate acest formular nu este încă valid!"],
+    });
+  }
+
+  if (form.dataExpirare && new Date(form.dataExpirare) <= Date.now()) {
+    return response.status(200).json({
+      titlu: form.titlu,
+      messages: ["Din păcate acest formular a expirat!"],
+    });
+  }
+  form.intrebari.forEach(question => {
     const type = question.tip;
     const isBoxQuestion =
       type === RADIO_BUTTON_QUESTION || type === CHECKBOX_QUESTION;
@@ -91,7 +105,7 @@ const getFormView = asyncHandler(async (request, response) => {
     }
   });
 
-  return response.json(request.form);
+  return response.json(form);
 });
 
 // @desc    Obtine formular folosind ID

@@ -59,25 +59,13 @@ const FormMainScreen = ({ match, history }) => {
             >
               <div className="p-4">
                 <h3 className="fw-bold">{form.titlu}</h3>
-                {form.dataExpirare &&
-                new Date(form.dataExpirare) <= Date.now() ? (
+                {form.messages ? (
                   <>
-                    <h3 className="mt-5">
-                      Din pacăte acest formular a expirat !
-                    </h3>
-                    <button
-                      className="btn btn-default btn-color-green px-4 text-dark text-bold fs-5 mt-4 fw-bold"
-                      onClick={handleFormExpireButton}
-                    >
-                      OK
-                    </button>
-                  </>
-                ) : form.dataValiditate &&
-                  Date.now() < new Date(form.dataValiditate) ? (
-                  <>
-                    <h3 className="mt-5">
-                      Din pacăte acest formular nu este încă valid !
-                    </h3>
+                    {form.messages.map((message, index) => (
+                      <h3 key={index} className="mt-5">
+                        {message}
+                      </h3>
+                    ))}
                     <button
                       className="btn btn-default btn-color-green px-4 text-dark text-bold fs-5 mt-4 fw-bold"
                       onClick={handleFormExpireButton}
