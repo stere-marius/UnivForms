@@ -112,6 +112,7 @@ const UserProfileScreen = () => {
         type: USER_LOGIN_SUCCESS,
         payload: data.user,
       });
+      localStorage.setItem("userInfo", JSON.stringify(data.user));
     } catch (error) {
       if (error.response.data.errors) {
         setErrors(
@@ -151,7 +152,6 @@ const UserProfileScreen = () => {
             }}
           >
             <div className="d-flex justify-content-center">
-              {loading && <Loader />}
               <div style={{ minWidth: "50%" }}>
                 <div class="mt-3">
                   <label for="formControlNume" class="form-label">
@@ -217,6 +217,7 @@ const UserProfileScreen = () => {
                     Reseteaza parola
                   </button>
                 </div>
+                {loading && <Loader />}
               </div>
             </div>
           </div>

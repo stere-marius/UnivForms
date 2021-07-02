@@ -36,7 +36,7 @@ const registerUser = asyncHandler(async (request, response) => {
 
   if (userExists) {
     response.status(400);
-    throw new Error("Utilizator deja existent");
+    throw new Error("Există deja un cont asociat cu această adresă de email!");
   }
 
   // const passwordRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
@@ -362,7 +362,7 @@ const updateUserProfile = asyncHandler(async (request, response) => {
       token: generateToken(updatedUser._id),
     },
     message: isEmailChanged
-      ? "Confirmati schimbarea adresei de email folosind link-ul transmis pe adresa de email asociată contului dvs!"
+      ? "Confirmati schimbarea adresei de email folosind link-ul transmis pe adresa de email asociată contului !"
       : undefined,
   });
 });
