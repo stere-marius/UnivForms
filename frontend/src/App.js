@@ -60,6 +60,7 @@ function App() {
                   <UserAnswerTab
                     formID={props.match.params.id}
                     answerID={props.match.params.answerID}
+                    history={props.history}
                   />
                 </div>
               </>

@@ -12,7 +12,7 @@ const FormViewContainer = ({ form, history }) => {
   );
 
   return (
-    <div className="colectie__formulare">
+    <div className="colectie__formulare my-2 my-md-0">
       <div className="formular">
         <div className="formular__header--heading">
           <p className="__heading">{form.titlu}</p>

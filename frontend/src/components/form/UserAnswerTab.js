@@ -13,7 +13,7 @@ import AnswerParagraph from "./AnswerParagraph";
 import AnswerScore from "./AnswerScore";
 import AnswerTextQuestion from "./AnswerTextQuestion";
 
-const UserAnswerTab = ({ answerID, formID, isFormOwner }) => {
+const UserAnswerTab = ({ answerID, formID, isFormOwner, history }) => {
   const dispatch = useDispatch();
 
   const formSpecificAnswer = useSelector(state => state.formAnswer);
@@ -23,9 +23,22 @@ const UserAnswerTab = ({ answerID, formID, isFormOwner }) => {
     error: errorSpecificAnswer,
   } = formSpecificAnswer;
 
+  const userLogin = useSelector(state => state.userLogin);
+  const { userInfo } = userLogin;
+
   useEffect(() => {
+    if (!userInfo) {
+      history.push(`/login?redirect=${window.location.pathname}`);
+      return;
+    }
+
+    if (!userInfo.token) {
+      history.push(`/login?redirect=${window.location.pathname}`);
+      return;
+    }
+
     dispatch(getFormAnswer(formID, answerID));
-  }, [formID, answerID, dispatch]);
+  }, [formID, answerID, dispatch, userInfo, userInfo?.token, history]);
 
   const getBoxShadowQuestion = question => {
     const {

@@ -130,7 +130,7 @@ const generatePasswordResetLink = asyncHandler(async (request, response) => {
   user.tokenResetareParola = tokenResetareParola;
   user.expirareResetareParola = Date.now() + 600000;
   await user.save();
-  const siteURL = request.protocol + "://" + request.get("host");
+  const siteURL = "http://localhost:3000";
   const msg = {
     to: user.email,
     from: process.env.SENDGRID_EMAIL,
@@ -265,7 +265,7 @@ const updateUserEmail = asyncHandler(async (request, response) => {
   user.expirareSchimbareEmail = undefined;
   const updatedUser = await user.save();
 
-  return response.json({
+  return response.status(200).json({
     _id: updatedUser._id,
     nume: updatedUser.nume,
     prenume: updatedUser.prenume,
@@ -316,7 +316,7 @@ const updateUserProfile = asyncHandler(async (request, response) => {
     const tokenSchimbareEmail = crypto.randomBytes(20).toString("hex");
     user.tokenSchimbareEmail = tokenSchimbareEmail;
     user.expirareSchimbareEmail = Date.now() + 600000;
-    const siteURL = request.protocol + "://" + request.get("host");
+    const siteURL = "http://localhost:3000";
     const msg = {
       to: user.email,
       from: process.env.SENDGRID_EMAIL,
@@ -425,7 +425,7 @@ const getUserGroups = asyncHandler(async (request, response) => {
     "utilizatori.utilizatorID": `${request.user._id}`,
   });
 
-  return response.json(groups);
+  return response.status(200).json(groups);
 });
 
 // @desc    Obtine formularele utilizatorului
@@ -458,7 +458,7 @@ const getUserForms = asyncHandler(async (request, response) => {
     })
   );
 
-  return response.json(forms);
+  return response.status(200).json(forms);
 });
 
 export {

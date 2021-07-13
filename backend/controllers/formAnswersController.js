@@ -744,14 +744,8 @@ const sendAnswerLinkEmail = asyncHandler(async (request, response) => {
 
   const { titlu: formTitle, _id } = request.form;
 
-  console.log(`Request url = ${request.url}`);
-  console.log(`Request path = ${request.path}`);
-  console.log(`req.headers.host = ${request.headers.host}`);
-  console.log(`request.originalURL = ${request.originalUrl}`);
-  console.log(`request.baseUrl = ${request.baseUrl}`);
-
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-  const siteURL = request.protocol + "://" + request.get("host");
+  const siteURL = "http://localhost:3000";
   const msg = {
     to: email.trim(),
     from: process.env.SENDGRID_EMAIL,

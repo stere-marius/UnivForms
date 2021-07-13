@@ -28,6 +28,7 @@ const FormMainScreen = ({ match, history }) => {
   }, [match, dispatch, history, userInfo]);
 
   const handleAccept = () => {
+    dispatch({ type: FORM_DETAILS_RESET });
     history.push(`/form/${match.params.id}/view`);
   };
 

@@ -70,7 +70,12 @@ const FormAnswersScreen = ({ match, history }) => {
 
   useEffect(() => {
     if (!userInfo) {
-      history.push(`/login`);
+      history.push(`/login?redirect=${window.location.pathname}`);
+      return;
+    }
+
+    if (!userInfo.token) {
+      history.push(`/login?redirect=${window.location.pathname}`);
       return;
     }
 

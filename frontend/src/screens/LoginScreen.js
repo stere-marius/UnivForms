@@ -26,7 +26,6 @@ const LoginScreen = ({ location, history }) => {
 
     if (location.search.includes("redirect=")) {
       history.push(redirectLink);
-      console.log(`History push redirect = ${redirectLink}`);
       return;
     }
 

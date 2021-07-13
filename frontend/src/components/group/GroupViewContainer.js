@@ -8,7 +8,7 @@ const GroupViewContainer = ({ group }) => {
   );
 
   return (
-    <div className="grup">
+    <div className="grup my-2 my-md-0">
       <div className="grup__header--heading">
         <p className="__heading">{group.nume}</p>
         <p className="created__at">
