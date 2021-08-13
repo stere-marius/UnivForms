@@ -26,6 +26,7 @@
   "dependencies": {
     "@sendgrid/mail": "^7.4.4",
     "bcryptjs": "^2.4.3",
+    "coinpayments-ipn": "^1.0.0",
     "colors": "^1.4.0",
     "crypto": "^1.0.1",
     "dotenv": "^8.2.0",
