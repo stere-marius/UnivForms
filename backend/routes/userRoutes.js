@@ -20,8 +20,8 @@ import {
   updateUserEmailValidator,
   updateUserProfileValidator,
 } from "../validators/userValidator.js";
-const { verify } = require(`coinpayments-ipn`);
-const CoinpaymentsIPNError = require(`coinpayments-ipn/lib/error`);
+import { verify } from "coinpayments-ipn";
+import CoinpaymentsIPNError from "coinpayments-ipn/lib/error";
 
 const router = express.Router();
 
